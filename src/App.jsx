@@ -72,7 +72,7 @@ function App() {
       element: <Admin />,
     },
     {
-      path: "/adminDashborad",
+      path: "/adminDashboard",
       element: (
         <ProtectedRoute>
           <AdminDashboard />
