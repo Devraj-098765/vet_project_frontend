@@ -11,7 +11,8 @@ import Consultation from "./component/Consultation/Consultation";
 import Footer from "./component/Footer/Footer";
 import Contact from "./utils/Contact";
 import  Selectdate from "./component/Index/selectdate"
-import VetCareAdminDashboard from "../admin/Admin";
+import Admin from "./pages/auth/Admin";
+import AdminDashboard from "./component/admin/AdminDashboard";
 
 
 function App() {
@@ -68,7 +69,15 @@ function App() {
     },
     {
       path: "/admin",
-      element: <VetCareAdminDashboard/>,
+      element: <Admin />,
+    },
+    {
+      path: "/adminDashborad",
+      element: (
+        <ProtectedRoute>
+          <AdminDashboard />
+        </ProtectedRoute>
+      ),
     }
 
     
