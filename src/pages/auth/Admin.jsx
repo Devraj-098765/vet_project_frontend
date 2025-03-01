@@ -25,10 +25,10 @@ const Admin = () => {
 
   const { handleAdminLogin, loading, error } = useAdminLogin();
 
-  const onSubmit = async () => {
+  const onSubmit = async (data) => {
     handleAdminLogin({
-      email: import.meta.env.VITE_ADMIN_EMAIL,
-      password: import.meta.env.VITE_ADMIN_PASSWORD,
+      email: data.email,
+      password: data.password,
     });
   };
 
