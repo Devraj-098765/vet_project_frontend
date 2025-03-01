@@ -1,21 +1,18 @@
 import React from "react";
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaFacebook, FaInstagram, FaClock, FaCheckCircle } from "react-icons/fa";
-import { motion } from "framer-motion";
-import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion"; 
+import NavBar from "../component/Header/NavBar";
+import Footer from "../component/Footer/Footer"; 
 
 const Contact = () => {
   return (
     <>
-      {/* Navbar */}
-      <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
-        <NavLink to="/" className="text-2xl font-bold text-blue-600">VetCare</NavLink>
-        <div className="space-x-6 flex items-center">
-          <NavLink to="/consultation" className="text-gray-600 hover:text-black">Consultation</NavLink>
-          <NavLink to="/all-veterinarians" className="text-gray-600 hover:text-black">All Veterinarians</NavLink>
-          <NavLink to="/about-us" className="text-gray-600 hover:text-black">About</NavLink>
-          <NavLink to="/contact" className="text-gray-600 hover:text-black">Contact</NavLink>
-        </div>
-      </nav>
+      
+      <div className="flex justify-center items-center">
+       <NavBar />
+      </div>
+
+  
 
       {/* Hero Section */}
       <motion.div
@@ -81,43 +78,7 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-gray-100 text-gray-800 py-10 mt-16">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-          
-          <div>
-            <h3 className="font-bold text-lg">Vetcare</h3>
-            <ul className="mt-3 space-y-2">
-              <li><NavLink to="/consultation" className="hover:underline">Consultation</NavLink></li>
-              <li><NavLink to="/all-veterinarians" className="hover:underline">All Veterinarians</NavLink></li>
-              <li><NavLink to="/about-us" className="hover:underline">About Us</NavLink></li>
-              <li><NavLink to="/book-appointment" className="hover:underline">Book Appointment</NavLink></li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-bold text-lg">Stay Connected</h3>
-            <p className="mt-2 text-gray-600">Contact:</p>
-            <p className="font-semibold text-blue-600">hi.Vetpeople@Vetcare.com</p>
-            <div className="mt-3 flex space-x-4">
-              <a href="#" className="text-gray-600 hover:text-blue-600"><FaFacebook size={24} /></a>
-              <a href="#" className="text-gray-600 hover:text-blue-600"><FaInstagram size={24} /></a>
-            </div>
-          </div>
-
-          <div className="text-center md:text-left">
-            <h3 className="font-bold text-lg">Join as Vetfamily and get 10% OFF</h3>
-            <p className="mt-2 text-gray-600">Our services are wide open for you</p>
-            <button className="mt-4 border border-gray-600 px-4 py-2 rounded-full text-lg font-semibold hover:bg-gray-200 transition">
-              Be Vetfamily
-            </button>
-          </div>
-        </div>
-
-        <div className="mt-6 text-center text-sm text-gray-500">
-          &copy; Vetcare.co • <NavLink to="/terms" className="hover:underline">Terms and Privacy Policy</NavLink>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 };
