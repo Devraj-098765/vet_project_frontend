@@ -24,7 +24,7 @@ const useAdminLogin = () => {
         localStorage.setItem("vetapp-token", token);
 
         setAuth({
-          email: import.meta.env.VITE_ADMIN_EMAIL,
+          email: data.email,
           token,
         });
       }
