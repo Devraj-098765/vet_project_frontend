@@ -14,7 +14,7 @@ import  Selectdate from "./component/Index/selectdate"
 import Admin from "./pages/auth/Admin";
 import AdminDashboard from "./component/admin/AdminDashboard";
 import UserList from "./component/admin/Userlist/UserList";
-
+import AddVet from "./component/admin/AddVet/AddVet.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -83,6 +83,10 @@ function App() {
     {
       path: "/UserList",
       element: <UserList />
+    },
+    {
+      path: "/AddVet",
+      element: <AddVet />
     },
    
 
