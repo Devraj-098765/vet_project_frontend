@@ -13,6 +13,7 @@ import Contact from "./utils/Contact";
 import  Selectdate from "./component/Index/selectdate"
 import Admin from "./pages/auth/Admin";
 import AdminDashboard from "./component/admin/AdminDashboard";
+import UserList from "./component/admin/Userlist/UserList";
 
 
 function App() {
@@ -78,7 +79,12 @@ function App() {
           <AdminDashboard />
         </ProtectedRoute>
       ),
-    }
+    },
+    {
+      path: "/UserList",
+      element: <UserList />
+    },
+   
 
     
   ]);
