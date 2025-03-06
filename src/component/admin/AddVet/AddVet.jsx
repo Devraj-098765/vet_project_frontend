@@ -9,24 +9,31 @@ const AdminAddVeterinarian = () => {
     experience: "",
     address: "",
     fee: "",
-    about: "",
+    bio: "",
     category: "",
     photo: null,
   });
-
   const [photoPreview, setPhotoPreview] = useState(null);
   const [errors, setErrors] = useState({});
-  const [existingEmails, setExistingEmails] = useState(["test@example.com"]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+    if (!['image/png', 'image/jpeg', 'image/jpg'].includes(file.type)) {
+      setErrors({ ...errors, photo: "Only PNG/JPEG images allowed" });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setErrors({ ...errors, photo: "File size must be < 5MB" });
+      return;
+    }
     setFormData({ ...formData, photo: file });
-
+    setErrors({ ...errors, photo: null });
     const reader = new FileReader();
     reader.onloadend = () => setPhotoPreview(reader.result);
     reader.readAsDataURL(file);
@@ -34,35 +41,29 @@ const AdminAddVeterinarian = () => {
 
   const validateForm = () => {
     let newErrors = {};
-
-    if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    else if (existingEmails.includes(formData.email))
-      newErrors.email = "Email already registered, use another email";
-
-    if (!formData.password) newErrors.password = "Password is required";
-    else if (formData.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
-
-    if (!formData.experience) newErrors.experience = "Experience is required";
-    if (!formData.address) newErrors.address = "Address is required";
-    if (!formData.fee) newErrors.fee = "Fee is required";
-    if (!formData.about) newErrors.about = "About is required";
-    if (!formData.category) newErrors.category = "Category is required";
-    if (!formData.photo) newErrors.photo = "Photo is required";
-
+    if (!formData.name.trim()) newErrors.name = "Full name required";
+    if (!formData.email.includes("@")) newErrors.email = "Invalid email format";
+    if (formData.password.length < 6) newErrors.password = "Password too short";
+    if (!formData.experience || formData.experience < 0) newErrors.experience = "Valid experience required";
+    if (!formData.address.trim()) newErrors.address = "Address required";
+    if (!formData.fee || formData.fee < 0) newErrors.fee = "Valid fee required";
+    if (!formData.bio.trim()) newErrors.bio = "Bio required";
+    if (!formData.category.trim()) newErrors.category = "Category required";
+    if (!formData.photo) newErrors.photo = "Profile photo required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) return;
-
-    console.log("Veterinarian added successfully!", formData);
+    setIsSubmitting(true);
+    if (!validateForm()) {
+      setIsSubmitting(false);
+      return;
+    }
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setIsSubmitting(false);
     alert("Veterinarian added successfully!");
-
     setFormData({
       name: "",
       email: "",
@@ -70,7 +71,7 @@ const AdminAddVeterinarian = () => {
       experience: "",
       address: "",
       fee: "",
-      about: "",
+      bio: "",
       category: "",
       photo: null,
     });
@@ -79,154 +80,31 @@ const AdminAddVeterinarian = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
       <AdminNavbar />
-
-      <div className="flex flex-grow justify-center items-start p-6 mt-10">
-        <div className="w-full max-w-4xl bg-white p-8 shadow-xl rounded-lg">
-          <h2 className="text-3xl font-bold text-gray-700 mb-6 text-center">
-            Add Veterinarian
+      <div className="flex-grow p-6 mt-10 overflow-auto">
+        <div className="max-w-4xl mx-auto bg-white p-8 shadow-lg rounded-xl">
+          <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center border-b pb-4">
+            New Veterinarian
           </h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Name */}
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter full name"
-                />
-                {errors.name && (
-                  <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-                )}
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
-                  placeholder="Enter email address"
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                )}
-              </div>
-
-              {/* Password */}
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter password"
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-                )}
-              </div>
-
-              {/* Experience */}
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Experience (Years)
-                </label>
-                <input
-                  type="number"
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter years of experience"
-                />
-                {errors.experience && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.experience}
-                  </p>
-                )}
-              </div>
-
-              {/* Category */}
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Category
-                </label>
-                <input
-                  type="text"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter category"
-                />
-                {errors.category && (
-                  <p className="text-red-500 text-sm mt-1">{errors.category}</p>
-                )}
-              </div>
-
-              {/* Fee */}
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Fee
-                </label>
-                <input
-                  type="number"
-                  name="fee"
-                  value={formData.fee}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter consultation fee"
-                />
-                {errors.fee && (
-                  <p className="text-red-500 text-sm mt-1">{errors.fee}</p>
-                )}
-              </div>
+              <InputField label="Full Name" name="name" value={formData.name} onChange={handleChange} error={errors.name} />
+              <InputField label="Email" name="email" value={formData.email} onChange={handleChange} error={errors.email} type="email" />
+              <InputField label="Password" name="password" value={formData.password} onChange={handleChange} error={errors.password} type="password" />
+              <InputField label="Experience (Years)" name="experience" value={formData.experience} onChange={handleChange} error={errors.experience} type="number" min="0" />
+              <InputField label="Category (Specialty)" name="category" value={formData.category} onChange={handleChange} error={errors.category} placeholder="Eg: Surgery" />
+              <InputField label="Consultation Fee ($)" name="fee" value={formData.fee} onChange={handleChange} error={errors.fee} type="number" min="0" step="0.01" />
             </div>
-
-            {/* File Upload */}
+            <InputField label="Clinic Address" name="address" value={formData.address} onChange={handleChange} error={errors.address} textarea />
+            <InputField label="Professional Bio" name="bio" value={formData.bio} onChange={handleChange} error={errors.bio} textarea />
             <div>
-              <label className="block text-gray-700 font-medium mb-2">
-                Photo
-              </label>
-              <label className="file-upload-label">
-                <input type="file" accept="image/*" onChange={handlePhotoChange} />
-                Upload Photo
-              </label>
-              {photoPreview && (
-                <img
-                  src={photoPreview}
-                  alt="Preview"
-                  className="mt-4 w-24 h-24 object-cover rounded-lg"
-                />
-              )}
-              {errors.photo && (
-                <p className="text-red-500 text-sm mt-1">{errors.photo}</p>
-              )}
+              <label className="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
+              <input type="file" accept="image/png, image/jpeg" onChange={handlePhotoChange} className="block w-full text-sm" />
+              {photoPreview && <img src={photoPreview} alt="Preview" className="w-20 h-20 mt-2 rounded-full border" />}
+              {errors.photo && <ErrorText message={errors.photo} />}
             </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300"
-            >
-              Add Veterinarian
+            <button type="submit" disabled={isSubmitting} className={`w-full py-3 px-4 rounded-lg font-medium text-white transition ${isSubmitting ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'}`}>
+              {isSubmitting ? "Registering..." : "Register Veterinarian"}
             </button>
           </form>
         </div>
@@ -234,5 +112,19 @@ const AdminAddVeterinarian = () => {
     </div>
   );
 };
+
+const InputField = ({ label, name, value, onChange, error, type = "text", textarea = false, ...props }) => (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+    {textarea ? (
+      <textarea name={name} value={value} onChange={onChange} className={`w-full px-4 py-2 text-sm border rounded-lg ${error ? 'border-red-500' : ''}`} {...props} />
+    ) : (
+      <input type={type} name={name} value={value} onChange={onChange} className={`w-full px-4 py-2 text-sm border rounded-lg ${error ? 'border-red-500' : ''}`} {...props} />
+    )}
+    {error && <ErrorText message={error} />}
+  </div>
+);
+
+const ErrorText = ({ message }) => <p className="text-red-500 text-xs italic mt-1">{message}</p>;
 
 export default AdminAddVeterinarian;
