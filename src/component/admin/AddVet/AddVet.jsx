@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import AdminNavbar from "../AdminNavbar";
 
 const AdminAddVeterinarian = () => {
   const [formData, setFormData] = useState({
@@ -39,7 +39,7 @@ const AdminAddVeterinarian = () => {
     if (!formData.email) newErrors.email = "Email is required";
     else if (existingEmails.includes(formData.email))
       newErrors.email = "Email already registered, use another email";
-    
+
     if (!formData.password) newErrors.password = "Password is required";
     else if (formData.password.length < 6)
       newErrors.password = "Password must be at least 6 characters";
@@ -77,136 +77,138 @@ const AdminAddVeterinarian = () => {
     setPhotoPreview(null);
   };
 
-
   return (
-    
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <AdminNavbar />
+
       <div className="flex flex-grow justify-center items-start p-6 mt-10">
-        <div className="w-full max-w-4xl bg-white p-8 shadow-lg rounded-lg">
-          <h2 className="text-2xl font-bold text-gray-700 mb-6 text-center">Add Veterinarian</h2>
+        <div className="w-full max-w-4xl bg-white p-8 shadow-xl rounded-lg">
+          <h2 className="text-3xl font-bold text-gray-700 mb-6 text-center">
+            Add Veterinarian
+          </h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Name */}
               <div>
-                <label className="block text-gray-700 font-medium mb-2">Name</label>
+                <label className="block text-gray-700 font-medium mb-2">
+                  Name
+                </label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter full name"
                 />
-                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                {errors.name && (
+                  <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                )}
               </div>
 
               {/* Email */}
               <div>
-                <label className="block text-gray-700 font-medium mb-2">Email</label>
+                <label className="block text-gray-700 font-medium mb-2">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
                   placeholder="Enter email address"
                 />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                )}
               </div>
 
               {/* Password */}
               <div>
-                <label className="block text-gray-700 font-medium mb-2">Password</label>
+                <label className="block text-gray-700 font-medium mb-2">
+                  Password
+                </label>
                 <input
                   type="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter password"
                 />
-                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                )}
               </div>
 
               {/* Experience */}
               <div>
-                <label className="block text-gray-700 font-medium mb-2">Experience (Years)</label>
+                <label className="block text-gray-700 font-medium mb-2">
+                  Experience (Years)
+                </label>
                 <input
                   type="number"
                   name="experience"
                   value={formData.experience}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter years of experience"
                 />
-                {errors.experience && <p className="text-red-500 text-sm mt-1">{errors.experience}</p>}
+                {errors.experience && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.experience}
+                  </p>
+                )}
               </div>
 
               {/* Category */}
               <div>
-                <label className="block text-gray-700 font-medium mb-2">Category</label>
+                <label className="block text-gray-700 font-medium mb-2">
+                  Category
+                </label>
                 <input
                   type="text"
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter category"
                 />
-                {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+                {errors.category && (
+                  <p className="text-red-500 text-sm mt-1">{errors.category}</p>
+                )}
               </div>
 
               {/* Fee */}
               <div>
-                <label className="block text-gray-700 font-medium mb-2">Fee</label>
+                <label className="block text-gray-700 font-medium mb-2">
+                  Fee
+                </label>
                 <input
                   type="number"
                   name="fee"
                   value={formData.fee}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter consultation fee"
                 />
-                {errors.fee && <p className="text-red-500 text-sm mt-1">{errors.fee}</p>}
+                {errors.fee && (
+                  <p className="text-red-500 text-sm mt-1">{errors.fee}</p>
+                )}
               </div>
             </div>
 
-            {/* Address */}
+            {/* File Upload */}
             <div>
-              <label className="block text-gray-700 font-medium mb-2">Address</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter address"
-              />
-              {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
-            </div>
-
-            {/* About */}
-            <div>
-              <label className="block text-gray-700 font-medium mb-2">About</label>
-              <textarea
-                name="about"
-                value={formData.about}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Write about the veterinarian"
-                rows="4"
-              />
-              {errors.about && <p className="text-red-500 text-sm mt-1">{errors.about}</p>}
-            </div>
-
-            {/* Photo Upload */}
-            <div>
-              <label className="block text-gray-700 font-medium mb-2">Photo</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <label className="block text-gray-700 font-medium mb-2">
+                Photo
+              </label>
+              <label className="file-upload-label">
+                <input type="file" accept="image/*" onChange={handlePhotoChange} />
+                Upload Photo
+              </label>
               {photoPreview && (
                 <img
                   src={photoPreview}
@@ -214,7 +216,9 @@ const AdminAddVeterinarian = () => {
                   className="mt-4 w-24 h-24 object-cover rounded-lg"
                 />
               )}
-              {errors.photo && <p className="text-red-500 text-sm mt-1">{errors.photo}</p>}
+              {errors.photo && (
+                <p className="text-red-500 text-sm mt-1">{errors.photo}</p>
+              )}
             </div>
 
             {/* Submit Button */}
@@ -227,7 +231,7 @@ const AdminAddVeterinarian = () => {
           </form>
         </div>
       </div>
-    
+    </div>
   );
 };
 
