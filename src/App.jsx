@@ -10,11 +10,13 @@ import AboutUs from "./component/About/About";
 import Consultation from "./component/Consultation/Consultation";
 import Footer from "./component/Footer/Footer";
 import Contact from "./utils/Contact";
-import  Selectdate from "./component/Index/selectdate"
+import Selectdate from "./component/Index/selectdate";
 import Admin from "./pages/auth/Admin";
 import AdminDashboard from "./component/admin/AdminDashboard";
 import UserList from "./component/admin/Userlist/UserList";
 import AddVet from "./component/admin/AddVet/AddVet.jsx";
+import AdminNavbar from "./component/admin/AdminNavbar.jsx";
+// import VetList from "./component/admin/AddVet/VeterinarianList.jsx"; 
 
 function App() {
   const router = createBrowserRouter([
@@ -88,9 +90,10 @@ function App() {
       path: "/AddVet",
       element: <AddVet />
     },
-   
-
-    
+    // {
+    //   path: "/VeterinarianList",
+    //   element: <VeterinarianList/>
+    // },
   ]);
 
   return <RouterProvider router={router} />;

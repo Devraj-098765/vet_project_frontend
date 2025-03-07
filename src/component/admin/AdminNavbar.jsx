@@ -11,6 +11,8 @@ const AdminNavbar = () => {
     { name: "Appointments", icon: <FiCalendar />, route: "/admin/appointments" },
     { name: "User List", icon: <FiHeart />, route: "/UserList" },
     { name: "Reports", icon: <FiActivity />, route: "/admin/reports" },
+    { name: "Veterinarian List", icon: <FiActivity />, route: "/admin/Veterinarian" },
+
   ];
 
   return (
