@@ -17,6 +17,7 @@ import UserList from "./component/admin/Userlist/UserList";
 import AddVet from "./component/admin/AddVet/AddVet.jsx";
 import AdminNavbar from "./component/admin/AdminNavbar.jsx";
 import VeterinarianList from "./component/admin/AddVet/VeterinarianList.jsx";
+import UserVeterinarianList from "./component/UserVeterinarian/UserVeterinarianList.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -39,6 +40,11 @@ function App() {
         {
           path: "/consultation",
           element: <Consultation />,
+        },
+        {
+          path: "/user/veterinarians",
+          element: <UserVeterinarianList/>
+
         },
         {
           path: "/contact",

@@ -45,7 +45,7 @@ const NavBar = () => {
         Consultation
       </NavLink>
 
-      <NavLink to="/all-veterinarians" className="text-gray-600 hover:text-black">
+      <NavLink to="/user/veterinarians" className="text-gray-600 hover:text-black">
         All Veterinarians
       </NavLink>
 
@@ -100,9 +100,9 @@ const NavBar = () => {
         </div>
       )}
 
-      <button className="border border-gray-400 px-4 py-2 rounded-full hover:bg-gray-100">
+      {/* <button className="border border-gray-400 px-4 py-2 rounded-full hover:bg-gray-100">
         <NavLink to="/BookingVisitForm">Book Appointment</NavLink>
-      </button>
+      </button> */}
     </nav>
   );
 };
