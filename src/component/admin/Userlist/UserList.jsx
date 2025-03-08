@@ -1,19 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import AdminNavbar from "../AdminNavbar";
+import useSignup from "../../../hooks/useSignup"; // Ensure this is the correct path
 
 const UserList = () => {
-  const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    setUsers([
-      { id: 1, name: "John Doe", email: "john@example.com", avatar: "https://i.pravatar.cc/150?img=1" },
-      { id: 2, name: "Jane Smith", email: "jane@example.com", avatar: "https://i.pravatar.cc/150?img=2" },
-      { id: 3, name: "Alice Johnson", email: "alice@example.com", avatar: "https://i.pravatar.cc/150?img=3" },
-    ]);
-  }, []);
+  const { users, error } = useSignup();
 
   const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().includes(search.toLowerCase())
@@ -40,15 +33,24 @@ const UserList = () => {
           />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {filteredUsers.length > 0 ? (
+          {error ? (
+            <motion.p
+              className="text-center text-red-500 col-span-full text-lg"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              Error: {error}
+            </motion.p>
+          ) : filteredUsers.length > 0 ? (
             filteredUsers.map((user) => (
               <motion.div
-                key={user.id}
+                key={user._id}
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-md border border-gray-200 hover:border-blue-500 transition-all duration-300"
               >
                 <img
-                  src={user.avatar}
+                  src={user.avatar || "https://i.pravatar.cc/150"}
                   alt={user.name}
                   className="w-16 h-16 rounded-full border-2 border-gray-300"
                 />
