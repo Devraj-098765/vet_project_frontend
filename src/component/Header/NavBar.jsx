@@ -1,4 +1,4 @@
-import { FaUserCircle } from "react-icons/fa"; // User icon
+import { FaUserCircle, FaLeaf } from "react-icons/fa"; // Changed to leaf icon
 import { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
@@ -36,73 +36,111 @@ const NavBar = () => {
   }, []);
 
   return ( 
-    <nav className="relative bg-white px-6 py-3 rounded-full shadow-md space-x-6 flex items-center mt-10">
-      <NavLink to="/" className="text-gray-600 hover:text-black">
-        Vetcare
-      </NavLink>
+    <nav className="relative bg-gradient-to-r from-green-50 to-green-100 px-8 py-4 rounded-xl shadow-md flex items-center justify-between mt-10 border-b-2 border-green-300">
+      {/* Logo and name section */}
+      <div className="flex items-center">
+        <FaLeaf className="text-green-600 mr-2" size={20} />
+        <NavLink to="/" className="text-green-800 font-medium text-lg tracking-wide hover:text-green-600 transition-colors">
+          Vetcare
+        </NavLink>
+      </div>
+      
+      {/* Navigation links with hover effects */}
+      <div className="flex space-x-2">
+        <NavLink 
+          to="/consultation" 
+          className={({ isActive }) => 
+            isActive 
+              ? "bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium"
+              : "text-green-700 px-4 py-2 hover:bg-green-100 rounded-lg transition-all duration-300"
+          }
+        >
+          Consultation
+        </NavLink>
 
-      <NavLink to="/consultation" className="text-gray-600 hover:text-black">
-        Consultation
-      </NavLink>
+        <NavLink 
+          to="/user/veterinarians" 
+          className={({ isActive }) => 
+            isActive 
+              ? "bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium"
+              : "text-green-700 px-4 py-2 hover:bg-green-100 rounded-lg transition-all duration-300"
+          }
+        >
+          All Veterinarians
+        </NavLink>
 
-      <NavLink to="/user/veterinarians" className="text-gray-600 hover:text-black">
-        All Veterinarians
-      </NavLink>
+        <NavLink 
+          to="/about-us" 
+          className={({ isActive }) => 
+            isActive 
+              ? "bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium"
+              : "text-green-700 px-4 py-2 hover:bg-green-100 rounded-lg transition-all duration-300"
+          }
+        >
+          About
+        </NavLink>
 
-      <NavLink to="/about-us" className="text-gray-600 hover:text-black">
-        About
-      </NavLink>
+        <NavLink 
+          to="/contact" 
+          className={({ isActive }) => 
+            isActive 
+              ? "bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium"
+              : "text-green-700 px-4 py-2 hover:bg-green-100 rounded-lg transition-all duration-300"
+          }
+        >
+          Contact
+        </NavLink>
+      </div>
 
-      <NavLink to="/contact" className="text-gray-600 hover:text-black">
-        Contact
-      </NavLink>
-
-      {!auth.token ? (
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-full">
-          <NavLink to="/login">Sign up</NavLink>
-        </button>
-      ) : (
-        <div className="relative" ref={dropdownRef}>
-          <button onClick={toggleDropdown} className="text-gray-600 hover:text-black">
-            <FaUserCircle size={30} />
+      {/* Auth section */}
+      <div className="flex items-center">
+        {!auth.token ? (
+          <button className="bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700 transition-colors duration-300">
+            <NavLink to="/login">Sign up</NavLink>
           </button>
-          {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg">
-              <NavLink
-                to="/settings"
-                className="block px-4 py-2 text-gray-600 hover:bg-gray-100"
-                onClick={() => setDropdownOpen(false)}
-              >
-                Settings
-              </NavLink>
-              <NavLink
-                to="/report"
-                className="block px-4 py-2 text-gray-600 hover:bg-gray-100"
-                onClick={() => setDropdownOpen(false)}
-              >
-                Report
-              </NavLink>
-              <NavLink
-                to="/vacation-details"
-                className="block px-4 py-2 text-gray-600 hover:bg-gray-100"
-                onClick={() => setDropdownOpen(false)}
-              >
-                Vacation Details
-              </NavLink>
-              <button
-                onClick={handleLogout}
-                className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
-              >
-                Logout
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* <button className="border border-gray-400 px-4 py-2 rounded-full hover:bg-gray-100">
-        <NavLink to="/BookingVisitForm">Book Appointment</NavLink>
-      </button> */}
+        ) : (
+          <div className="relative" ref={dropdownRef}>
+            <button 
+              onClick={toggleDropdown} 
+              className="bg-green-100 text-green-700 p-2 rounded-full hover:bg-green-200 transition-colors duration-300 border border-green-300"
+            >
+              <FaUserCircle size={26} />
+            </button>
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-3 w-52 bg-white rounded-lg shadow-lg border border-green-200 overflow-hidden z-10">
+                
+                <NavLink
+                  to="/settings"
+                  className="flex px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  Edit profile 
+                </NavLink>
+                <NavLink
+                  to="/report"
+                  className="flex px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  Report
+                </NavLink>
+                <NavLink
+                  to="/vacation-details"
+                  className="flex px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  Vacation Details
+                </NavLink>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-3 text-red-600 hover:bg-green-50 transition-colors border-t border-green-100"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </nav>
   );
 };
