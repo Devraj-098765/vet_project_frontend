@@ -4,7 +4,6 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import MainLayout from "./component/MainLayout";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
-import BookingVisitForm from "./component/bookingsytem";
 import IndexPage from "./component/Index/IndexPage";
 import AboutUs from "./component/About/About";
 import Consultation from "./component/Consultation/Consultation";
@@ -18,6 +17,8 @@ import AddVet from "./component/admin/AddVet/AddVet.jsx";
 import AdminNavbar from "./component/admin/AdminNavbar.jsx";
 import VeterinarianList from "./component/admin/AddVet/VeterinarianList.jsx";
 import UserVeterinarianList from "./component/UserVeterinarian/UserVeterinarianList.jsx";
+import EditProfile from "./component/EditProfile/EditProfile.jsx";
+import BookingSystem from "./component/BookingSytem.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -54,18 +55,20 @@ function App() {
           path: "/footer",
           element: <Footer />,
         },
+       
         {
-          path: "/BookingVisitForm",
+          path: "/bookingsystem",
           element: (
             <ProtectedRoute>
-              <BookingVisitForm />
+              <BookingSystem />
             </ProtectedRoute>
-          ),
+          )
         },
         {
-          path: "/selectdate",
-          element:<Selectdate/>,
-        },
+          path: "/editprofile",
+          element:<EditProfile/>
+
+        }
       ],
     },
     {
