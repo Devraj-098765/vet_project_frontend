@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AlertCircle, Calendar, Clock, Phone, User, CheckCircle, Loader2 } from "lucide-react";
-import NavBar from "./Header/Navbar";
-import useAuth from "../hooks/useAuth"; // Ensure the correct import path
+import NavBar from "./Header/NavBar"; 
+import useAuth from "../hooks/useAuth";
 
 const BookingSystem = () => {
   const { auth } = useAuth();
@@ -22,16 +22,10 @@ const BookingSystem = () => {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    console.log("Auth Data:", auth); // Debugging step
-
-    if (auth?.email) {
-      const email = auth.email.split("@")[0];
-
-      if (auth?.name) {
-        setFormData((prevData) => ({ ...prevData, name: auth.name }));
-      } else {
-        setFormData((prevData) => ({ ...prevData, name: email })); // Use email as fallback
-      }
+    const userEmail = localStorage.getItem("email").split("@")[0];
+    
+    if (userEmail) {
+      setFormData((prevData) => ({ ...prevData, name: userEmail }));
     }
   }, []);
 
