@@ -128,7 +128,7 @@ const NavBar = () => {
                   className="flex px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  Vacation Details
+                  Appiontment Details
                 </NavLink>
                 <button
                   onClick={handleLogout}
