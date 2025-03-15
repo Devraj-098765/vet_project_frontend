@@ -31,9 +31,7 @@ const useSignup = () => {
 
       toast.success("User Logged In successfully");
       navigate("/");
-      localStorage.removeItem("currentConversationId");
-      localStorage.removeItem("currentConversationTitle");
-      setConversations(null);
+      localStorage.setItem("email", data.email);
     } catch (err) {
       if (err.response && err.response.data) {
         if (err.response.data.message) {
