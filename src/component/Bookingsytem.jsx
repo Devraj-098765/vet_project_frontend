@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { AlertCircle, Calendar, Clock, Phone, User, CheckCircle, Loader2 } from "lucide-react";
-import NavBar from "../component/Header/NavBar";
+import NavBar from "./Header/Navbar";
 import useAuth from "../hooks/useAuth";
+import Footer from "./Footer/Footer";
 
 const BookingSystem = () => {
   const { auth } = useAuth();
@@ -22,8 +23,7 @@ const BookingSystem = () => {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    const userEmail = localStorage.getItem("email").split("@")[0];
-    
+    const userEmail = localStorage.getItem("email")?.split("@")[0];
     if (userEmail) {
       setFormData((prevData) => ({ ...prevData, name: userEmail }));
     }
@@ -45,12 +45,8 @@ const BookingSystem = () => {
   const petTypes = ["Dog", "Cat", "Bird", "Other"];
 
   const handleChange = (e) => {
-    const userEmail = localStorage.getItem("vetapp-email").split("@")[0];
-    console.log("this is logged in user email", userEmail)
-
-    if (userEmail) {
-      setFormData((prevData) => ({ ...prevData, name: userEmail }));
-    }
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const validateForm = () => {
@@ -77,7 +73,7 @@ const BookingSystem = () => {
     if (!validateForm()) return;
 
     setLoading(true);
-    setErrors({}); // Clear previous form-level errors
+    setErrors({});
 
     try {
       const response = await fetch("http://localhost:3001/api/bookings", {
@@ -120,186 +116,233 @@ const BookingSystem = () => {
   };
 
   return (
-    <div className="flex justify-center items-center">
-          <NavBar />
-      <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-        <h2 className="text-2xl font-bold mb-6 text-center text-blue-700">Book a Veterinarian Appointment</h2>
-
-        {success && (
-          <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-lg flex items-center space-x-2">
-            <CheckCircle size={20} />
-            <span>Appointment booked successfully! We'll contact you to confirm.</span>
-          </div>
-        )}
-
-        {errors.form && (
-          <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg flex items-center space-x-2">
-            <AlertCircle size={20} />
-            <span>{errors.form}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name Field */}
-          <div className="space-y-2">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Your Name</label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-              <input
-                id="name"
-                type="text"
-                name="name"
-                value={formData.name}
-                readOnly
-                className="w-full p-2 pl-10 border rounded border-gray-300 bg-gray-100 cursor-not-allowed"
-              />
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100">
+      <div className="flex justify-center items-center">
+        <NavBar />
+      </div>
+      
+      <div className="max-w-2xl mx-auto p-6 my-8">
+        <div className="bg-white rounded-xl overflow-hidden shadow-lg border-l-4 border-green-700">
+          <div className="h-8 bg-gradient-to-r from-green-800 to-green-600"></div>
+          
+          <div className="p-6">
+            <div className="flex justify-center mb-4">
+              <div className="w-14 h-14 bg-green-700 rounded-full flex items-center justify-center -mt-12 border-4 border-white shadow-md">
+                <Calendar size={24} className="text-white" />
+              </div>
             </div>
-          </div>
+            
+            <h2 className="text-2xl font-bold text-center text-green-800 mb-1">Veterinary Appointment</h2>
+            <p className="text-center text-green-600 mb-6 text-sm">Schedule care for your pet</p>
 
-          {/* Phone Number */}
-          <div className="space-y-2">
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-            <div className="relative">
-              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-              <input
-                id="phone"
-                type="tel"
-                name="phone"
-                placeholder="(XXX) XXX-XXXX"
-                value={formData.phone}
-                onChange={handleChange}
-                className={`w-full p-2 pl-10 border rounded ${errors.phone ? "border-red-500" : "border-gray-300"}`}
-              />
-            </div>
-            {errors.phone && <p className="text-red-500 text-xs">{errors.phone}</p>}
-          </div>
+            {success && (
+              <div className="mb-6 p-4 bg-green-50 rounded-lg flex items-center border-l-4 border-green-500">
+                <CheckCircle size={20} className="mr-2 text-green-500" />
+                <span>Appointment booked successfully! We'll contact you to confirm.</span>
+              </div>
+            )}
 
-          {/* Date & Time */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="date" className="block text-sm font-medium text-gray-700">Preferred Date</label>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  id="date"
-                  type="date"
-                  name="date"
-                  min={getTodayDate()}
-                  value={formData.date}
+            {errors.form && (
+              <div className="mb-6 p-4 bg-red-50 rounded-lg flex items-center border-l-4 border-red-500">
+                <AlertCircle size={20} className="mr-2 text-red-500" />
+                <span>{errors.form}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* Name Field */}
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-green-700 mb-1 flex items-center">
+                    <User size={14} className="mr-1 text-green-600" />
+                    Your Name
+                  </label>
+                  <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    readOnly
+                    className="w-full p-2 rounded-lg bg-green-50/70 shadow-inner cursor-not-allowed text-green-700"
+                  />
+                </div>
+
+                {/* Phone Number */}
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-green-700 mb-1 flex items-center">
+                    <Phone size={14} className="mr-1 text-green-600" />
+                    Phone Number
+                  </label>
+                  <input
+                    id="phone"
+                    type="tel"
+                    name="phone"
+                    placeholder="(XXX) XXX-XXXX"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className={`w-full p-2 rounded-lg shadow-inner ${
+                      errors.phone ? "ring-1 ring-red-500" : "border-green-200"
+                    }`}
+                  />
+                  {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                </div>
+              </div>
+
+              {/* Date & Time */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label htmlFor="date" className="block text-sm font-medium text-green-700 mb-1 flex items-center">
+                    <Calendar size={14} className="mr-1 text-green-600" />
+                    Preferred Date
+                  </label>
+                  <input
+                    id="date"
+                    type="date"
+                    name="date"
+                    min={getTodayDate()}
+                    value={formData.date}
+                    onChange={handleChange}
+                    className={`w-full p-2 rounded-lg ${
+                      errors.date ? "ring-1 ring-red-500" : ""
+                    }`}
+                  />
+                  {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
+                </div>
+                <div>
+                  <label htmlFor="time" className="block text-sm font-medium text-green-700 mb-1 flex items-center">
+                    <Clock size={14} className="mr-1 text-green-600" />
+                    Preferred Time
+                  </label>
+                  <select
+                    id="time"
+                    name="time"
+                    value={formData.time}
+                    onChange={handleChange}
+                    className={`w-full p-2 rounded-lg ${
+                      errors.time ? "ring-1 ring-red-500" : ""
+                    }`}
+                  >
+                    <option value="">Select Time Slot</option>
+                    {timeSlots.map((slot) => (
+                      <option key={slot} value={slot}>{slot}</option>
+                    ))}
+                  </select>
+                  {errors.time && <p className="text-red-500 text-xs mt-1">{errors.time}</p>}
+                </div>
+              </div>
+
+              {/* Pet Section */}
+              <div className="bg-green-50/70 p-4 rounded-lg border-l-4 border-green-600">
+                <h3 className="text-green-800 font-medium mb-3">Pet Information</h3>
+                
+                <div className="space-y-3">
+                  <div>
+                    <label htmlFor="petName" className="block text-sm font-medium text-green-700 mb-1">Pet Name</label>
+                    <input
+                      id="petName"
+                      type="text"
+                      name="petName"
+                      value={formData.petName}
+                      onChange={handleChange}
+                      className={`w-full p-2 rounded-lg ${
+                        errors.petName ? "ring-1 ring-red-500" : ""
+                      }`}
+                    />
+                    {errors.petName && <p className="text-red-500 text-xs mt-1">{errors.petName}</p>}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label htmlFor="petType" className="block text-sm font-medium text-green-700 mb-1">Pet Type</label>
+                      <select
+                        id="petType"
+                        name="petType"
+                        value={formData.petType}
+                        onChange={handleChange}
+                        className={`w-full p-2 rounded-lg ${
+                          errors.petType ? "ring-1 ring-red-500" : ""
+                        }`}
+                      >
+                        <option value="">Select Pet Type</option>
+                        {petTypes.map((type) => (
+                          <option key={type} value={type}>{type}</option>
+                        ))}
+                      </select>
+                      {errors.petType && <p className="text-red-500 text-xs mt-1">{errors.petType}</p>}
+                    </div>
+                    <div>
+                      <label htmlFor="petAge" className="block text-sm font-medium text-green-700 mb-1">Pet Age</label>
+                      <input
+                        id="petAge"
+                        type="text"
+                        name="petAge"
+                        value={formData.petAge}
+                        onChange={handleChange}
+                        className={`w-full p-2 rounded-lg ${
+                          errors.petAge ? "ring-1 ring-red-500" : ""
+                        }`}
+                      />
+                      {errors.petAge && <p className="text-red-500 text-xs mt-1">{errors.petAge}</p>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Service */}
+              <div>
+                <label htmlFor="service" className="block text-sm font-medium text-green-700 mb-2">Service Required</label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  {services.map((service) => (
+                    <label 
+                      key={service} 
+                      className={`flex items-center p-2 rounded-lg cursor-pointer ${
+                        formData.service === service 
+                          ? "bg-green-700 text-white" 
+                          : "bg-white hover:bg-green-50 border border-green-200"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="service"
+                        value={service}
+                        checked={formData.service === service}
+                        onChange={handleChange}
+                        className="sr-only"
+                      />
+                      <span className="text-sm">{service}</span>
+                    </label>
+                  ))}
+                </div>
+                {errors.service && <p className="text-red-500 text-xs mt-1">{errors.service}</p>}
+              </div>
+
+              {/* Notes */}
+              <div>
+                <label htmlFor="notes" className="block text-sm font-medium text-green-700 mb-1">Additional Notes (Optional)</label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  value={formData.notes}
                   onChange={handleChange}
-                  className={`w-full p-2 pl-10 border rounded ${errors.date ? "border-red-500" : "border-gray-300"}`}
+                  className="w-full p-2 rounded-lg border-green-200"
+                  rows="3"
                 />
               </div>
-              {errors.date && <p className="text-red-500 text-xs">{errors.date}</p>}
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="time" className="block text-sm font-medium text-gray-700">Preferred Time</label>
-              <div className="relative">
-                <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                <select
-                  id="time"
-                  name="time"
-                  value={formData.time}
-                  onChange={handleChange}
-                  className={`w-full p-2 pl-10 border rounded ${errors.time ? "border-red-500" : "border-gray-300"}`}
-                >
-                  <option value="">Select Time Slot</option>
-                  {timeSlots.map((slot) => (
-                    <option key={slot} value={slot}>{slot}</option>
-                  ))}
-                </select>
-              </div>
-              {errors.time && <p className="text-red-500 text-xs">{errors.time}</p>}
-            </div>
-          </div>
 
-          {/* Pet Details */}
-          <div className="space-y-2">
-            <label htmlFor="petName" className="block text-sm font-medium text-gray-700">Pet Name</label>
-            <input
-              id="petName"
-              type="text"
-              name="petName"
-              value={formData.petName}
-              onChange={handleChange}
-              className={`w-full p-2 border rounded ${errors.petName ? "border-red-500" : "border-gray-300"}`}
-            />
-            {errors.petName && <p className="text-red-500 text-xs">{errors.petName}</p>}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="petType" className="block text-sm font-medium text-gray-700">Pet Type</label>
-              <select
-                id="petType"
-                name="petType"
-                value={formData.petType}
-                onChange={handleChange}
-                className={`w-full p-2 border rounded ${errors.petType ? "border-red-500" : "border-gray-300"}`}
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-green-700 hover:bg-green-800 text-white p-2 rounded-lg flex justify-center items-center disabled:bg-green-400 transition duration-300"
               >
-                <option value="">Select Pet Type</option>
-                {petTypes.map((type) => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-              {errors.petType && <p className="text-red-500 text-xs">{errors.petType}</p>}
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="petAge" className="block text-sm font-medium text-gray-700">Pet Age</label>
-              <input
-                id="petAge"
-                type="text"
-                name="petAge"
-                value={formData.petAge}
-                onChange={handleChange}
-                className={`w-full p-2 border rounded ${errors.petAge ? "border-red-500" : "border-gray-300"}`}
-              />
-              {errors.petAge && <p className="text-red-500 text-xs">{errors.petAge}</p>}
-            </div>
+                {loading ? <Loader2 size={18} className="animate-spin mr-2" /> : null}
+                {loading ? "Booking..." : "Book Appointment"}
+              </button>
+            </form>
           </div>
-
-          {/* Service */}
-          <div className="space-y-2">
-            <label htmlFor="service" className="block text-sm font-medium text-gray-700">Service</label>
-            <select
-              id="service"
-              name="service"
-              value={formData.service}
-              onChange={handleChange}
-              className={`w-full p-2 border rounded ${errors.service ? "border-red-500" : "border-gray-300"}`}
-            >
-              <option value="">Select Service</option>
-              {services.map((service) => (
-                <option key={service} value={service}>{service}</option>
-              ))}
-            </select>
-            {errors.service && <p className="text-red-500 text-xs">{errors.service}</p>}
-          </div>
-
-          {/* Notes */}
-          <div className="space-y-2">
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-700">Additional Notes (Optional)</label>
-            <textarea
-              id="notes"
-              name="notes"
-              value={formData.notes}
-              onChange={handleChange}
-              className="w-full p-2 border rounded border-gray-300"
-              rows="3"
-            />
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded flex justify-center items-center disabled:bg-blue-400"
-          >
-            {loading ? <Loader2 size={20} className="animate-spin mr-2" /> : null}
-            {loading ? "Booking..." : "Book Appointment"}
-          </button>
-        </form>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };
