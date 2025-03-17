@@ -18,7 +18,7 @@ import AdminNavbar from "./component/admin/AdminNavbar.jsx";
 import VeterinarianList from "./component/admin/AddVet/VeterinarianList.jsx";
 import UserVeterinarianList from "./component/UserVeterinarian/UserVeterinarianList.jsx";
 import EditProfile from "./component/EditProfile/EditProfile.jsx";
-import BookingSystem from "./component/BookingSytem.jsx";
+import BookingSystem from "./component/Bookingsytem.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -65,7 +65,7 @@ function App() {
           )
         },
         {
-          path: "/editprofile",
+          path: "/editprofile/:id",
           element:<EditProfile/>
 
         }

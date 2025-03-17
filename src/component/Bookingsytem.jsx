@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { AlertCircle, Calendar, Clock, Phone, User, CheckCircle, Loader2 } from "lucide-react";
-import NavBar from "./Header/NavBar"; 
+import NavBar from "../component/Header/NavBar";
 import useAuth from "../hooks/useAuth";
 
 const BookingSystem = () => {
@@ -45,10 +45,11 @@ const BookingSystem = () => {
   const petTypes = ["Dog", "Cat", "Bird", "Other"];
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
+    const userEmail = localStorage.getItem("vetapp-email").split("@")[0];
+    console.log("this is logged in user email", userEmail)
+
+    if (userEmail) {
+      setFormData((prevData) => ({ ...prevData, name: userEmail }));
     }
   };
 
@@ -119,8 +120,8 @@ const BookingSystem = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <NavBar />
+    <div className="flex justify-center items-center">
+          <NavBar />
       <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
         <h2 className="text-2xl font-bold mb-6 text-center text-blue-700">Book a Veterinarian Appointment</h2>
 
