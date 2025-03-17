@@ -9,16 +9,18 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("vetapp-token");
+    const email = localStorage.getItem("vetapp-email");
+    const userId = localStorage.getItem("vetapp-userId");
 
     if (token) {
-      setAuth({ token });
+      setAuth({ email, userId, token });
     }
     setLoading(false);
   }, []);
 
   const logout = () => {
     localStorage.removeItem("vetapp-token");
-    setAuth({});
+    setAuth({ email: "", userId: "", token: "" });
   };
 
   if (loading) {

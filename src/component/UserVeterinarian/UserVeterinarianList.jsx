@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import NavBar from "../Header/Navbar";
+import NavBar from "../Header/NavBar"
 
 const UserVeterinarianList = () => {
   const [veterinarians, setVeterinarians] = useState([]);
@@ -48,7 +48,7 @@ const UserVeterinarianList = () => {
   };
 
   const handleBookAppointment = (vet) => {
-    navigate(`/Bookingsystem`, { state: { vet } }); // Navigate to booking page with vet details
+    navigate(`/bookingsystem`, { state: { vet } }); // Navigate to booking page with vet details
   };
 
   if (loading)

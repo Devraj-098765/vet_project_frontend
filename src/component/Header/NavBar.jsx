@@ -110,7 +110,7 @@ const NavBar = () => {
               <div className="absolute right-0 mt-3 w-52 bg-white rounded-lg shadow-lg border border-green-200 overflow-hidden z-10">
                 
                 <NavLink
-                  to="/editprofile"
+                  to= { `/editprofile/${auth.userId}` }
                   className="flex px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
                   onClick={() => setDropdownOpen(false)}
                 >
