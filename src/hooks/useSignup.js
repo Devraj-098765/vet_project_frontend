@@ -13,7 +13,6 @@ const useSignup = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const [users, setUsers] = useState([]);
 
   const handleAuthSignup = async (data) => {
     setLoading(true);
@@ -39,21 +38,6 @@ const useSignup = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-
-    const fetchUserList = async () => {
-      try {
-        const response = await axiosInstance.get(SIGNUP_URL);
-        console.log("Users:", response.data);
-        setUsers(response.data);
-      } catch (error) {
-        setError(error.message);
-      }
-    }
-
-    fetchUserList();
-  }, []);
 
   return { handleAuthSignup, loading, error, users };
 };

@@ -22,9 +22,12 @@ const useSignup = () => {
 
       if (token) {
         localStorage.setItem("vetapp-token", token);
-
+        localStorage.setItem("vetapp-email", data.email);
+        localStorage.setItem("vetapp-userId", response.data._id);
+        
         setAuth({
           email: data.email,
+          _id: response.data._id,
           token,
         });
       }
