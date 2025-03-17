@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import NavBar from "../Header/Navbar";
+import NavBar from "../Header/NavBar";
 import Footer from "../Footer/Footer";
 
 const Consultation = () => {
