@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import AdminNavbar from "../AdminNavbar";
-import useSignup from "../../../hooks/useSignup"; // Ensure this is the correct path
+import useUserInfo from "../../../hooks/userUserInfo";
 
 const UserList = () => {
   const [search, setSearch] = useState("");
-  const { users, error } = useSignup();
+  const { users, error } = useUserInfo();
 
   const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().includes(search.toLowerCase())
