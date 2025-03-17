@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import NavBar from "../Header/NavBar"
+import NavBar from "../Header/Navbar";
+import Footer from "../Footer/Footer";
 
 const UserVeterinarianList = () => {
   const [veterinarians, setVeterinarians] = useState([]);
@@ -152,9 +153,10 @@ const UserVeterinarianList = () => {
             ))}
           </div>
         </div>
+        <Footer />
       </div>
     </>
   );
 };
 
-export default UserVeterinarianList;
+export default UserVeterinarianList
