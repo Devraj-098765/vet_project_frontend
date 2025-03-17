@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import useUserInfo from "../../hooks/userUserInfo";
-import NavBar from "../Header/NavBar";
+import NavBar from "../Header/Navbar";
+import Footer from "../Footer/Footer";
 
 const EditProfile = () => {
   const { id } = useParams();
@@ -35,57 +36,69 @@ const EditProfile = () => {
   };
 
   return (
-    
-    <div className="flex justify-center items-center">
+    <div className="min-h-screen bg-green-100">
+      <div className="flex justify-center items-center">
         <NavBar />
+      </div>
       
-    <div className="max-w-md mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-semibold text-center mb-4">Edit Profile</h2>
+      <div className="flex-grow flex items-center justify-center py-12 px-4">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-lg overflow-hidden border border-green-200">
+          <div className="bg-green-800 p-5">
+            <h2 className="text-2xl font-medium text-white text-center">Edit Profile</h2>
+          </div>
+          
+          <div className="p-6 space-y-6">
+            {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
+            
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-green-900">Name</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={handleChange}
+                  name="name"
+                  className="w-full p-3 border border-green-300 rounded-lg bg-green-50 cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Name</label>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={handleChange}
-            name="name"
-            className="w-full mt-1 p-2 border rounded bg-gray-100 cursor-not-allowed"
-          />
-        </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-green-900">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-3 border border-green-300 rounded-lg bg-green-50 cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-green-900">New Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-3 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full mt-1 p-2 border rounded bg-gray-100 cursor-not-allowed"
-          />
+              <button
+                type="submit"
+                className="w-full bg-green-700 text-white p-3 rounded-lg hover:bg-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 font-medium mt-6"
+                disabled={loading}
+              >
+                {loading ? "Updating..." : "Update Profile"}
+              </button>
+            </form>
+          </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium">New Password</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full mt-1 p-2 border rounded"
-          />
-        </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-        >
-          Update Profile
-        </button>
-      </form>
-    </div>
+      </div>
+      
+      <Footer />
     </div>
   );
 };
