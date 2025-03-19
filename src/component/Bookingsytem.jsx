@@ -1,8 +1,10 @@
+// component/Bookingsytem.jsx
 import { useState, useEffect } from "react";
 import { AlertCircle, Calendar, Clock, Phone, User, CheckCircle, Loader2 } from "lucide-react";
 import NavBar from "./Header/Navbar";
 import useAuth from "../hooks/useAuth";
 import Footer from "./Footer/Footer";
+import axiosInstance from "../api/axios.js";
 
 const BookingSystem = () => {
   const { auth } = useAuth();
@@ -76,18 +78,8 @@ const BookingSystem = () => {
     setErrors({});
 
     try {
-      const response = await fetch("http://localhost:3001/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to book appointment");
-      }
-
-      await response.json();
+      const response = await axiosInstance.post("/bookings", formData);
+      console.log("Booking Response:", response.data);
       setSuccess(true);
       setFormData({
         name: auth?.name || auth?.email || "",
@@ -103,8 +95,10 @@ const BookingSystem = () => {
 
       setTimeout(() => setSuccess(false), 5000);
     } catch (error) {
-      console.error("Booking Error:", error);
-      setErrors({ form: error.message || "Something went wrong. Please try again." });
+      console.error("Booking Error:", error.response ? error.response.data : error.message);
+      setErrors({
+        form: error.response?.data?.error || "Something went wrong. Please try again.",
+      });
     } finally {
       setLoading(false);
     }
