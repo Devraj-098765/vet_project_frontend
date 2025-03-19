@@ -19,6 +19,7 @@ import VeterinarianList from "./component/admin/AddVet/VeterinarianList.jsx";
 import UserVeterinarianList from "./component/UserVeterinarian/UserVeterinarianList.jsx";
 import EditProfile from "./component/EditProfile/EditProfile.jsx";
 import BookingSystem from "./component/Bookingsytem.jsx";
+import AppointmentHistory from "./component/AppointmentHistory/AppointmentHistory.jsx"
 
 function App() {
   const router = createBrowserRouter([
@@ -68,7 +69,15 @@ function App() {
           path: "/editprofile/:id",
           element:<EditProfile/>
 
-        }
+        },
+        {
+          path: "/appointmenthistory/:id",
+          element: (
+            <ProtectedRoute>
+              <AppointmentHistory />
+            </ProtectedRoute>
+          ),
+        },
       ],
     },
     {
