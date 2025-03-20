@@ -48,57 +48,90 @@ const AdminAddVeterinarian = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-r from-blue-50 via-cyan-50 to-sky-50">
+    <div className="flex h-screen bg-gradient-to-b from-purple-950 via-purple-900 to-purple-800">
       <AdminNavbar />
-      <div className="flex-1 p-8 overflow-auto">
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-sky-100">
-          <div className="bg-gradient-to-r from-blue-500 to-sky-400 p-10 relative">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mt-16 -mr-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -mb-12 -ml-12"></div>
-            <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-white/10 rounded-full"></div>
-            <h2 className="text-4xl font-bold text-white text-center relative z-10">Add Veterinarian</h2>
-            <p className="text-blue-100 text-center mt-2 relative z-10">Add a skilled veterinary professional to your team</p>
+      <div className="flex-1 p-6 overflow-auto bg-[url('https://www.transparenttextures.com/patterns/dark-leather.png')] bg-repeat">
+        <div className="max-w-5xl mx-auto bg-purple-950/70 backdrop-blur-md rounded-xl shadow-2xl overflow-hidden border border-purple-600/20">
+          <div className="bg-gradient-to-r from-purple-950 to-purple-900 p-8 relative overflow-hidden border-b border-purple-700/30">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl -ml-16 -mb-16"></div>
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <h2 className="text-4xl font-serif font-bold text-purple-100 tracking-tight">Add Veterinarian</h2>
+                <p className="text-purple-300 mt-2 font-light">Expand your premium medical team</p>
+              </div>
+              <div className="h-16 w-16 rounded-lg bg-gradient-to-br from-purple-800 to-purple-700 flex items-center justify-center shadow-lg shadow-purple-900/50 border border-purple-600/50">
+                <svg className="w-8 h-8 text-purple-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+              </div>
+            </div>
           </div>
           
-          <form onSubmit={handleSubmit(onSubmit)} className="p-10">
-            <div className="flex flex-col md:flex-row gap-10">
+          <form onSubmit={handleSubmit(onSubmit)} className="p-8 relative">
+            <div className="absolute inset-0 bg-gradient-to-b from-purple-900/5 to-purple-800/5 z-0"></div>
+            <div className="flex flex-col md:flex-row gap-8 relative z-10">
               {/* Left side - Photo upload */}
-              <div className="md:w-1/3 flex flex-col items-center">
-                <div className="w-52 h-52 rounded-full bg-gradient-to-br from-sky-100 to-blue-50 flex items-center justify-center mb-6 border-4 border-sky-200 overflow-hidden shadow-lg p-1">
-                  {photoPreview ? (
-                    <img src={photoPreview} className="w-full h-full object-cover rounded-full" alt="Preview" />
-                  ) : (
-                    <div className="text-center p-6">
-                      <svg className="w-16 h-16 text-blue-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              <div className="md:w-1/3">
+                <div className="bg-purple-900/50 p-6 rounded-xl border border-purple-700/50 shadow-xl shadow-purple-950/30">
+                  <h3 className="text-lg font-serif font-medium text-purple-200 mb-4 flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Profile Image
+                  </h3>
+                  <div className="aspect-square mb-6 bg-purple-900/60 border border-purple-600/30 rounded-xl flex items-center justify-center overflow-hidden shadow-inner">
+                    {photoPreview ? (
+                      <img src={photoPreview} className="w-full h-full object-cover" alt="Preview" />
+                    ) : (
+                      <div className="text-center p-6">
+                        <div className="w-24 h-24 bg-purple-800/50 rounded-full flex items-center justify-center mx-auto mb-4 border border-purple-600/30">
+                          <svg className="w-12 h-12 text-purple-400/80" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                          </svg>
+                        </div>
+                        <p className="text-purple-300 text-sm font-light">Upload profile photo</p>
+                        <p className="text-purple-400/40 text-xs mt-2">Premium quality recommended</p>
+                      </div>
+                    )}
+                  </div>
+                  <label className="bg-gradient-to-r from-purple-800 to-purple-700 hover:from-purple-700 hover:to-purple-600 text-purple-200 w-full py-3 rounded-lg text-center cursor-pointer transition-all duration-300 inline-block text-sm font-medium shadow-lg shadow-purple-950/50 group border border-purple-600/50">
+                    <span className="flex items-center justify-center">
+                      <svg className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"></path>
                       </svg>
-                      <p className="text-blue-400 mt-4 font-medium">Profile Photo</p>
-                    </div>
-                  )}
+                      Select Image
+                    </span>
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                  </label>
                 </div>
-                <label className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full cursor-pointer transition-all duration-300 text-sm font-medium shadow-md hover:shadow-lg flex items-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"></path>
-                  </svg>
-                  Upload Image
-                  <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                </label>
               </div>
               
               {/* Right side - Form fields */}
               <div className="md:w-2/3">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="group relative">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="bg-purple-900/50 p-5 rounded-xl border border-purple-700/40 shadow-lg hover:shadow-purple-800/20 transition-all duration-300 transform hover:-translate-y-1">
+                    <label className="block text-purple-300 text-sm font-medium mb-2 flex items-center">
+                      <svg className="w-4 h-4 mr-1 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                      </svg>
+                      Name
+                    </label>
                     <input 
                       {...register("name", { required: "Name is required" })} 
-                      placeholder=" " 
-                      className="w-full px-5 py-4 rounded-xl border border-blue-100 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 outline-none transition-all duration-300 bg-blue-50 bg-opacity-30 hover:bg-opacity-50"
+                      className="w-full px-4 py-3 rounded-lg bg-purple-950/70 border border-purple-700/50 text-purple-200 placeholder-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
+                      placeholder="Full Name"
                     />
-                    <label className="absolute left-5 top-4 text-blue-400 transition-all duration-300 pointer-events-none group-focus-within:text-blue-600 group-focus-within:-translate-y-7 group-focus-within:text-sm">Name</label>
-                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+                    {errors.name && <p className="text-pink-300 text-xs mt-1 flex items-center"><svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>{errors.name.message}</p>}
                   </div>
                   
-                  <div className="group relative">
+                  <div className="bg-purple-900/50 p-5 rounded-xl border border-purple-700/40 shadow-lg hover:shadow-purple-800/20 transition-all duration-300 transform hover:-translate-y-1">
+                    <label className="block text-purple-300 text-sm font-medium mb-2 flex items-center">
+                      <svg className="w-4 h-4 mr-1 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                      </svg>
+                      Email
+                    </label>
                     <input 
                       {...register("email", { 
                         required: "Email is required",
@@ -107,35 +140,50 @@ const AdminAddVeterinarian = () => {
                           message: "Please enter a valid email"
                         }
                       })} 
-                      placeholder=" " 
                       type="email" 
-                      className="w-full px-5 py-4 rounded-xl border border-blue-100 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 outline-none transition-all duration-300 bg-blue-50 bg-opacity-30 hover:bg-opacity-50"
+                      className="w-full px-4 py-3 rounded-lg bg-purple-950/70 border border-purple-700/50 text-purple-200 placeholder-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
+                      placeholder="email@example.com"
                     />
-                    <label className="absolute left-5 top-4 text-blue-400 transition-all duration-300 pointer-events-none group-focus-within:text-blue-600 group-focus-within:-translate-y-7 group-focus-within:text-sm">Email</label>
-                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                    {errors.email && <p className="text-pink-300 text-xs mt-1 flex items-center"><svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>{errors.email.message}</p>}
                   </div>
                   
-                  <div className="group relative">
+                  <div className="bg-purple-900/50 p-5 rounded-xl border border-purple-700/40 shadow-lg hover:shadow-purple-800/20 transition-all duration-300 transform hover:-translate-y-1">
+                    <label className="block text-purple-300 text-sm font-medium mb-2 flex items-center">
+                      <svg className="w-4 h-4 mr-1 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                      </svg>
+                      Phone
+                    </label>
                     <input 
                       {...register("phone", { required: "Phone is required" })} 
-                      placeholder=" " 
-                      className="w-full px-5 py-4 rounded-xl border border-blue-100 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 outline-none transition-all duration-300 bg-blue-50 bg-opacity-30 hover:bg-opacity-50"
+                      className="w-full px-4 py-3 rounded-lg bg-purple-950/70 border border-purple-700/50 text-purple-200 placeholder-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
+                      placeholder="(123) 456-7890"
                     />
-                    <label className="absolute left-5 top-4 text-blue-400 transition-all duration-300 pointer-events-none group-focus-within:text-blue-600 group-focus-within:-translate-y-7 group-focus-within:text-sm">Phone</label>
-                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
+                    {errors.phone && <p className="text-pink-300 text-xs mt-1 flex items-center"><svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>{errors.phone.message}</p>}
                   </div>
                   
-                  <div className="group relative">
+                  <div className="bg-purple-900/50 p-5 rounded-xl border border-purple-700/40 shadow-lg hover:shadow-purple-800/20 transition-all duration-300 transform hover:-translate-y-1">
+                    <label className="block text-purple-300 text-sm font-medium mb-2 flex items-center">
+                      <svg className="w-4 h-4 mr-1 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                      </svg>
+                      Specialization
+                    </label>
                     <input 
                       {...register("specialization", { required: "Specialization is required" })} 
-                      placeholder=" " 
-                      className="w-full px-5 py-4 rounded-xl border border-blue-100 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 outline-none transition-all duration-300 bg-blue-50 bg-opacity-30 hover:bg-opacity-50"
+                      className="w-full px-4 py-3 rounded-lg bg-purple-950/70 border border-purple-700/50 text-purple-200 placeholder-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
+                      placeholder="e.g. Small Animals, Surgery"
                     />
-                    <label className="absolute left-5 top-4 text-blue-400 transition-all duration-300 pointer-events-none group-focus-within:text-blue-600 group-focus-within:-translate-y-7 group-focus-within:text-sm">Specialization</label>
-                    {errors.specialization && <p className="text-red-500 text-sm mt-1">{errors.specialization.message}</p>}
+                    {errors.specialization && <p className="text-pink-300 text-xs mt-1 flex items-center"><svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>{errors.specialization.message}</p>}
                   </div>
                   
-                  <div className="group relative">
+                  <div className="bg-purple-900/50 p-5 rounded-xl border border-purple-700/40 shadow-lg hover:shadow-purple-800/20 transition-all duration-300 transform hover:-translate-y-1">
+                    <label className="block text-purple-300 text-sm font-medium mb-2 flex items-center">
+                      <svg className="w-4 h-4 mr-1 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      Experience (Years)
+                    </label>
                     <input 
                       {...register("experience", { 
                         required: "Experience is required",
@@ -145,16 +193,21 @@ const AdminAddVeterinarian = () => {
                           message: "Experience cannot be negative"
                         }
                       })} 
-                      placeholder=" " 
                       type="number"
                       min="0"
-                      className="w-full px-5 py-4 rounded-xl border border-blue-100 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 outline-none transition-all duration-300 bg-blue-50 bg-opacity-30 hover:bg-opacity-50"
+                      className="w-full px-4 py-3 rounded-lg bg-purple-950/70 border border-purple-700/50 text-purple-200 placeholder-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
+                      placeholder="0"
                     />
-                    <label className="absolute left-5 top-4 text-blue-400 transition-all duration-300 pointer-events-none group-focus-within:text-blue-600 group-focus-within:-translate-y-7 group-focus-within:text-sm">Experience (Years)</label>
-                    {errors.experience && <p className="text-red-500 text-sm mt-1">{errors.experience.message}</p>}
+                    {errors.experience && <p className="text-pink-300 text-xs mt-1 flex items-center"><svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>{errors.experience.message}</p>}
                   </div>
                   
-                  <div className="group relative">
+                  <div className="bg-purple-900/50 p-5 rounded-xl border border-purple-700/40 shadow-lg hover:shadow-purple-800/20 transition-all duration-300 transform hover:-translate-y-1">
+                    <label className="block text-purple-300 text-sm font-medium mb-2 flex items-center">
+                      <svg className="w-4 h-4 mr-1 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      Fee
+                    </label>
                     <input 
                       {...register("fee", { 
                         required: "Fee is required",
@@ -164,16 +217,21 @@ const AdminAddVeterinarian = () => {
                           message: "Fee cannot be negative"
                         }
                       })} 
-                      placeholder=" " 
                       type="number" 
                       min="0"
-                      className="w-full px-5 py-4 rounded-xl border border-blue-100 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 outline-none transition-all duration-300 bg-blue-50 bg-opacity-30 hover:bg-opacity-50"
+                      className="w-full px-4 py-3 rounded-lg bg-purple-950/70 border border-purple-700/50 text-purple-200 placeholder-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
+                      placeholder="0.00"
                     />
-                    <label className="absolute left-5 top-4 text-blue-400 transition-all duration-300 pointer-events-none group-focus-within:text-blue-600 group-focus-within:-translate-y-7 group-focus-within:text-sm">Fee</label>
-                    {errors.fee && <p className="text-red-500 text-sm mt-1">{errors.fee.message}</p>}
+                    {errors.fee && <p className="text-pink-300 text-xs mt-1 flex items-center"><svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>{errors.fee.message}</p>}
                   </div>
                   
-                  <div className="group relative">
+                  <div className="bg-purple-900/50 p-5 rounded-xl border border-purple-700/40 shadow-lg hover:shadow-purple-800/20 transition-all duration-300 transform hover:-translate-y-1">
+                    <label className="block text-purple-300 text-sm font-medium mb-2 flex items-center">
+                      <svg className="w-4 h-4 mr-1 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                      </svg>
+                      Password
+                    </label>
                     <input 
                       {...register("password", { 
                         required: "Password is required",
@@ -182,33 +240,37 @@ const AdminAddVeterinarian = () => {
                           message: "Password must be at least 6 characters"
                         }
                       })} 
-                      placeholder=" " 
                       type="password" 
-                      className="w-full px-5 py-4 rounded-xl border border-blue-100 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 outline-none transition-all duration-300 bg-blue-50 bg-opacity-30 hover:bg-opacity-50"
+                      className="w-full px-4 py-3 rounded-lg bg-purple-950/70 border border-purple-700/50 text-purple-200 placeholder-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
+                      placeholder="••••••••"
                     />
-                    <label className="absolute left-5 top-4 text-blue-400 transition-all duration-300 pointer-events-none group-focus-within:text-blue-600 group-focus-within:-translate-y-7 group-focus-within:text-sm">Password</label>
-                    {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+                    {errors.password && <p className="text-pink-300 text-xs mt-1 flex items-center"><svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>{errors.password.message}</p>}
                   </div>
                   
-                  <div className="group relative col-span-2">
+                  <div className="bg-purple-900/50 p-5 rounded-xl border border-purple-700/40 shadow-lg hover:shadow-purple-800/20 transition-all duration-300 transform hover:-translate-y-1 col-span-2">
+                    <label className="block text-purple-300 text-sm font-medium mb-2 flex items-center">
+                      <svg className="w-4 h-4 mr-1 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 6h16M4 12h16m-7 6h7"></path>
+                      </svg>
+                      Bio
+                    </label>
                     <textarea 
                       {...register("bio", { required: "Bio is required" })} 
-                      placeholder=" " 
                       rows="4" 
-                      className="w-full px-5 py-4 rounded-xl border border-blue-100 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 outline-none transition-all duration-300 bg-blue-50 bg-opacity-30 hover:bg-opacity-50"
+                      className="w-full px-4 py-3 rounded-lg bg-purple-950/70 border border-purple-700/50 text-purple-200 placeholder-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
+                      placeholder="Write a short bio..."
                     ></textarea>
-                    <label className="absolute left-5 top-4 text-blue-400 transition-all duration-300 pointer-events-none group-focus-within:text-blue-600 group-focus-within:-translate-y-7 group-focus-within:text-sm">Bio</label>
-                    {errors.bio && <p className="text-red-500 text-sm mt-1">{errors.bio.message}</p>}
+                    {errors.bio && <p className="text-pink-300 text-xs mt-1 flex items-center"><svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>{errors.bio.message}</p>}
                   </div>
                 </div>
                 
-                <div className="mt-10 flex justify-end">
+                <div className="mt-8 flex justify-end">
                   <button 
                     type="submit" 
-                    className="bg-gradient-to-r from-blue-500 to-sky-500 hover:from-blue-600 hover:to-sky-600 text-white px-10 py-4 rounded-xl shadow-lg hover:shadow-blue-200/50 hover:shadow-2xl transition-all duration-300 font-medium flex items-center"
+                    className="bg-gradient-to-r from-purple-800 to-purple-700 hover:from-purple-700 hover:to-purple-600 text-purple-200 px-10 py-3 rounded-lg shadow-lg shadow-purple-950/50 transition-all duration-300 font-medium flex items-center transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-900/30 border border-purple-600/50"
                   >
-                    <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
                     </svg>
                     Add Veterinarian
                   </button>
