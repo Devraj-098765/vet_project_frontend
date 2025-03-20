@@ -27,7 +27,6 @@
 
 // api/axios.js
 
-// api/axios.js
 import axios from "axios";
 
 const axiosInstance = axios.create({
@@ -54,3 +53,7 @@ axiosInstance.interceptors.request.use(
 );
 
 export default axiosInstance;
+
+
+
+
