@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import useUserInfo from "../../hooks/userUserInfo";
-import NavBar from "../Header/Navbar";
+import NavBar from "../Header/NavBar"
 import Footer from "../Footer/Footer";
 
 const EditProfile = () => {
