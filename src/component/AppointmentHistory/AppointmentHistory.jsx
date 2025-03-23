@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../api/axios.js";
-import NavBar from "../Header/Navbar";
+import NavBar from "../Header/NavBar.jsx"
 import Footer from "../Footer/Footer";
 import { toast } from "react-toastify";
 
