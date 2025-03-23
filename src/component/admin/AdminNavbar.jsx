@@ -9,9 +9,8 @@ const AdminNavbar = () => {
   const navItems = [
     { name: "Dashboard", icon: <FiActivity />, route: "/adminDashboard" },
     { name: " Add Veterinarians", icon: <FiUsers />, route: "/AddVet" },
-    { name: "Appointments", icon: <FiCalendar />, route: "/admin/appointments" },
+    { name: "Appointments", icon: <FiCalendar />, route: "/appointments" },
     { name: "User List", icon: <FiHeart />, route: "/UserList" },
-    { name: "Reports", icon: <FiActivity />, route: "/admin/reports" },
     { name: "Veterinarian List", icon: <FiActivity />, route: "/admin/veterinarianlist" },
   ];
 
