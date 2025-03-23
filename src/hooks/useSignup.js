@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import useAuth from "./useAuth";
 import axiosInstance from "../api/axios";
 
-const SIGNUP_URL = "/users";
+const SIGNUP_URL = "/signup";
 
 const useSignup = () => {
   const { setAuth } = useAuth();
