@@ -8,9 +8,9 @@ const APPOINTMENT_URL = "/bookings";
 
 const useAppointmentHistory = () => {
   const [ appointments, setAppointments ] = useState([]);
+  const [ adminAppointments, setAdminAppointments ] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   useEffect(() => { 
     const fetchAppointmentHistory = async (id) => {
       try {
@@ -25,7 +25,25 @@ const useAppointmentHistory = () => {
     fetchAppointmentHistory();
   }, []);
 
-  return { appointments, loading, error };
+
+  useEffect(() => { 
+    const fetchAdminAppointments = async () => {
+      try {
+        const response = await axiosInstance.get(`${APPOINTMENT_URL}/admin/bookings`, {
+          params: {
+            today: true,
+          }
+        });
+        setAdminAppointments(response.data);
+      } catch (err) {
+        setError(err.message);
+      } 
+    };
+
+    fetchAdminAppointments();
+  }, []);
+
+  return { appointments, loading, error, adminAppointments };
 };
 
 export default useAppointmentHistory;
