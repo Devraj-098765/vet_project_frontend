@@ -20,7 +20,9 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("vetapp-token");
-    setAuth({ email: "", userId: "", token: "" });
+    localStorage.removeItem("vetapp-email");
+    localStorage.removeItem("vetapp-userId");
+    setAuth({ });
   };
 
   if (loading) {
