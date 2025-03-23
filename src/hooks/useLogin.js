@@ -28,14 +28,13 @@ const useSignup = () => {
         
         setAuth({
           email: data.email,
-          _id: response.data._id,
+          userId: response.data._id,
           token,
         });
       }
 
       toast.success("User Logged In successfully");
       navigate("/");
-      localStorage.setItem("email", data.email);
     } catch (err) {
       if (err.response && err.response.data) {
         if (err.response.data.message) {
