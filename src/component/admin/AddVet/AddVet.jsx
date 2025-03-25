@@ -248,7 +248,7 @@ const AdminAddVeterinarian = () => {
                   </div>
                   
                   <div className="bg-purple-900/50 p-5 rounded-xl border border-purple-700/40 shadow-lg hover:shadow-purple-800/20 transition-all duration-300 transform hover:-translate-y-1 col-span-2">
-                    <label className="block text-purple-300 text-sm font-medium mb-2 flex items-center">
+                    <label className="text-purple-300 text-sm font-medium mb-2 flex items-center">
                       <svg className="w-4 h-4 mr-1 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 6h16M4 12h16m-7 6h7"></path>
                       </svg>
