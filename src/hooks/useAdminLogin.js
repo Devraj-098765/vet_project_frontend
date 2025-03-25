@@ -18,6 +18,7 @@ const useAdminLogin = () => {
     setError("");
     try {
       const response = await axiosInstance.post(LOGIN_URL, data);
+      console.log("Response:", response.data);
       const token = response.headers["x-auth-token"];
 
       if (token) {
@@ -25,12 +26,19 @@ const useAdminLogin = () => {
 
         setAuth({
           email: data.email,
+          role: data.role,
           token,
         });
       }
 
-      toast.success("Admin Logged In successfully");
-      navigate("/adminDashboard");
+      toast.success(`${data.role} Logged In successfully`);
+
+      // Navigate based on role
+      if (data.role === "admin") {
+        navigate("/adminDashboard");
+      } else if (data.role === "veterinarian") {
+        navigate("/VeterinarianDashboard");
+      }
     } catch (err) {
       if (err.response && err.response.data) {
         if (err.response.data.message) {
@@ -48,4 +56,3 @@ const useAdminLogin = () => {
 };
 
 export default useAdminLogin;
-

@@ -253,8 +253,7 @@ const NavBar = () => {
                   Report
                 </NavLink>
                 <NavLink
-                to='/appointmenthistory/:id'
-                  // to= { `/appointmenthistory/${auth.userId}` }
+                  to= { `/appointmenthistory/${auth.userId}` }
                   className="flex px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
                   onClick={() => setDropdownOpen(false)}
                 >
