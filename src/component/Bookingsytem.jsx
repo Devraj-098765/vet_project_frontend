@@ -29,10 +29,11 @@ const BookingSystem = () => {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    const userEmail = localStorage.getItem("email")?.split("@")[0];
+    const userEmail = localStorage.getItem("vetapp-email")?.split("@")[0];
     if (userEmail) {
       setFormData((prevData) => ({ ...prevData, name: userEmail, veterinarianId: vet?._id || "" }));
     }
+    console.log(userEmail)
   }, [vet]);
 
   const timeSlots = [

@@ -22,6 +22,7 @@ import BookingSystem from "./component/Bookingsytem.jsx";
 import AppointmentHistory from "./component/AppointmentHistory/AppointmentHistory.jsx";
 import AdminAppointments from "./component/admin/AdminAppointment/AdminAppointment.jsx";
 import VeterinarianDashboard from "../Veterinarian/VeterinarianDash/VeterinarianDashboard.jsx";
+import TotalAppointment from "../Veterinarian/TotalAppointment/TotalAppointment.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -126,6 +127,10 @@ function App() {
    {
     path: "/VeterinarianDashboard",
     element: <VeterinarianDashboard/>
+   },
+   {
+    path:"/Totalappointment",
+    element:<TotalAppointment/>
    }
   ]);
 

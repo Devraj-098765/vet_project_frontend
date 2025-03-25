@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiCalendar, FiList, FiFileText, FiUser } from "react-icons/fi";
+import { FiCalendar, FiList, FiFileText, FiUser, FiLogOut } from "react-icons/fi";
 
 const VeterinarianNavbar = () => {
   const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState("Appointments");
 
   const navItems = [
-    { name: "Appointments", icon: <FiCalendar />, route: "/vet/appointments" },
+    { name: "Appointments", icon: <FiCalendar />, route: "/Totalappointment" },
     { name: "Pet List", icon: <FiList />, route: "/vet/petlist" },
     { name: "Reports", icon: <FiFileText />, route: "/vet/reports" },
     { name: "Profile", icon: <FiUser />, route: "/vet/profile" },
@@ -16,6 +16,11 @@ const VeterinarianNavbar = () => {
   const handleNavigation = (route, name) => {
     setActiveItem(name);
     navigate(route);
+  };
+
+  const handleLogout = () => {
+    // Add your logout logic here (e.g., clear auth tokens, redirect to login)
+    navigate("/login"); // Assuming you have a login route
   };
 
   return (
@@ -51,14 +56,24 @@ const VeterinarianNavbar = () => {
         </ul>
       </nav>
       
-      <div className="mt-auto mb-6 bg-white bg-opacity-10 p-3 rounded-lg">
-        <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-gray-300"></div>
-          <div className="ml-3">
-            <p className="text-white text-sm font-medium">Veterinarian</p>
-            <p className="text-gray-300 text-xs">Vet Specialist</p>
+      <div className="mt-auto">
+        <div className="mb-6 bg-white bg-opacity-10 p-3 rounded-lg">
+          <div className="flex items-center">
+            <div className="w-8 h-8 rounded-full bg-gray-300"></div>
+            <div className="ml-3">
+              <p className="text-white text-sm font-medium">Veterinarian</p>
+              <p className="text-gray-300 text-xs">Vet Specialist</p>
+            </div>
           </div>
         </div>
+        
+        <button
+          className="w-full flex items-center px-4 py-3 text-gray-300 hover:bg-white hover:bg-opacity-10 rounded-lg transition-all duration-300"
+          onClick={handleLogout}
+        >
+          <FiLogOut className="text-xl text-gray-400" />
+          <span className="ml-3 font-medium">Logout</span>
+        </button>
       </div>
     </aside>
   );   

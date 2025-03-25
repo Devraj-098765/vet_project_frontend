@@ -11,9 +11,11 @@ const useAppointmentHistory = () => {
   const [ adminAppointments, setAdminAppointments ] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   useEffect(() => { 
     const fetchAppointmentHistory = async (id) => {
       try {
+        console.log("I am from the useAppointmentHistory")
         const response = await axiosInstance.get(`${APPOINTMENT_URL}/${id}`);
         console.log("AppointmentHistory", response.data);
         setAppointments(response.data);
@@ -30,8 +32,6 @@ const useAppointmentHistory = () => {
     const fetchAdminAppointments = async () => {
       try {
         const response = await axiosInstance.get(`${APPOINTMENT_URL}/admin/bookings`, {
-         
-        
         });
         setAdminAppointments(response.data);
       } catch (err) {
