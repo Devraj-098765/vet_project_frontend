@@ -30,9 +30,8 @@ const useAppointmentHistory = () => {
     const fetchAdminAppointments = async () => {
       try {
         const response = await axiosInstance.get(`${APPOINTMENT_URL}/admin/bookings`, {
-          params: {
-            today: true,
-          }
+         
+        
         });
         setAdminAppointments(response.data);
       } catch (err) {
