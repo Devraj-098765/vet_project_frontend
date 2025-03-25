@@ -111,6 +111,7 @@ function App() {
         </ProtectedRoute>
       )
     },
+    
     {
       path: "/UserList",
       element: <UserList />
@@ -120,18 +121,32 @@ function App() {
       element: <AddVet />
     },
    {
+    
     path: "/admin/veterinarianlist",
-    element: <VeterinarianList />
+    element:(
+     < ProtectedRoute>
+     <VeterinarianList />
+     </ProtectedRoute>
+    )
    },
 
    {
     path: "/VeterinarianDashboard",
-    element: <VeterinarianDashboard/>
+    element:( 
+      <ProtectedRoute>
+    <VeterinarianDashboard/>
+    </ProtectedRoute>
+    )
    },
    {
     path:"/Totalappointment",
-    element:<TotalAppointment/>
+    element:(
+      <ProtectedRoute>
+    <TotalAppointment/>
+    </ProtectedRoute>
+    )
    }
+  
   ]);
 
   
