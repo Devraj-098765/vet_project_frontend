@@ -1,16 +1,162 @@
+// import { useState, useEffect } from "react";
+// import axiosInstance from "../../src/api/axios.js"; // Adjust path to your axios file
+// import { toast } from "react-toastify";
+// import VeterinarianNavbar from "../SideBarVeterinarian/SideBarVeterinarian";
+
+// const TotalAppointment = () => {
+//   const [appointments, setAppointments] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   // Fetch appointments for the veterinarian
+//   useEffect(() => {
+//     const fetchAppointments = async () => {
+//       try {
+//         console.log("Fetching appointments with token:", localStorage.getItem("vetapp-token"));
+//         const { data } = await axiosInstance.get("/bookings/veterinarian");
+//         console.log("Appointments data:", data);
+//         setAppointments(data);
+//         setLoading(false);
+//       } catch (error) {
+//         console.error("Error fetching appointments:", error.response?.status, error.response?.data, error.message);
+//         setLoading(false);
+//         toast.error("Failed to load appointments");
+//       }
+//     };
+//     fetchAppointments();
+//   }, []);
+
+//   // Handle confirming or canceling an appointment
+//   const handleStatusUpdate = async (bookingId, status) => {
+//     try {
+//       const { data } = await axiosInstance.put(`/bookings/${bookingId}/status`, { status });
+//       setAppointments((prev) =>
+//         prev.map((appt) => (appt._id === bookingId ? { ...appt, status } : appt))
+//       );
+//       toast.success(data.message);
+//     } catch (error) {
+//       console.error(`Error updating appointment to ${status}:`, error.response?.status, error.response?.data);
+//       toast.error(`Failed to update appointment to ${status}`);
+//     }
+//   };
+
+//   const handleConfirm = (bookingId) => {
+//     if (window.confirm("Are you sure you want to confirm this appointment?")) {
+//       handleStatusUpdate(bookingId, "Confirmed");
+//     }
+//   };
+
+//   const handleCancel = (bookingId) => {
+//     if (window.confirm("Are you sure you want to cancel this appointment?")) {
+//       handleStatusUpdate(bookingId, "Cancelled");
+//     }
+//   };
+
+//   if (loading) return <p className="p-5 text-gray-500">Loading appointments...</p>;
+
+//   return (
+//     <div className="flex">
+//       {/* Sidebar */}
+//       <VeterinarianNavbar />
+
+//       {/* Main Content */}
+//       <div className="p-5 flex-1">
+//         <h2 className="text-2xl font-semibold mb-5">Total Appointments</h2>
+//         {appointments.length > 0 ? (
+//           <div className="grid gap-6">
+//             {appointments.map((appt) => (
+//               <div
+//                 key={appt._id}
+//                 className="bg-white p-5 rounded-lg shadow-md border border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center"
+//               >
+//                 {/* Appointment and User Details */}
+//                 <div className="flex-1">
+//                   <div className="mb-3">
+//                     <h3 className="text-lg font-medium text-gray-800">
+//                       {appt.petName} ({appt.petType})
+//                     </h3>
+//                     <p className="text-gray-600">
+//                       <span className="font-medium">Service:</span> {appt.service}
+//                     </p>
+//                     <p className="text-gray-600">
+//                       <span className="font-medium">Date:</span> {appt.date} at {appt.time}
+//                     </p>
+//                     <p className="text-gray-600">
+//                       <span className="font-medium">Status:</span>{" "}
+//                       <span
+//                         className={`px-2 py-1 rounded text-white text-sm ${
+//                           appt.status === "Pending"
+//                             ? "bg-yellow-500"
+//                             : appt.status === "Confirmed"
+//                             ? "bg-green-500"
+//                             : appt.status === "Completed"
+//                             ? "bg-blue-500"
+//                             : "bg-red-500"
+//                         }`}
+//                       >
+//                         {appt.status}
+//                       </span>
+//                     </p>
+//                   </div>
+
+//                   {/* User Profile */}
+//                   <div className="border-t pt-3">
+//                     <h4 className="text-md font-medium text-gray-700">Booked by:</h4>
+//                     <p className="text-gray-600">
+//                       <span className="font-medium">Name:</span> {appt.userId?.name || "N/A"}
+//                     </p>
+//                     <p className="text-gray-600">
+//                       <span className="font-medium">Email:</span> {appt.userId?.email || "N/A"}
+//                     </p>
+//                   </div>
+//                 </div>
+
+//                 {/* Action Buttons */}
+//                 <div className="mt-4 md:mt-0 md:ml-4 flex space-x-3">
+//                   {appt.status === "Pending" && (
+//                     <>
+//                       <button
+//                         onClick={() => handleConfirm(appt._id)}
+//                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+//                       >
+//                         Confirm
+//                       </button>
+//                       <button
+//                         onClick={() => handleCancel(appt._id)}
+//                         className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+//                       >
+//                         Cancel
+//                       </button>
+//                     </>
+//                   )}
+//                   {appt.status !== "Pending" && (
+//                     <p className="text-gray-500 italic">Status: {appt.status}</p>
+//                   )}
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         ) : (
+//           <p className="text-gray-500">No appointments scheduled.</p>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default TotalAppointment;
+
 import { useState, useEffect } from "react";
-import axiosInstance from "../../src/api/axios.js"; // Adjust path to your axios file
+import axiosInstance from "../../src/api/axios.js";
 import { toast } from "react-toastify";
+import VeterinarianNavbar from "../SideBarVeterinarian/SideBarVeterinarian";
 
 const TotalAppointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch appointments for the veterinarian
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        console.log("Hello")
         console.log("Fetching appointments with token:", localStorage.getItem("vetapp-token"));
         const { data } = await axiosInstance.get("/bookings/veterinarian");
         console.log("Appointments data:", data);
@@ -25,7 +171,6 @@ const TotalAppointment = () => {
     fetchAppointments();
   }, []);
 
-  // Handle confirming or canceling an appointment
   const handleStatusUpdate = async (bookingId, status) => {
     try {
       const { data } = await axiosInstance.put(`/bookings/${bookingId}/status`, { status });
@@ -51,88 +196,91 @@ const TotalAppointment = () => {
     }
   };
 
-  if (loading) return <p className="p-5 text-gray-500">Loading appointments...</p>;
+  if (loading) return <p className="p-5 text-green-700">Loading appointments...</p>;
 
   return (
-    <div className="p-5">
-      <h2 className="text-2xl font-semibold mb-5">Total Appointments</h2>
-      {appointments.length > 0 ? (
-        <div className="grid gap-6">
-          {appointments.map((appt) => (
-            <div
-              key={appt._id}
-              className="bg-white p-5 rounded-lg shadow-md border border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center"
-            >
-              {/* Appointment and User Details */}
-              <div className="flex-1">
-                <div className="mb-3">
-                  <h3 className="text-lg font-medium text-gray-800">
-                    {appt.petName} ({appt.petType})
-                  </h3>
-                  <p className="text-gray-600">
-                    <span className="font-medium">Service:</span> {appt.service}
-                  </p>
-                  <p className="text-gray-600">
-                    <span className="font-medium">Date:</span> {appt.date} at {appt.time}
-                  </p>
-                  <p className="text-gray-600">
-                    <span className="font-medium">Status:</span>{" "}
-                    <span
-                      className={`px-2 py-1 rounded text-white text-sm ${
-                        appt.status === "Pending"
-                          ? "bg-yellow-500"
-                          : appt.status === "Confirmed"
-                          ? "bg-green-500"
-                          : appt.status === "Completed"
-                          ? "bg-blue-500"
-                          : "bg-red-500"
-                      }`}
-                    >
-                      {appt.status}
-                    </span>
-                  </p>
+    <div className="flex bg-gray-100 min-h-screen">
+      {/* Sidebar */}
+      <VeterinarianNavbar />
+
+      {/* Main Content */}
+      <div className="p-8 flex-1">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Total Appointments</h2>
+        
+        {appointments.length > 0 ? (
+          <div className="space-y-4">
+            {appointments.map((appt) => (
+              <div
+                key={appt._id}
+                className="bg-green-50 rounded-lg shadow-sm border border-green-100 p-4"
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {appt.petName} <span className="text-gray-600">({appt.petType})</span>
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      <span className="font-medium">Service:</span> {appt.service}
+                    </p>
+                    <p className="text-gray-600 text-sm">
+                      <span className="font-medium">Date:</span> {appt.date} at {appt.time}
+                    </p>
+                    
+                    <div className="mt-2">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          appt.status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : appt.status === "Confirmed"
+                            ? "bg-green-100 text-green-800"
+                            : appt.status === "Completed"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {appt.status}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  {appt.status === "Pending" && (
+                    <div className="flex flex-col space-y-2">
+                      <button
+                        onClick={() => handleConfirm(appt._id)}
+                        className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600 transition"
+                      >
+                        Confirm
+                      </button>
+                      <button
+                        onClick={() => handleCancel(appt._id)}
+                        className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                {/* User Profile */}
-                <div className="border-t pt-3">
-                  <h4 className="text-md font-medium text-gray-700">Booked by:</h4>
-                  <p className="text-gray-600">
+                {/* Booked By Section */}
+                <div className="mt-4 border-t border-green-100 pt-3">
+                  <h4 className="text-sm font-medium text-gray-700 mb-1">Booked by:</h4>
+                  <p className="text-gray-600 text-sm">
                     <span className="font-medium">Name:</span> {appt.userId?.name || "N/A"}
                   </p>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-sm">
                     <span className="font-medium">Email:</span> {appt.userId?.email || "N/A"}
                   </p>
                 </div>
               </div>
-
-              {/* Action Buttons */}
-              <div className="mt-4 md:mt-0 md:ml-4 flex space-x-3">
-                {appt.status === "Pending" && (
-                  <>
-                    <button
-                      onClick={() => handleConfirm(appt._id)}
-                      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
-                    >
-                      Confirm
-                    </button>
-                    <button
-                      onClick={() => handleCancel(appt._id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-                    >
-                      Cancel
-                    </button>
-                  </>
-                )}
-                {appt.status !== "Pending" && (
-                  <p className="text-gray-500 italic">Status: {appt.status}</p>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-gray-500">No appointments scheduled.</p>
-      )}
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center bg-white p-4 rounded">
+            No appointments scheduled.
+          </p>
+        )}
+      </div>
     </div>
   );
 };

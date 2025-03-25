@@ -8,7 +8,6 @@ const VeterinarianNavbar = () => {
 
   const navItems = [
     { name: "Appointments", icon: <FiCalendar />, route: "/Totalappointment" },
-    { name: "Pet List", icon: <FiList />, route: "/vet/petlist" },
     { name: "Reports", icon: <FiFileText />, route: "/vet/reports" },
     { name: "Profile", icon: <FiUser />, route: "/vet/profile" },
   ];
@@ -20,7 +19,7 @@ const VeterinarianNavbar = () => {
 
   const handleLogout = () => {
     // Add your logout logic here (e.g., clear auth tokens, redirect to login)
-    navigate("/login"); // Assuming you have a login route
+    navigate("/admin"); // Assuming you have a login route
   };
 
   return (
