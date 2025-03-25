@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,9 +9,9 @@ import useAdminLogin from "../../hooks/useAdminLogin";
 import AuthLayout from "../../utils/AuthLayout";
 
 const schema = z.object({
-  role: z.enum(["Admin", "Veterinarian"], { message: "Select a valid role" }),
+  role: z.enum(["admin", "vetnerian"], { message: "Select a valid role" }),
   email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(1, { message: "Password is required" }),
+  password: z.string().min(8, { message: "Password must be at least 3 characters" }),
 });
 
 const Login = () => {
@@ -26,28 +27,24 @@ const Login = () => {
       role: "",
       email: "",
       password: "",
-    }
+    },
   });
 
   const { handleAdminLogin, loading, error } = useAdminLogin();
 
   const onSubmit = async (data) => {
-    handleAdminLogin({
-      role: data.role,
-      email: data.email,
-      password: data.password,
-    });
+    await handleAdminLogin(data);
   };
 
   return (
     <AuthLayout title="Login">
+     
       <div className="overflow-hidden rounded-2xl shadow-xl w-full max-w-md">
-        {/* Header with wave design */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 relative">
           <div className="absolute left-0 right-0 bottom-0">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-16 -mb-1">
               <path fill="#ffffff" fillOpacity="1" d="M0,128L48,144C96,160,192,192,288,197.3C384,203,480,181,576,165.3C672,149,768,139,864,154.7C960,171,1056,213,1152,213.3C1248,213,1344,171,1392,149.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-            </svg>
+          </svg>
           </div>
           <div className="flex items-center justify-center mb-8">
             <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
@@ -60,9 +57,8 @@ const Login = () => {
           <p className="text-blue-100 text-center mt-1">Sign in to access your account</p>
         </div>
         
-        {/* Main content */}
-        <div className="bg-white p-6">          
-          <form className="w-full space-y-5" onSubmit={handleSubmit(onSubmit)}>
+        <div className="bg-white p-6">
+          <form className="w-full space-y-5" onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="space-y-1">
               <label htmlFor="role" className="block text-sm font-medium text-gray-700">Your Role</label>
               <div className="relative">
@@ -71,9 +67,9 @@ const Login = () => {
                   id="role"
                   className="w-full appearance-none bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 text-gray-800"
                 >
-                  <option value="" className="text-gray-400">Select Role</option>
-                  <option value="Admin" className="text-gray-800">Admin</option>
-                  <option value="Veterinarian" className="text-gray-800">Veterinarian</option>
+                  <option value="">Select Role</option>
+                  <option value="admin">Admin</option>
+                  <option value="vetnerian">Veterinarian</option>
                 </select>
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -119,7 +115,7 @@ const Login = () => {
                   placeholder="••••••••"
                   className="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 text-gray-800"
                 />
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
