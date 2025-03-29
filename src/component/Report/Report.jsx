@@ -3,7 +3,7 @@ import { CSVLink } from "react-csv";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import axiosInstance from "../../api/axios";
-import NavBar from "../Header/Navbar";
+import NavBar from "../Header/NavBar"
 import Footer from "../Footer/Footer";
 import { toast } from "react-toastify";
 
