@@ -23,6 +23,8 @@ import AppointmentHistory from "./component/AppointmentHistory/AppointmentHistor
 import AdminAppointments from "./component/admin/AdminAppointment/AdminAppointment.jsx";
 import VeterinarianDashboard from "../Veterinarian/VeterinarianDash/VeterinarianDashboard.jsx";
 import TotalAppointment from "../Veterinarian/TotalAppointment/TotalAppointment.jsx";
+import MakeReport from "../Veterinarian/MakeReport.jsx";
+import Profile from "../Veterinarian/Profile.jsx"
 
 function App() {
   const router = createBrowserRouter([
@@ -145,6 +147,14 @@ function App() {
     <TotalAppointment/>
     </ProtectedRoute>
     )
+   },
+   {
+    path: "/MakeReport",
+    element:<MakeReport/>
+   },
+   {
+    path: "/Profile",
+    element:<Profile/>
    }
   
   ]);

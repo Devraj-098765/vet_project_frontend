@@ -80,8 +80,7 @@ const useAdminLogin = () => {
       const response = await axiosInstance.post(LOGIN_URL, data);
       const token = response.headers["x-auth-token"];
 
-      if (token && response.data.role) {
-        const serverRole = response.data.role.toLowerCase(); // Normalize role
+      if (token) {
         localStorage.setItem("vetapp-token", token);
 
         setAuth({
