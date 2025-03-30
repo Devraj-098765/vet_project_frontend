@@ -10,9 +10,16 @@ const VetDashboard = () => {
   const navigate = useNavigate();
 
   const Dashboard = () => {
+<<<<<<< HEAD
     const { isLoading } = useVetDashboard();
     const stats = JSON.parse(localStorage.getItem("veterinarian-stats"));
 
+=======
+
+    const { stats, isLoading } = useVetDashboard();
+    console.log("here is your stats", stats)
+
+>>>>>>> 81322380e15c124f939abfb18c3bd5d3fb04e339
     if (isLoading) {
       return <div className="grid grid-cols-3 gap-6">
         {[1, 2, 3].map((i) => (
