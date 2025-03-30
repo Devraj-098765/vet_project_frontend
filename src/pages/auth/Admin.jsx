@@ -9,7 +9,7 @@ import useAdminLogin from "../../hooks/useAdminLogin";
 import AuthLayout from "../../utils/AuthLayout";
 
 const schema = z.object({
-  role: z.enum(["admin", "vetnerian"], { message: "Select a valid role" }),
+  role: z.enum(["admin", "veterinarian"], { message: "Select a valid role" }),
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(8, { message: "Password must be at least 3 characters" }),
 });
@@ -69,7 +69,7 @@ const Login = () => {
                 >
                   <option value="">Select Role</option>
                   <option value="admin">Admin</option>
-                  <option value="vetnerian">Veterinarian</option>
+                  <option value="veterinarian">Veterinarian</option>
                 </select>
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

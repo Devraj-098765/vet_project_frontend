@@ -15,22 +15,22 @@ const NavBar = () => {
 
   // Sample notifications
   const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      message: "Your appointment is confirmed for tomorrow",
-      time: "2 hours ago",
-      read: false
-    },
-    {
-      id: 2,
-      message: "Dr. Smith responded to your query",
-      time: "Yesterday",
-      read: false
-    },
+    // {
+    //   id: 1,
+    //   message: "Your appointment is confirmed for tomorrow",
+    //   time: "2 hours ago",
+    //   read: false
+    // },
+    // {
+    //   id: 2,
+    //   message: "Dr. Smith responded to your query",
+    //   time: "Yesterday",
+    //   read: false
+    // },
     {
       id: 3,
-      message: "New vet services available in your area",
-      time: "3 days ago",
+      message: "  Your appointment will start at 3:15, so be ready. This is a reminder.",
+      time: "3:45",
       read: false
     }
   ]);

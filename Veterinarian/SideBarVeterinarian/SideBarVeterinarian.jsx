@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiCalendar, FiList, FiFileText, FiUser, FiLogOut } from "react-icons/fi";
+import { FiCalendar, FiFileText, FiUser, FiLogOut } from "react-icons/fi";
 
 const VeterinarianNavbar = () => {
   const navigate = useNavigate();
@@ -8,8 +8,8 @@ const VeterinarianNavbar = () => {
 
   const navItems = [
     { name: "Appointments", icon: <FiCalendar />, route: "/Totalappointment" },
-    { name: "Reports", icon: <FiFileText />, route: "/vet/reports" },
-    { name: "Profile", icon: <FiUser />, route: "/vet/profile" },
+    { name: "Reports", icon: <FiFileText />, route: "/makereport" },
+    { name: "Profile", icon: <FiUser />, route: "/Profile" },
   ];
 
   const handleNavigation = (route, name) => {
@@ -18,19 +18,24 @@ const VeterinarianNavbar = () => {
   };
 
   const handleLogout = () => {
-    // Add your logout logic here (e.g., clear auth tokens, redirect to login)
-    navigate("/admin"); // Assuming you have a login route
+    navigate("/admin");
+    localStorage.removeItem("veterinarian-stats");
   };
 
   return (
     <aside className="w-64 bg-gradient-to-b from-green-900 to-teal-800 rounded-r-xl shadow-xl p-4 h-screen flex flex-col">
-      <div className="flex items-center justify-center mb-12 mt-4">
+      {/* Vetcare Clickable Logo */}
+      <div 
+        className="flex items-center justify-center mb-12 mt-4 cursor-pointer" 
+        onClick={() => navigate("/VeterinarianDashboard")} // Redirects to dashboard
+      >
         <div className="bg-white bg-opacity-20 p-3 rounded-full">
           <FiUser className="text-white text-2xl" />
         </div>
-        <h2 className="text-2xl font-bold text-white ml-3">VetPanel</h2>
+        <h2 className="text-2xl font-bold text-white ml-3">Vetcare</h2>
       </div>
-      
+
+      {/* Navigation Menu */}
       <nav className="flex-grow">
         <ul className="space-y-2">
           {navItems.map((item, index) => (
@@ -54,7 +59,8 @@ const VeterinarianNavbar = () => {
           ))}
         </ul>
       </nav>
-      
+
+      {/* Veterinarian Info & Logout */}
       <div className="mt-auto">
         <div className="mb-6 bg-white bg-opacity-10 p-3 rounded-lg">
           <div className="flex items-center">
@@ -65,7 +71,7 @@ const VeterinarianNavbar = () => {
             </div>
           </div>
         </div>
-        
+
         <button
           className="w-full flex items-center px-4 py-3 text-gray-300 hover:bg-white hover:bg-opacity-10 rounded-lg transition-all duration-300"
           onClick={handleLogout}
@@ -75,7 +81,7 @@ const VeterinarianNavbar = () => {
         </button>
       </div>
     </aside>
-  );   
+  );
 };
 
 export default VeterinarianNavbar;
