@@ -18,12 +18,8 @@ const VeterinarianNavbar = () => {
   };
 
   const handleLogout = () => {
-<<<<<<< HEAD
     navigate("/admin");
     localStorage.removeItem("veterinarian-stats");
-=======
-    navigate("/admin"); // Assuming admin login route
->>>>>>> 81322380e15c124f939abfb18c3bd5d3fb04e339
   };
 
   return (
