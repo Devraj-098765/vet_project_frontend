@@ -7,17 +7,27 @@ const TotalAppointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  console.log("TotalAppointment", appointments);
+
   // Fetch appointments for the veterinarian
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        console.log("Fetching appointments with token:", localStorage.getItem("vetapp-token"));
+        console.log(
+          "Fetching appointments with token:",
+          localStorage.getItem("vetapp-token")
+        );
         const { data } = await axiosInstance.get("/bookings/veterinarian");
         console.log("Appointments data:", data);
-        setAppointments(data);
+        setAppointments(data.bookings || []); // Access the bookings array from response
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching appointments:", error.response?.status, error.response?.data, error.message);
+        console.error(
+          "Error fetching appointments:",
+          error.response?.status,
+          error.response?.data,
+          error.message
+        );
         setLoading(false);
         toast.error("Failed to load appointments");
       }
@@ -28,13 +38,20 @@ const TotalAppointment = () => {
   // Handle confirming or canceling an appointment
   const handleStatusUpdate = async (bookingId, status) => {
     try {
-      const { data } = await axiosInstance.put(`/bookings/${bookingId}/status`, { status });
+      const { data } = await axiosInstance.put(`/bookings/${bookingId}/status`, {
+        status,
+      });
       setAppointments((prev) =>
-        prev.map((appt) => (appt._id === bookingId ? { ...appt, status } : appt))
+        prev.map((appt) =>
+          appt._id === bookingId ? { ...appt, status } : appt
+        )
       );
       toast.success(data.message);
     } catch (error) {
-      console.error(`Error updating appointment to ${status}:`, error.response?.status, error.response?.data);
+      console.error(
+        error.response?.status,
+        error.response?.data
+      );
       toast.error(`Failed to update appointment to ${status}`);
     }
   };
@@ -61,7 +78,7 @@ const TotalAppointment = () => {
       {/* Main Content */}
       <div className="p-5 flex-1">
         <h2 className="text-2xl font-semibold mb-5">Total Appointments</h2>
-        {appointments.length > 0 ? (
+        {appointments && appointments.length > 0 ? (
           <div className="grid gap-6">
             {appointments.map((appt) => (
               <div
@@ -75,10 +92,12 @@ const TotalAppointment = () => {
                       {appt.petName} ({appt.petType})
                     </h3>
                     <p className="text-gray-600">
-                      <span className="font-medium">Service:</span> {appt.service}
+                      <span className="font-medium">Service:</span>{" "}
+                      {appt.service}
                     </p>
                     <p className="text-gray-600">
-                      <span className="font-medium">Date:</span> {appt.date} at {appt.time}
+                      <span className="font-medium">Date:</span> {appt.date} at{" "}
+                      {appt.time}
                     </p>
                     <p className="text-gray-600">
                       <span className="font-medium">Status:</span>{" "}
@@ -100,12 +119,16 @@ const TotalAppointment = () => {
 
                   {/* User Profile */}
                   <div className="border-t pt-3">
-                    <h4 className="text-md font-medium text-gray-700">Booked by:</h4>
+                    <h4 className="text-md font-medium text-gray-700">
+                      Booked by:
+                    </h4>
                     <p className="text-gray-600">
-                      <span className="font-medium">Name:</span> {appt.userId?.name || "N/A"}
+                      <span className="font-medium">Name:</span>{" "}
+                      {appt.userId?.name || "N/A"}
                     </p>
                     <p className="text-gray-600">
-                      <span className="font-medium">Email:</span> {appt.userId?.email || "N/A"}
+                      <span className="font-medium">Email:</span>{" "}
+                      {appt.userId?.email || "N/A"}
                     </p>
                   </div>
                 </div>
