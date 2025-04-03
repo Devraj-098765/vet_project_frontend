@@ -46,9 +46,9 @@ const AdminVeterinarianList = () => {
               <p className="text-gray-500 mt-2">{vet.experience} years experience</p>
               <p className="text-gray-700 font-medium mt-1">Fee: ${vet.fee}</p>
               <p className="text-gray-500 text-sm mt-3 line-clamp-3">{vet.bio}</p>
-              <button className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+              {/* <button className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
                 View Profile
-              </button>
+              </button> */}
             </div>
           ))}
         </div>
