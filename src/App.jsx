@@ -6,10 +6,10 @@ import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import IndexPage from "./component/Index/IndexPage";
 import AboutUs from "./component/About/About";
+import Report from "./component/Report/Report.jsx"
 import Consultation from "./component/Consultation/Consultation";
 import Footer from "./component/Footer/Footer";
 import Contact from "./utils/Contact";
-import Selectdate from "./component/Index/selectdate";
 import Admin from "./pages/auth/Admin";
 import AdminDashboard from "./component/admin/AdminDashboard";
 import UserList from "./component/admin/Userlist/UserList";
@@ -44,6 +44,10 @@ function App() {
           path: "/about-us",
           element: <AboutUs />,
         },
+       {
+          path:"/report",
+          element: <Report/>
+         },
         {
           path: "/consultation",
           element: <Consultation />,
