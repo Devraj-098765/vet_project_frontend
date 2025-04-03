@@ -246,7 +246,7 @@ const NavBar = () => {
                   Edit profile 
                 </NavLink>
                 <NavLink
-                  to="/appointmentreport"
+                  to="/report"
                   className="flex px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
                   onClick={() => setDropdownOpen(false)}
                 >
