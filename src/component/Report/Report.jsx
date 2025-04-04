@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, User, Phone, Dog, Stethoscope, FileText, Download, Printer, ChevronLeft, ChevronRight, Search } from 'lucide-react';
-import NavBar from "../Header/Navbar";
+import NavBar from "../Header/NavBar"
 
 const ViewVeterinaryReports = () => {
   // Sample reports data (in a real app, this would come from an API)
@@ -186,9 +186,10 @@ const ViewVeterinaryReports = () => {
   };
 
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <UserNavbar />
+    <div className="min-h-screen bg-green-100">
+      <div className="flex justify-center items-center">
+        <NavBar />
+      </div>
 
       {/* Main Content */}
       <div className="bg-gray-50 min-h-screen p-6 flex-1">
