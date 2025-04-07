@@ -1,4 +1,4 @@
-import { FaUserCircle, FaLeaf, FaBell } from "react-icons/fa"; // Added bell icon
+import { FaUserCircle, FaLeaf, FaBell, FaBars, FaTimes } from "react-icons/fa"; // Added hamburger and close icons
 import { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
@@ -9,8 +9,10 @@ const NavBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notificationCount, setNotificationCount] = useState(3); // Example count
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State for mobile menu
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
+  const mobileMenuRef = useRef(null);
   const navigate = useNavigate();
 
   // Sample notifications
@@ -38,6 +40,7 @@ const NavBar = () => {
   // Simulate logout
   const handleLogout = () => {
     setDropdownOpen(false);
+    setMobileMenuOpen(false); // Close mobile menu when logging out
     navigate("/login"); 
     logout();
   };
@@ -45,6 +48,11 @@ const NavBar = () => {
   // Toggle dropdown menu
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
+  };
+
+  // Toggle mobile menu
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
   // Toggle notification panel
@@ -74,7 +82,7 @@ const NavBar = () => {
     setNotificationCount(unreadCount);
   };
 
-  // Close dropdown when clicking outside
+  // Close dropdown and mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -82,6 +90,9 @@ const NavBar = () => {
       }
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
         setNotificationOpen(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setMobileMenuOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -91,7 +102,7 @@ const NavBar = () => {
   }, []);
 
   return ( 
-    <nav className="relative bg-gradient-to-r from-green-50 to-green-100 px-8 py-4 rounded-xl shadow-md flex items-center justify-between mt-10 border-b-2 border-green-300">
+    <nav className="relative bg-gradient-to-r from-green-50 to-green-100 px-4 sm:px-8 py-4 rounded-xl shadow-md flex items-center justify-between mt-10 border-b-2 border-green-300">
       {/* Logo and name section */}
       <div className="flex items-center">
         <FaLeaf className="text-green-600 mr-2" size={20} />
@@ -100,8 +111,8 @@ const NavBar = () => {
         </NavLink>
       </div>
       
-      {/* Navigation links with hover effects */}
-      <div className="flex space-x-2">
+      {/* Navigation links with hover effects - Hidden on mobile */}
+      <div className="hidden md:flex space-x-2">
         <NavLink 
           to="/consultation" 
           className={({ isActive }) => 
@@ -149,6 +160,14 @@ const NavBar = () => {
 
       {/* Auth section */}
       <div className="flex items-center space-x-4">
+        {/* Hamburger menu button - Visible only on mobile */}
+        <button 
+          className="md:hidden text-green-700 p-2 hover:bg-green-100 rounded-lg transition-colors"
+          onClick={toggleMobileMenu}
+        >
+          {mobileMenuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
+        </button>
+
         {auth.token && (
           <div className="relative" ref={notificationRef}>
             <button 
@@ -225,7 +244,7 @@ const NavBar = () => {
         )}
         
         {!auth.token ? (
-          <button className="bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700 transition-colors duration-300">
+          <button className="bg-green-600 text-white px-4 sm:px-5 py-2 rounded-lg shadow hover:bg-green-700 transition-colors duration-300 text-sm sm:text-base">
             <NavLink to="/login">Sign up</NavLink>
           </button>
         ) : (
@@ -270,6 +289,97 @@ const NavBar = () => {
           </div>
         )}
       </div>
+
+      {/* Mobile menu - Shown only when mobileMenuOpen is true */}
+      {mobileMenuOpen && (
+        <div 
+          ref={mobileMenuRef}
+          className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-green-200 z-20 mx-4"
+        >
+          <div className="py-2">
+            <NavLink 
+              to="/consultation" 
+              className={({ isActive }) => 
+                isActive 
+                  ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
+                  : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
+              }
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Consultation
+            </NavLink>
+
+            <NavLink 
+              to="/user/veterinarians" 
+              className={({ isActive }) => 
+                isActive 
+                  ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
+                  : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
+              }
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              All Veterinarians
+            </NavLink>
+
+            <NavLink 
+              to="/about-us" 
+              className={({ isActive }) => 
+                isActive 
+                  ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
+                  : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
+              }
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              About
+            </NavLink>
+
+            <NavLink 
+              to="/contact" 
+              className={({ isActive }) => 
+                isActive 
+                  ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
+                  : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
+              }
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Contact
+            </NavLink>
+
+            {auth.token && (
+              <>
+                <div className="border-t border-green-100 my-2"></div>
+                <NavLink
+                  to={`/editprofile/${auth.userId}`}
+                  className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Edit profile 
+                </NavLink>
+                <NavLink
+                  to="/my-report-card"
+                  className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Report
+                </NavLink>
+                <NavLink
+                  to= { `/appointmenthistory/${auth.userId}` }
+                  className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Appointment Details
+                </NavLink>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-3 text-red-600 hover:bg-green-50 transition-colors border-t border-green-100"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
