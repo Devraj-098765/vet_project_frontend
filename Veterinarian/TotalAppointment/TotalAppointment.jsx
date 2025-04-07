@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import axiosInstance from "../../src/api/axios.js"; // Adjust path to your axios file
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import VeterinarianNavbar from "../SideBarVeterinarian/SideBarVeterinarian";
+import SideBarVeterinarian from "../SideBarVeterinarian/SideBarVeterinarian";
+import axiosInstance from "../../src/api/axios";
 
 const TotalAppointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   console.log("TotalAppointment", appointments);
 
-  // Fetch appointments for the veterinarian
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -19,7 +20,7 @@ const TotalAppointment = () => {
         );
         const { data } = await axiosInstance.get("/bookings/veterinarian");
         console.log("Appointments data:", data);
-        setAppointments(data.bookings || []); // Access the bookings array from response
+        setAppointments(data.bookings || []);
         setLoading(false);
       } catch (error) {
         console.error(
@@ -35,7 +36,6 @@ const TotalAppointment = () => {
     fetchAppointments();
   }, []);
 
-  // Handle confirming or canceling an appointment
   const handleStatusUpdate = async (bookingId, status) => {
     try {
       const { data } = await axiosInstance.put(`/bookings/${bookingId}/status`, {
@@ -49,8 +49,10 @@ const TotalAppointment = () => {
       toast.success(data.message);
     } catch (error) {
       console.error(
+        "Error updating appointment status:",
         error.response?.status,
-        error.response?.data
+        error.response?.data,
+        error.message
       );
       toast.error(`Failed to update appointment to ${status}`);
     }
@@ -68,14 +70,16 @@ const TotalAppointment = () => {
     }
   };
 
+  const handleCreateReport = (bookingId) => {
+    console.log('Navigating to MakeReport with ID:', bookingId);
+    navigate(`/booking-report/${bookingId}`);
+  };
+
   if (loading) return <p className="p-5 text-gray-500">Loading appointments...</p>;
 
   return (
     <div className="flex">
-      {/* Sidebar */}
-      <VeterinarianNavbar />
-
-      {/* Main Content */}
+      <SideBarVeterinarian />
       <div className="p-5 flex-1">
         <h2 className="text-2xl font-semibold mb-5">Total Appointments</h2>
         {appointments && appointments.length > 0 ? (
@@ -85,19 +89,16 @@ const TotalAppointment = () => {
                 key={appt._id}
                 className="bg-white p-5 rounded-lg shadow-md border border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center"
               >
-                {/* Appointment and User Details */}
                 <div className="flex-1">
                   <div className="mb-3">
                     <h3 className="text-lg font-medium text-gray-800">
                       {appt.petName} ({appt.petType})
                     </h3>
                     <p className="text-gray-600">
-                      <span className="font-medium">Service:</span>{" "}
-                      {appt.service}
+                      <span className="font-medium">Service:</span> {appt.service}
                     </p>
                     <p className="text-gray-600">
-                      <span className="font-medium">Date:</span> {appt.date} at{" "}
-                      {appt.time}
+                      <span className="font-medium">Date:</span> {appt.date} at {appt.time}
                     </p>
                     <p className="text-gray-600">
                       <span className="font-medium">Status:</span>{" "}
@@ -116,24 +117,16 @@ const TotalAppointment = () => {
                       </span>
                     </p>
                   </div>
-
-                  {/* User Profile */}
                   <div className="border-t pt-3">
-                    <h4 className="text-md font-medium text-gray-700">
-                      Booked by:
-                    </h4>
+                    <h4 className="text-md font-medium text-gray-700">Booked by:</h4>
                     <p className="text-gray-600">
-                      <span className="font-medium">Name:</span>{" "}
-                      {appt.userId?.name || "N/A"}
+                      <span className="font-medium">Name:</span> {appt.userId?.name || "N/A"}
                     </p>
                     <p className="text-gray-600">
-                      <span className="font-medium">Email:</span>{" "}
-                      {appt.userId?.email || "N/A"}
+                      <span className="font-medium">Email:</span> {appt.userId?.email || "N/A"}
                     </p>
                   </div>
                 </div>
-
-                {/* Action Buttons */}
                 <div className="mt-4 md:mt-0 md:ml-4 flex space-x-3">
                   {appt.status === "Pending" && (
                     <>
@@ -152,7 +145,12 @@ const TotalAppointment = () => {
                     </>
                   )}
                   {appt.status !== "Pending" && (
-                    <p className="text-gray-500 italic">Status: {appt.status}</p>
+                    <button
+                      onClick={() => handleCreateReport(appt._id)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                    >
+                      Create Report
+                    </button>
                   )}
                 </div>
               </div>
