@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FileText, Download, Printer, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { FileText, Download, Printer, Search, ChevronLeft, ChevronRight, Calendar, Thermometer, Weight, Clock, X } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import axiosInstance from "../api/axios";
 import NavBar from "../component/Header/NavBar";
+import Footer from "../component/Footer/Footer";
 
 const MyReportCard = () => {
   const [reports, setReports] = useState([]);
@@ -84,27 +85,40 @@ const MyReportCard = () => {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-gray-100">
-      <NavBar />
-      <div className="p-5">
-        <p className="text-gray-500">Loading your reports...</p>
+    <div className="min-h-screen bg-green-100">
+      <div className="flex justify-center items-center">
+        <NavBar />
+      </div>
+      <div className="flex justify-center items-center h-96">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="w-16 h-16 border-4 border-green-700 border-t-transparent rounded-full animate-spin"></div>
+          <p className="mt-4 text-green-800 font-medium">Loading your reports...</p>
+        </div>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <NavBar />
-      <div className="p-5 max-w-5xl mx-auto">
-        <h2 className="text-2xl font-semibold mb-5 text-gray-800">My Veterinary Reports</h2>
+    <div className="min-h-screen bg-green-100">
+      <div className="flex justify-center items-center">
+        <NavBar />
+      </div>
+      
+      <div className="p-6 max-w-6xl mx-auto">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-green-900 inline-block border-b-4 border-green-600 pb-2">
+            Pet Health Records
+          </h2>
+          <p className="text-gray-600 mt-2">View and manage your pet's medical history</p>
+        </div>
 
-        <div className="mb-6 relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+        <div className="mb-8 relative bg-white rounded-xl shadow-lg p-1">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-green-600" />
           </div>
           <input
             type="text"
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="block w-full pl-12 pr-4 py-3 rounded-lg bg-white text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent text-base"
             placeholder="Search by pet name or diagnosis..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -113,91 +127,185 @@ const MyReportCard = () => {
 
         {filteredReports.length > 0 ? (
           <>
-            <div className="grid gap-6">
+            <div className="grid gap-8">
               {currentReports.map((report) => (
                 <div
                   key={report._id}
-                  className="bg-white p-5 rounded-lg shadow-md border border-gray-200 flex flex-col"
+                  className={`bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 ${
+                    expandedReportId === report._id ? "ring-4 ring-green-400 ring-opacity-50" : ""
+                  }`}
                 >
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-medium text-gray-800">
-                        {report.petName} ({report.petType})
-                      </h3>
-                      <p className="text-gray-600">
-                        <span className="font-medium">Diagnosis:</span> {report.diagnosis || 'N/A'}
-                      </p>
-                      <p className="text-gray-600">
-                        <span className="font-medium">Date:</span> {report.createdAt.split('T')[0]}
-                      </p>
-                      <p className="text-gray-600">
-                        <span className="font-medium">Veterinarian:</span> {report.veterinarianId?.name || "N/A"}
-                      </p>
-                    </div>
-                    <div className="mt-4 md:mt-0 md:ml-4 flex space-x-3">
-                      <button
-                        onClick={() => toggleReportDetails(report._id)}
-                        className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition flex items-center"
-                      >
-                        <FileText className="mr-2" size={16} /> 
-                        {expandedReportId === report._id ? "Hide Report" : "View Report"}
-                      </button>
-                      <button
-                        onClick={() => downloadReportAsPDF(report)}
-                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition flex items-center"
-                      >
-                        <Download className="mr-2" size={16} /> Download
-                      </button>
-                      <button
-                        onClick={() => printReport(report)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition flex items-center"
-                      >
-                        <Printer className="mr-2" size={16} /> Print
-                      </button>
+                  <div className="bg-gradient-to-r from-green-700 to-green-600 p-4 flex justify-between items-center">
+                    <h3 className="text-xl font-bold text-white">
+                      {report.petName}
+                    </h3>
+                    <div className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-white text-sm">
+                      {report.petType}
                     </div>
                   </div>
-
-                  {expandedReportId === report._id && (
-                    <div className="mt-4 border-t pt-4 text-gray-600">
-                      <p><span className="font-medium">Treatment:</span> {report.treatment || "N/A"}</p>
-                      <p><span className="font-medium">Medications:</span> {report.medications || "None"}</p>
-                      <p><span className="font-medium">Vaccinations:</span> {report.vaccinations || "None"}</p>
-                      <p><span className="font-medium">Recommendations:</span> {report.recommendations || "None"}</p>
-                      <p><span className="font-medium">Follow-up Date:</span> {report.followUpDate || "N/A"}</p>
-                      <p><span className="font-medium">Weight:</span> {report.weight || "N/A"} kg</p>
-                      <p><span className="font-medium">Temperature:</span> {report.temperature || "N/A"} °C</p>
+                  
+                  <div className="p-6">
+                    <div className="flex flex-col lg:flex-row justify-between">
+                      <div className="space-y-4 flex-1">
+                        <div className="flex items-start">
+                          <div className="flex-shrink-0 bg-green-100 p-2 rounded-lg">
+                            <Calendar className="h-5 w-5 text-green-700" />
+                          </div>
+                          <div className="ml-4">
+                            <p className="text-sm text-gray-500">Date</p>
+                            <p className="font-medium text-gray-800">{report.createdAt.split('T')[0]}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-start">
+                          <div className="flex-shrink-0 bg-green-100 p-2 rounded-lg">
+                            <Weight className="h-5 w-5 text-green-700" />
+                          </div>
+                          <div className="ml-4">
+                            <p className="text-sm text-gray-500">Diagnosis</p>
+                            <p className="font-medium text-gray-800">{report.diagnosis || 'N/A'}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-start">
+                          <div className="flex-shrink-0 bg-green-100 p-2 rounded-lg">
+                            <Thermometer className="h-5 w-5 text-green-700" />
+                          </div>
+                          <div className="ml-4">
+                            <p className="text-sm text-gray-500">Veterinarian</p>
+                            <p className="font-medium text-gray-800">{report.veterinarianId?.name || "N/A"}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-6 lg:mt-0 flex flex-col sm:flex-row lg:flex-col gap-3">
+                        <button
+                          onClick={() => toggleReportDetails(report._id)}
+                          className={`${
+                            expandedReportId === report._id 
+                              ? "bg-green-700 text-white" 
+                              : "bg-green-100 text-green-800 hover:bg-green-200"
+                          } px-4 py-3 rounded-lg transition flex items-center justify-center font-medium`}
+                        >
+                          {expandedReportId === report._id ? (
+                            <>
+                              <X className="mr-2" size={18} /> Hide Details
+                            </>
+                          ) : (
+                            <>
+                              <FileText className="mr-2" size={18} /> View Details
+                            </>
+                          )}
+                        </button>
+                        
+                        <button
+                          onClick={() => downloadReportAsPDF(report)}
+                          className="bg-emerald-100 text-emerald-800 hover:bg-emerald-200 px-4 py-3 rounded-lg transition flex items-center justify-center font-medium"
+                        >
+                          <Download className="mr-2" size={18} /> Download
+                        </button>
+                        
+                        <button
+                          onClick={() => printReport(report)}
+                          className="bg-teal-100 text-teal-800 hover:bg-teal-200 px-4 py-3 rounded-lg transition flex items-center justify-center font-medium"
+                        >
+                          <Printer className="mr-2" size={18} /> Print
+                        </button>
+                      </div>
                     </div>
-                  )}
+
+                    {expandedReportId === report._id && (
+                      <div className="mt-6 p-5 bg-green-50 rounded-xl border border-green-100">
+                        <h4 className="text-lg font-semibold text-green-800 mb-4">Detailed Report</h4>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                          <div className="space-y-1">
+                            <p className="text-sm text-green-700">Treatment</p>
+                            <p className="font-medium">{report.treatment || "N/A"}</p>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <p className="text-sm text-green-700">Medications</p>
+                            <p className="font-medium">{report.medications || "None"}</p>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <p className="text-sm text-green-700">Vaccinations</p>
+                            <p className="font-medium">{report.vaccinations || "None"}</p>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <p className="text-sm text-green-700">Follow-up Date</p>
+                            <p className="font-medium">{report.followUpDate || "N/A"}</p>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <p className="text-sm text-green-700">Weight</p>
+                            <p className="font-medium">{report.weight || "N/A"} kg</p>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <p className="text-sm text-green-700">Temperature</p>
+                            <p className="font-medium">{report.temperature || "N/A"} °C</p>
+                          </div>
+                          
+                          <div className="space-y-1 md:col-span-2">
+                            <p className="text-sm text-green-700">Recommendations</p>
+                            <p className="font-medium">{report.recommendations || "None"}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
 
             {totalPages > 1 && (
-              <div className="flex justify-center mt-6">
-                <nav className="flex items-center">
+              <div className="flex justify-center mt-10">
+                <div className="inline-flex bg-white shadow-md rounded-lg overflow-hidden">
                   <button
                     onClick={() => setCurrentPage(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className={`p-2 rounded-md ${currentPage === 1 ? 'text-gray-400 cursor-not-allowed' : 'text-blue-600 hover:bg-blue-100'}`}
+                    className={`flex items-center justify-center px-4 py-2 ${
+                      currentPage === 1
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-green-700 hover:bg-green-50"
+                    }`}
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
-                  <span className="mx-4 text-sm text-gray-700">Page {currentPage} of {totalPages}</span>
+                  
+                  <div className="px-4 py-2 bg-green-100 text-green-800 font-medium">
+                    Page {currentPage} of {totalPages}
+                  </div>
+                  
                   <button
                     onClick={() => setCurrentPage(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className={`p-2 rounded-md ${currentPage === totalPages ? 'text-gray-400 cursor-not-allowed' : 'text-blue-600 hover:bg-blue-100'}`}
+                    className={`flex items-center justify-center px-4 py-2 ${
+                      currentPage === totalPages
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-green-700 hover:bg-green-50"
+                    }`}
                   >
                     <ChevronRight className="h-5 w-5" />
                   </button>
-                </nav>
+                </div>
               </div>
             )}
           </>
         ) : (
-          <p className="text-gray-500">No reports available for your pets.</p>
+          <div className="bg-white p-10 rounded-xl shadow-lg text-center">
+            <div className="inline-block p-4 bg-green-100 rounded-full mb-4">
+              <FileText className="h-10 w-10 text-green-700" />
+            </div>
+            <p className="text-xl text-gray-600">No reports available for your pets.</p>
+            <p className="text-gray-500 mt-2">Reports will appear here after your vet visits.</p>
+          </div>
         )}
       </div>
+       <Footer />
     </div>
   );
 };
