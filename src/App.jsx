@@ -6,7 +6,6 @@ import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import IndexPage from "./component/Index/IndexPage";
 import AboutUs from "./component/About/About";
-import Report from "./component/Report/Report.jsx"
 import Consultation from "./component/Consultation/Consultation";
 import Footer from "./component/Footer/Footer";
 import Contact from "./utils/Contact";
@@ -23,18 +22,17 @@ import AppointmentHistory from "./component/AppointmentHistory/AppointmentHistor
 import AdminAppointments from "./component/admin/AdminAppointment/AdminAppointment.jsx";
 import VeterinarianDashboard from "../Veterinarian/VeterinarianDash/VeterinarianDashboard.jsx";
 import TotalAppointment from "../Veterinarian/TotalAppointment/TotalAppointment.jsx";
+import Profile from "../Veterinarian/Profile.jsx";
 import MakeReport from "../Veterinarian/MakeReport.jsx";
-import Profile from "../Veterinarian/Profile.jsx"
+import VeterinarianReports from "../Veterinarian/VeterinarianReports.jsx";
+import MyReportCard from "./pages/MyReportCard.jsx";
+
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: (
-        <>
-          <Outlet /> {/* Renders the child routes */}
-        </>
-      ),
+      element: <Outlet />,
       children: [
         {
           path: "/",
@@ -44,18 +42,13 @@ function App() {
           path: "/about-us",
           element: <AboutUs />,
         },
-       {
-          path:"/report",
-          element: <Report/>
-         },
         {
           path: "/consultation",
           element: <Consultation />,
         },
         {
           path: "/user/veterinarians",
-          element: <UserVeterinarianList/>
-
+          element: <UserVeterinarianList />,
         },
         {
           path: "/contact",
@@ -65,19 +58,17 @@ function App() {
           path: "/footer",
           element: <Footer />,
         },
-       
         {
           path: "/bookingsystem",
           element: (
             <ProtectedRoute>
               <BookingSystem />
             </ProtectedRoute>
-          )
+          ),
         },
         {
           path: "/editprofile/:id",
-          element:<EditProfile/>
-
+          element: <EditProfile />,
         },
         {
           path: "/appointmenthistory/:id",
@@ -87,6 +78,14 @@ function App() {
             </ProtectedRoute>
           ),
         },
+        {
+          path: "/my-report-card",
+          element: (
+            <ProtectedRoute>
+              <MyReportCard />
+            </ProtectedRoute>
+          ),
+        }, // New route
       ],
     },
     {
@@ -110,63 +109,68 @@ function App() {
       ),
     },
     {
-      path: "/appointments", 
+      path: "/appointments",
       element: (
         <ProtectedRoute>
           <AdminAppointments />
         </ProtectedRoute>
-      )
+      ),
     },
-    
     {
       path: "/UserList",
-      element: <UserList />
+      element: <UserList />,
     },
     {
       path: "/AddVet",
-      element: <AddVet />
+      element: <AddVet />,
     },
-   {
-    
-    path: "/admin/veterinarianlist",
-    element:(
-     < ProtectedRoute>
-     <VeterinarianList />
-     </ProtectedRoute>
-    )
-   },
-
-   {
-    path: "/VeterinarianDashboard",
-    element:( 
-      <ProtectedRoute>
-    <VeterinarianDashboard/>
-    </ProtectedRoute>
-    )
-   },
-   {
-    path:"/Totalappointment",
-    element:(
-      <ProtectedRoute>
-    <TotalAppointment/>
-    </ProtectedRoute>
-    )
-   },
-   {
-    path: "/MakeReport",
-    element:<MakeReport/>
-   },
-   {
-    path: "/Profile",
-    element:<Profile/>
-   }
-  
+    {
+      path: "/admin/veterinarianlist",
+      element: (
+        <ProtectedRoute>
+          <VeterinarianList />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/VeterinarianDashboard",
+      element: (
+        <ProtectedRoute>
+          <VeterinarianDashboard />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/Totalappointment",
+      element: (
+        <ProtectedRoute>
+          <TotalAppointment />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/booking-report/:bookingId",
+      element: (
+        <ProtectedRoute>
+          <MakeReport />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/veterinarian-reports",
+      element: (
+        <ProtectedRoute>
+          <VeterinarianReports />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/Profile",
+      element: <Profile />,
+    },
   ]);
-
-  
 
   return <RouterProvider router={router} />;
 }
 
 export default App;
-

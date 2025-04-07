@@ -1,8 +1,7 @@
-
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3001",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3001", // Base URL without /api
   headers: {
     "Content-Type": "application/json",
     "Accept": "application/json",
@@ -25,4 +24,3 @@ axiosInstance.interceptors.request.use(
 );
 
 export default axiosInstance;
-
