@@ -50,8 +50,10 @@ const AppointmentHistory = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
-      <NavBar />
+    <div className="min-h-screen bg-green-100">
+      <div className="flex justify-center items-center">
+        <NavBar />
+      </div>
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto">
           <div className="mb-10 text-center">
