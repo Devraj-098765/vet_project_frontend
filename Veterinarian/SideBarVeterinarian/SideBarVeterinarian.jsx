@@ -8,6 +8,7 @@ const SideBarVeterinarian = () => {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [vetInfo, setVetInfo] = useState({ name: "Veterinarian", role: "Vet Specialist" });
+  const [showLogoutModal, setShowLogoutModal] = useState(false); // State for logout modal
 
   // Navigation items
   const navItems = [
@@ -37,13 +38,22 @@ const SideBarVeterinarian = () => {
     navigate(route);
   };
 
-  // Handle logout with confirmation
-  const handleLogout = () => {
-    if (window.confirm("Are you sure you want to log out?")) {
-      localStorage.removeItem("vetapp-token"); // Clear token
-      localStorage.removeItem("veterinarian-stats"); // Clear stats
-      navigate("/admin");
-    }
+  // Show logout modal
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  // Confirm logout
+  const confirmLogout = () => {
+    localStorage.removeItem("vetapp-token"); // Clear token
+    localStorage.removeItem("veterinarian-stats"); // Clear stats
+    setShowLogoutModal(false); // Close modal immediately
+    navigate("/admin"); // Navigate immediately
+  };
+
+  // Cancel logout
+  const cancelLogout = () => {
+    setShowLogoutModal(false);
   };
 
   // Toggle sidebar collapse
@@ -131,7 +141,7 @@ const SideBarVeterinarian = () => {
           </div>
         )}
         <button
-          onClick={handleLogout}
+          onClick={handleLogoutClick}
           className={`w-full flex items-center px-4 py-3 text-gray-300 hover:bg-white hover:bg-opacity-10 rounded-lg transition-all duration-300 ${
             isCollapsed ? "justify-center" : ""
           }`}
@@ -145,6 +155,30 @@ const SideBarVeterinarian = () => {
           )}
         </button>
       </div>
+
+      {/* Custom Logout Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-80 shadow-lg">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Confirm Logout</h3>
+            <p className="text-gray-600 mb-6">Are you sure you want to log out?</p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelLogout}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 };
