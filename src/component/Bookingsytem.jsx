@@ -9,7 +9,7 @@ import axiosInstance from "../api/axios.js";
 const BookingSystem = () => {
   const { auth } = useAuth();
   const location = useLocation();
-  const vet = location.state?.vet; // Get vet data from navigation
+  const vet = location.state?.vet;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -27,19 +27,10 @@ const BookingSystem = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-
-  useEffect(() => {
-    const userEmail = localStorage.getItem("vetapp-email")?.split("@")[0];
-    if (userEmail) {
-      setFormData((prevData) => ({ ...prevData, name: userEmail, veterinarianId: vet?._id || "" }));
-    }
-    console.log(userEmail)
-  }, [vet]);
-
-  const timeSlots = [
+  const [availableSlots, setAvailableSlots] = useState([
     "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
     "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM",
-  ];
+  ]);
 
   const services = [
     "Routine Check-up",
@@ -51,6 +42,34 @@ const BookingSystem = () => {
 
   const petTypes = ["Dog", "Cat", "Bird", "Other"];
 
+  useEffect(() => {
+    const userEmail = localStorage.getItem("vetapp-email")?.split("@")[0];
+    if (userEmail) {
+      setFormData((prevData) => ({ ...prevData, name: userEmail, veterinarianId: vet?._id || "" }));
+    }
+  }, [vet]);
+
+  useEffect(() => {
+    const fetchAvailableSlots = async () => {
+      if (formData.date && formData.veterinarianId) {
+        try {
+          const response = await axiosInstance.get('/bookings/available-slots', {
+            params: {
+              veterinarianId: formData.veterinarianId,
+              date: formData.date
+            }
+          });
+          setAvailableSlots(response.data.availableSlots);
+        } catch (error) {
+          console.error('Error fetching available slots:', error);
+          setErrors({ form: 'Failed to load available time slots' });
+        }
+      }
+    };
+    
+    fetchAvailableSlots();
+  }, [formData.date, formData.veterinarianId]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -58,17 +77,32 @@ const BookingSystem = () => {
 
   const validateForm = () => {
     const newErrors = {};
+    const today = new Date();
+    const maxDate = new Date(today);
+    maxDate.setDate(today.getDate() + 7);
+
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required";
     } else if (!/^\d{10}$/.test(formData.phone.replace(/[()-\s]/g, ""))) {
       newErrors.phone = "Please enter a valid 10-digit phone number";
     }
-    if (!formData.date) newErrors.date = "Date is required";
+    if (!formData.date) {
+      newErrors.date = "Date is required";
+    } else {
+      const selectedDate = new Date(formData.date);
+      if (selectedDate < today.setHours(0,0,0,0) || selectedDate > maxDate) {
+        newErrors.date = "Date must be between today and the next 7 days";
+      }
+    }
     if (!formData.time) newErrors.time = "Time slot is required";
     if (!formData.petName.trim()) newErrors.petName = "Pet name is required";
     if (!formData.petType) newErrors.petType = "Pet type is required";
-    if (!formData.petAge.trim()) newErrors.petAge = "Pet age is required";
+    if (!formData.petAge.trim()) {
+      newErrors.petAge = "Pet age is required";
+    } else if (isNaN(formData.petAge) || Number(formData.petAge) > 10 || Number(formData.petAge) < 0) {
+      newErrors.petAge = "Pet age must be a number between 0 and 10";
+    }
     if (!formData.service) newErrors.service = "Service is required";
     if (!formData.veterinarianId) newErrors.veterinarianId = "Veterinarian selection is required";
 
@@ -84,6 +118,19 @@ const BookingSystem = () => {
     setErrors({});
 
     try {
+      const slotCheck = await axiosInstance.get('/bookings/available-slots', {
+        params: {
+          veterinarianId: formData.veterinarianId,
+          date: formData.date
+        }
+      });
+      
+      if (!slotCheck.data.availableSlots.includes(formData.time)) {
+        setErrors({ time: "Selected time slot is no longer available" });
+        setLoading(false);
+        return;
+      }
+
       const response = await axiosInstance.post("/bookings", formData);
       console.log("Booking Response:", response.data);
       setSuccess(true);
@@ -113,6 +160,12 @@ const BookingSystem = () => {
   const getTodayDate = () => {
     const today = new Date();
     return today.toISOString().split("T")[0];
+  };
+
+  const getMaxDate = () => {
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 7);
+    return maxDate.toISOString().split("T")[0];
   };
 
   return (
@@ -199,6 +252,7 @@ const BookingSystem = () => {
                     type="date"
                     name="date"
                     min={getTodayDate()}
+                    max={getMaxDate()}
                     value={formData.date}
                     onChange={handleChange}
                     className={`w-full p-2 rounded-lg ${
@@ -222,7 +276,7 @@ const BookingSystem = () => {
                     }`}
                   >
                     <option value="">Select Time Slot</option>
-                    {timeSlots.map((slot) => (
+                    {availableSlots.map((slot) => (
                       <option key={slot} value={slot}>{slot}</option>
                     ))}
                   </select>
