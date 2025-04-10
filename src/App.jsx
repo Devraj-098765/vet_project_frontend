@@ -9,6 +9,7 @@ import AboutUs from "./component/About/About";
 import Consultation from "./component/Consultation/Consultation";
 import Footer from "./component/Footer/Footer";
 import Contact from "./utils/Contact";
+import UserBlogPage from "./component/UserBlog.jsx";
 import Admin from "./pages/auth/Admin";
 import AdminDashboard from "./component/admin/AdminDashboard";
 import UserList from "./component/admin/Userlist/UserList";
@@ -60,6 +61,10 @@ function App() {
           element: <Footer />,
         },
         {
+        path:"/userblog",
+        element:<UserBlogPage/>  
+        },
+        {
           path: "/bookingsystem",
           element: (
             <ProtectedRoute>
@@ -71,6 +76,7 @@ function App() {
           path: "/editprofile/:id",
           element: <EditProfile />,
         },
+
         {
           path: "/appointmenthistory/:id",
           element: (
