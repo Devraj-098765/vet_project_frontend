@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import Footer from "../Footer/Footer";
-import NavBar from "../Header/Navbar";
+import NavBar from "../Header/NavBar";
 
 const AboutUs = () => {
   return (

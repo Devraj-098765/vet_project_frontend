@@ -26,6 +26,7 @@ import Profile from "../Veterinarian/Profile.jsx";
 import MakeReport from "../Veterinarian/MakeReport.jsx";
 import VeterinarianReports from "../Veterinarian/VeterinarianReports.jsx";
 import MyReportCard from "./pages/MyReportCard.jsx";
+import Blog from "../Veterinarian/Blog.jsx";
 
 
 function App() {
@@ -163,6 +164,14 @@ function App() {
           <VeterinarianReports />
         </ProtectedRoute>
       ),
+    },
+    {
+    path: "/blog",
+    element: (
+      <ProtectedRoute>
+        <Blog />
+      </ProtectedRoute>
+    ),
     },
     {
       path: "/Profile",
