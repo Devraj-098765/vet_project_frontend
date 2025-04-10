@@ -1,7 +1,7 @@
 // frontend/component/UserVeterinarian/UserVeterinarianList.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NavBar from "../Header/Navbar";
+import NavBar from "../Header/NavBar";
 import Footer from "../Footer/Footer";
 
 const UserVeterinarianList = () => {

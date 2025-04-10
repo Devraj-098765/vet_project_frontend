@@ -15,13 +15,14 @@ const SideBarVeterinarian = () => {
     { name: "Appointments", icon: <FiCalendar />, route: "/Totalappointment", tooltip: "View Appointments" },
     { name: "Reports", icon: <FiFileText />, route: "/veterinarian-reports", tooltip: "View Reports" },
     { name: "Profile", icon: <FiUser />, route: "/Profile", tooltip: "Edit Profile" },
+    { name: "Blog", icon: <FiFileText />, route: "/blog", tooltip: "View Blog" },
   ];
 
   // Fetch veterinarian info on mount
   useEffect(() => {
     const fetchVetInfo = async () => {
       try {
-        const { data } = await axiosInstance.get("/api/veterinarians/me"); // Adjust endpoint as per your backend
+        const { data } = await axiosInstance.get("/veterinarians"); // Adjust endpoint as per your backend
         setVetInfo({
           name: data.name || "Veterinarian",
           role: data.role || "Vet Specialist",
