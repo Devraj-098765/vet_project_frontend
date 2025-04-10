@@ -169,6 +169,17 @@ const NavBar = () => {
           </NavLink>
 
           <NavLink 
+            to="/userblog" 
+            className={({ isActive }) => 
+              isActive 
+                ? "bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium"
+                : "text-green-700 px-4 py-2 hover:bg-green-100 rounded-lg transition-all duration-300"
+            }
+          >
+            Blog
+          </NavLink>
+
+          <NavLink 
             to="/contact" 
             className={({ isActive }) => 
               isActive 
@@ -346,6 +357,18 @@ const NavBar = () => {
               </NavLink>
 
               <NavLink 
+                to="/userblog" 
+                className={({ isActive }) => 
+                  isActive 
+                    ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
+                    : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
+                }
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Blog
+              </NavLink>
+
+              <NavLink 
                 to="/contact" 
                 className={({ isActive }) => 
                   isActive 
@@ -380,6 +403,13 @@ const NavBar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Appointment Details
+                  </NavLink>
+                  <NavLink
+                    to="/userblog"
+                    className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Blog
                   </NavLink>
                   <button
                     onClick={handleLogout}
