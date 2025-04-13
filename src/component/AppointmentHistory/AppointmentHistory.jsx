@@ -8,6 +8,9 @@ const AppointmentHistory = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelBookingId, setCancelBookingId] = useState(null);
+  const [cancelReason, setCancelReason] = useState("");
 
   useEffect(() => {
     fetchAppointments();
@@ -27,16 +30,43 @@ const AppointmentHistory = () => {
     }
   };
 
-  const handleCancel = async (bookingId) => {
-    if (window.confirm("Are you sure you want to cancel this appointment?")) {
-      try {
-        await axiosInstance.delete(`/bookings/${bookingId}`);
-        setAppointments(appointments.filter((appt) => appt._id !== bookingId));
-        toast.success("Appointment canceled successfully");
-      } catch (err) {
-        console.error("Cancel Error:", err.response?.data || err.message);
-        toast.error("Failed to cancel appointment");
-      }
+  const openCancelModal = (bookingId) => {
+    setCancelBookingId(bookingId);
+    setCancelReason(""); // Reset reason input
+    setShowCancelModal(true);
+  };
+
+  const closeCancelModal = () => {
+    setShowCancelModal(false);
+    setCancelBookingId(null);
+    setCancelReason("");
+  };
+
+  const handleCancel = async () => {
+    if (!cancelReason.trim()) {
+      toast.error("Please provide a reason for cancellation");
+      return;
+    }
+
+    try {
+      // Send cancellation request with reason
+      await axiosInstance.delete(`/bookings/${cancelBookingId}`, {
+        data: { reason: cancelReason },
+      });
+      // Update appointment status and reason in state
+      setAppointments(
+        appointments.map((appt) =>
+          appt._id === cancelBookingId
+            ? { ...appt, status: "Cancelled", cancellationReason: cancelReason }
+            : appt
+        )
+      );
+      toast.success("Appointment canceled successfully");
+      closeCancelModal();
+    } catch (err) {
+      console.error("Cancel Error:", err.response?.data || err.message);
+      toast.error("Failed to cancel appointment");
+      closeCancelModal();
     }
   };
 
@@ -85,12 +115,10 @@ const AppointmentHistory = () => {
           ) : (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {appointments.map((appt) => {
-                // Fix the image URL by ensuring the correct path
                 let imageUrl = appt.veterinarianId?.image
                   ? `${import.meta.env.VITE_API_URL}${appt.veterinarianId.image}`
                   : "https://placehold.co/40x40";
                 
-                // Safeguard: Correct old /api/uploads/ paths
                 if (imageUrl.includes("/api/uploads/")) {
                   imageUrl = imageUrl.replace("/api/uploads/", "/uploads/");
                 }
@@ -125,7 +153,7 @@ const AppointmentHistory = () => {
                                 alt={appt.veterinarianId?.name || "Doctor"}
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
-                                  console.error(`Image failed to load: ${imageUrl} - Status: ${e.target.status || "Unknown"}`);
+                                  console.error(`Image failed to load: ${imageUrl}`);
                                   e.target.src = "https://placehold.co/40x40";
                                 }}
                                 onLoad={() => console.log(`Image loaded successfully: ${imageUrl}`)}
@@ -230,11 +258,36 @@ const AppointmentHistory = () => {
                               <p className="text-gray-800">{appt.status}</p>
                             </div>
                           </div>
+
+                          {appt.status === "Cancelled" && appt.cancellationReason && (
+                            <div className="flex items-center">
+                              <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  className="w-4 h-4 text-red-600"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                  />
+                                </svg>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500 font-medium">Cancellation Reason</p>
+                                <p className="text-gray-800">{appt.cancellationReason}</p>
+                              </div>
+                            </div>
+                          )}
                         </div>
 
                         {["Pending"].includes(appt.status) && (
                           <button
-                            onClick={() => handleCancel(appt._id)}
+                            onClick={() => openCancelModal(appt._id)}
                             className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 px-4 rounded-xl font-medium hover:from-red-600 hover:to-red-700"
                           >
                             Cancel Appointment
@@ -249,6 +302,38 @@ const AppointmentHistory = () => {
           )}
         </div>
       </div>
+
+      {/* Cancellation Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Cancel Appointment</h2>
+            <p className="text-gray-600 mb-4">Please provide a reason for canceling this appointment.</p>
+            <textarea
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              rows="4"
+              placeholder="Enter cancellation reason..."
+            />
+            <div className="flex justify-end mt-6 space-x-3">
+              <button
+                onClick={closeCancelModal}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              >
+                Confirm Cancellation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );
