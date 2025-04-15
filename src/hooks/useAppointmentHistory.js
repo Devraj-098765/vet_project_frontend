@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import useAuth from "./useAuth"; // Assuming this provides auth info
+import useAuth from "./useAuth"; 
 import axiosInstance from "../api/axios";
 
 const APPOINTMENT_URL = "/bookings";

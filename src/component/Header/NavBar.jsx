@@ -12,6 +12,7 @@ const NavBar = () => {
   const [notificationCount, setNotificationCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
   const mobileMenuRef = useRef(null);
@@ -69,10 +70,19 @@ const NavBar = () => {
   };
 
   const handleLogout = () => {
+    setIsModalOpen(true); // Open the modal when logout is clicked
+  };
+
+  const confirmLogout = () => {
     setDropdownOpen(false);
     setMobileMenuOpen(false);
-    navigate("/login");
+    setIsModalOpen(false); // Close the modal
     logout();
+    navigate("/");
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false); // Close the modal without logging out
   };
 
   const toggleDropdown = () => {
@@ -137,7 +147,7 @@ const NavBar = () => {
         <div className="flex items-center">
           <FaLeaf className="text-green-600 mr-2" size={20} />
           <NavLink to="/" className="text-green-800 font-medium text-lg tracking-wide hover:text-green-600 transition-colors">
-            Vetcare
+            Petcare
           </NavLink>
         </div>
 
@@ -436,6 +446,45 @@ const NavBar = () => {
           </div>
         )}
       </nav>
+
+      {/* Logout Confirmation Modal */}
+      {isModalOpen && (
+        <>
+          {/* Overlay */}
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={closeModal}></div>
+          
+          {/* Modal */}
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg z-50 w-80 p-6">
+            <div className="relative">
+              {/* Close Button */}
+              <button
+                onClick={closeModal}
+                className="absolute top-0 right-0 text-white bg-blue-600 rounded-full w-6 h-6 flex items-center justify-center hover:bg-blue-700 transition-colors"
+              >
+                ✕
+              </button>
+
+              {/* Modal Content */}
+              <h3 className="text-lg font-semibold text-black mb-2">Confirm Logout</h3>
+              <p className="text-gray-600 mb-6">Are you sure you want to log out?</p>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={closeModal}
+                  className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmLogout}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };
