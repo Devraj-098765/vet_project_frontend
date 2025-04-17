@@ -67,7 +67,7 @@ const SideBarVeterinarian = () => {
 
   return (
     <aside
-      className={`bg-gradient-to-b from-green-900 to-teal-800 rounded-r-xl shadow-xl h-screen flex flex-col transition-all duration-300 ${
+      className={`bg-gradient-to-b from-green-800 to-green-600 rounded-r-xl shadow-xl h-screen flex flex-col transition-all duration-300 ${
         isCollapsed ? "w-16" : "w-64"
       }`}
     >
@@ -78,7 +78,7 @@ const SideBarVeterinarian = () => {
             className="flex items-center cursor-pointer"
             onClick={() => handleNavigation("/VeterinarianDashboard")}
           >
-            <div className="bg-white bg-opacity-20 p-2 rounded-full">
+            <div className="bg-green-500 bg-opacity-20 p-2 rounded-full">
               <FiUser className="text-white text-xl" />
             </div>
             <h2 className="text-xl font-bold text-white ml-2">Vetcare</h2>
@@ -86,7 +86,7 @@ const SideBarVeterinarian = () => {
         )}
         <button
           onClick={toggleCollapse}
-          className="text-white hover:bg-white hover:bg-opacity-20 p-1 rounded-full transition-colors"
+          className="text-white hover:bg-green-500 hover:bg-opacity-20 p-1 rounded-full transition-colors"
         >
           {isCollapsed ? <FiChevronRight size={20} /> : <FiChevronLeft size={20} />}
         </button>
@@ -100,14 +100,14 @@ const SideBarVeterinarian = () => {
               key={item.route}
               className={`relative flex items-center px-4 py-3 rounded-lg cursor-pointer transition-all duration-300 ${
                 isActive(item.route)
-                  ? "bg-white bg-opacity-20 text-white shadow-md"
-                  : "text-gray-300 hover:bg-white hover:bg-opacity-10"
+                  ? "bg-green-500 bg-opacity-20 text-white shadow-md"
+                  : "text-green-100 hover:bg-green-500 hover:bg-opacity-10"
               }`}
               onClick={() => handleNavigation(item.route)}
             >
               <div
                 className={`text-xl ${
-                  isActive(item.route) ? "text-white" : "text-gray-400"
+                  isActive(item.route) ? "text-white" : "text-green-200"
                 }`}
               >
                 {item.icon}
@@ -116,12 +116,12 @@ const SideBarVeterinarian = () => {
                 <span className="ml-3 font-medium">{item.name}</span>
               )}
               {isCollapsed && (
-                <span className="absolute left-14 bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                <span className="absolute left-14 bg-green-700 text-white text-xs rounded-md px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
                   {item.tooltip}
                 </span>
               )}
               {isActive(item.route) && !isCollapsed && (
-                <div className="ml-auto w-1 h-6 bg-white rounded-full" />
+                <div className="ml-auto w-1 h-6 bg-green-300 rounded-full" />
               )}
             </li>
           ))}
@@ -131,26 +131,26 @@ const SideBarVeterinarian = () => {
       {/* Veterinarian Info & Logout */}
       <div className="mt-auto p-4">
         {!isCollapsed && (
-          <div className="mb-4 bg-white bg-opacity-10 p-3 rounded-lg">
+          <div className="mb-4 bg-green-500 bg-opacity-10 p-3 rounded-lg">
             <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0" />
+              <div className="w-8 h-8 rounded-full bg-green-200 flex-shrink-0" />
               <div className="ml-3 overflow-hidden">
                 <p className="text-white text-sm font-medium truncate">{vetInfo.name}</p>
-                <p className="text-gray-300 text-xs truncate">{vetInfo.role}</p>
+                <p className="text-green-200 text-xs truncate">{vetInfo.role}</p>
               </div>
             </div>
           </div>
         )}
         <button
           onClick={handleLogoutClick}
-          className={`w-full flex items-center px-4 py-3 text-gray-300 hover:bg-white hover:bg-opacity-10 rounded-lg transition-all duration-300 ${
+          className={`w-full flex items-center px-4 py-3 text-green-100 hover:bg-green-500 hover:bg-opacity-10 rounded-lg transition-all duration-300 ${
             isCollapsed ? "justify-center" : ""
           }`}
         >
-          <FiLogOut className="text-xl text-gray-400 flex-shrink-0" />
+          <FiLogOut className="text-xl text-green-200 flex-shrink-0" />
           {!isCollapsed && <span className="ml-3 font-medium">Logout</span>}
           {isCollapsed && (
-            <span className="absolute left-14 bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+            <span className="absolute left-14 bg-green-700 text-white text-xs rounded-md px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
               Logout
             </span>
           )}
@@ -172,7 +172,7 @@ const SideBarVeterinarian = () => {
               </button>
               <button
                 onClick={confirmLogout}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
               >
                 OK
               </button>
