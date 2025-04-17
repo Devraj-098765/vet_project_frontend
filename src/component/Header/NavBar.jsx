@@ -147,7 +147,7 @@ const NavBar = () => {
         <div className="flex items-center">
           <FaLeaf className="text-green-600 mr-2" size={20} />
           <NavLink to="/" className="text-green-800 font-medium text-lg tracking-wide hover:text-green-600 transition-colors">
-            Petcare
+            Vetcare
           </NavLink>
         </div>
 
