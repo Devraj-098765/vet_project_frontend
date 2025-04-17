@@ -33,7 +33,6 @@ const useAppointmentHistory = () => {
     if (auth?.userId) {
       fetchAppointmentHistory(auth.userId);
     } else {
-      console.warn("No user ID available to fetch appointments");
       setError("User not authenticated");
     }
   }, [auth?.userId]); // Re-run if userId changes
