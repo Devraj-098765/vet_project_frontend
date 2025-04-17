@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../api/axios.js";
-import NavBar from "../Header/NavBar.jsx";
+import NavBar from "../Header/Navbar.jsx";
 import Footer from "../Footer/Footer";
 import { toast } from "react-toastify";
 
@@ -50,7 +50,7 @@ const AppointmentHistory = () => {
 
     try {
       // Send cancellation request with reason
-      await axiosInstance.delete(`/bookings/${cancelBookingId}`, {
+      await axiosInstance.put(`/bookings/${cancelBookingId}/cancel`, {
         data: { reason: cancelReason },
       });
       // Update appointment status and reason in state
