@@ -5,7 +5,7 @@ import useAuth from "./useAuth";
 import axiosInstance from "../api/axios";
 
 const APPOINTMENT_URL = "/bookings";
-
+// Custom hook to fetch appointment history for both user and admin
 const useAppointmentHistory = () => {
   const [appointments, setAppointments] = useState([]);
   const [adminAppointments, setAdminAppointments] = useState([]);
