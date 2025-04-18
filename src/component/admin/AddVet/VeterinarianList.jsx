@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import AdminNavbar from "../AdminNavbar";
 
@@ -56,7 +57,6 @@ const AdminVeterinarianList = () => {
               </div>
               <p className="text-gray-500 mt-2">{vet.experience} years experience</p>
               <p className="text-gray-700 font-medium mt-1">Fee: ${vet.fee}</p>
-              {/* <p className="text-gray-500 text-sm mt-3 line-clamp-3">{vet.bio}</p> */}
               <button 
                 className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                 onClick={() => openProfile(vet)}
@@ -101,6 +101,13 @@ const AdminVeterinarianList = () => {
                     <span className="font-semibold">Fee:</span> ${selectedVet.fee}
                   </p>
                   
+                  <p className="text-gray-700 mb-2">
+                    <span className="font-semibold">Phone:</span> {selectedVet.phone || "Not provided"}
+                  </p>
+                  
+                  <p className="text-gray-700 mb-2">
+                    <span className="font-semibold">Location:</span> {selectedVet.location || "Not provided"}
+                  </p>
                   
                   <div className="mt-4">
                     <h4 className="text-lg font-semibold text-purple-700 mb-2">📄 Bio</h4>
