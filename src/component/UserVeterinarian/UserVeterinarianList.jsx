@@ -41,6 +41,10 @@ const UserVeterinarianList = () => {
       sortedVets.sort((a, b) => b.name.localeCompare(a.name));
     } else if (option === "specialization") {
       sortedVets.sort((a, b) => a.specialization.localeCompare(b.specialization));
+    } else if (option === "price-low-high") {
+      sortedVets.sort((a, b) => a.fee - b.fee);
+    } else if (option === "price-high-low") {
+      sortedVets.sort((a, b) => b.fee - a.fee);
     } else {
       sortedVets = [...veterinarians];
     }
@@ -48,21 +52,16 @@ const UserVeterinarianList = () => {
   };
 
   const handleBookAppointment = (vet) => {
-    navigate(`/bookingsystem`, { state: { vet } }); // Pass vet object
+    navigate(`/bookingsystem`, { state: { vet } });
   };
 
   const toggleBio = (vetId) => {
-    if (expandedVet === vetId) {
-      setExpandedVet(null);
-    } else {
-      setExpandedVet(vetId);
-    }
+    setExpandedVet(expandedVet === vetId ? null : vetId);
   };
 
-  // Function to truncate text to a certain number of characters
   const truncateBio = (text, maxLength = 70) => {
     if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
+    return text.substring(0, maxLength) + "...";
   };
 
   if (loading)
@@ -118,6 +117,8 @@ const UserVeterinarianList = () => {
                 <option value="alphabetical-asc">Sort by Name (A-Z)</option>
                 <option value="alphabetical-desc">Sort by Name (Z-A)</option>
                 <option value="specialization">Sort by Specialty</option>
+                <option value="price-low-high">Sort by Price: Low to High</option>
+                <option value="price-high-low">Sort by Price: High to Low</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-green-500">
                 <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
@@ -139,7 +140,7 @@ const UserVeterinarianList = () => {
               >
                 {/* Top curved shape */}
                 <div className="absolute top-0 left-0 w-full h-32 bg-green-600 rounded-b-full transform scale-150"></div>
-                
+
                 {/* Image with circular crop */}
                 <div className="relative z-10 mx-auto mt-6 w-36 h-36 rounded-full border-4 border-white shadow-lg overflow-hidden">
                   <img
@@ -148,7 +149,7 @@ const UserVeterinarianList = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                
+
                 {/* Content */}
                 <div className="p-6 text-center mt-4">
                   <h3 className="text-2xl font-light text-green-800">{vet.name}</h3>
@@ -157,8 +158,67 @@ const UserVeterinarianList = () => {
                       {vet.specialization}
                     </span>
                   </div>
-                  
-                  {/* Always show truncated bio */}
+                  <div className="mt-2 text-sm text-green-700 font-light">
+                    <div className="flex justify-center items-center gap-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 text-green-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                      <span>{vet.location || "Not provided"}</span>
+                    </div>
+                    <div className="flex justify-center items-center gap-2 mt-1">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 text-green-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                        />
+                      </svg>
+                      <span>{vet.phone || "Not provided"}</span>
+                    </div>
+                    <div className="flex justify-center items-center gap-2 mt-1">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 text-green-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span>Fee: ${vet.fee.toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  {/* Bio */}
                   <div className="mt-4 min-h-16 text-green-700 font-light leading-relaxed">
                     {expandedVet === vet._id ? (
                       <p>{vet.bio}</p>
@@ -166,8 +226,8 @@ const UserVeterinarianList = () => {
                       <p>{truncateBio(vet.bio)}</p>
                     )}
                   </div>
-                  
-                  {/* Buttons in a row */}
+
+                  {/* Buttons */}
                   <div className="flex gap-2 mt-6">
                     <button
                       onClick={() => toggleBio(vet._id)}
