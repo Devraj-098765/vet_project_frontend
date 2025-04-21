@@ -33,11 +33,13 @@ const useUserInfo = () => {
       );
   
       toast.success("User information updated successfully");
-    } catch (error) {
-      if (error.response && error.response.data) {
-        setError(error.response.data.message);
-      } else {
-        setError("An error occurred while updating user information");
+    } catch (err) {
+      if (err.response && err.response.data) {
+        if (err.response.data.message) {
+          setError(err.response.data.message);
+        }
+      } else if (err instanceof Error) {
+        setError(err.message);
       }
     } finally {
       setLoading(false);

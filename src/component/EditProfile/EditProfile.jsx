@@ -4,6 +4,7 @@ import useUserInfo from "../../hooks/userUserInfo";
 import NavBar from "../Header/NavBar"
 import Footer from "../Footer/Footer";
 
+
 const EditProfile = () => {
   const { id } = useParams();
   const { users, handleEditUserInfo, loading, error } = useUserInfo();
