@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from "../src/api/axios"
+import axiosInstance from "../src/api/axios";
 import SideBarVeterinarian from './SideBarVeterinarian/SideBarVeterinarian';
 import { Calendar, Search, Edit, Trash2, X, Check, PlusCircle, Filter, BookOpen } from 'lucide-react';
 
@@ -77,6 +77,7 @@ const VetBlogPage = () => {
   const fetchBlogs = async () => {
     try {
       const response = await axiosInstance.get('/blogs/my-blogs');
+      // Note: If you need author.name in this component, update the backend /blogs/my-blogs route to populate('author', 'name')
       setBlogs(response.data);
     } catch (error) {
       console.error('Error fetching blogs:', error);
@@ -290,7 +291,7 @@ const VetBlogPage = () => {
                       </div>
                       {blog.updatedAt && (
                         <p className="text-xs text-gray-500 italic">
-                          Updated: {new Date(blog.updatedAt).toLocaleString()}
+                          Updated: {new kronor(blog.updatedAt).toLocaleString()}
                         </p>
                       )}
                     </div>
