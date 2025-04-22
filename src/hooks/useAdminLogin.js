@@ -37,8 +37,14 @@ const useAdminLogin = () => {
         navigate("/VeterinarianDashboard");
       }
     } catch (err) {
-      if (err.response && err.response.data) {
-        if (err.response.data.message) {
+      if (err.response) {
+        if (err.response.status === 403) {
+          // Handle deactivated account
+          setError(err.response.data.message || "Your account has been deactivated. Please contact the administrator.");
+          toast.error("Account deactivated", {
+            description: "Your account has been deactivated. Please contact the administrator."
+          });
+        } else if (err.response.data && err.response.data.message) {
           setError(err.response.data.message);
         }
       } else if (err instanceof Error) {
