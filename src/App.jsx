@@ -28,6 +28,7 @@ import MakeReport from "../Veterinarian/MakeReport.jsx";
 import VeterinarianReports from "../Veterinarian/VeterinarianReports.jsx";
 import MyReportCard from "./pages/MyReportCard.jsx";
 import Blog from "../Veterinarian/Blog.jsx";
+import ResetPasswordConfirmation from "./pages/auth/ResetPasswordConfirmation.jsx";
 
 
 function App() {
@@ -102,6 +103,10 @@ function App() {
     {
       path: "/login",
       element: <Login />,
+    },
+    {
+      path: "/reset-password/:token",
+      element: <ResetPasswordConfirmation />, // Assuming you have a ResetPassword component
     },
     {
       path: "/admin",
