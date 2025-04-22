@@ -44,6 +44,20 @@ const MakeReport = () => {
         console.log("Fetching booking with ID:", bookingId);
         const { data } = await axiosInstance.get(`/bookings/${bookingId}`);
         console.log("Booking data:", data);
+        
+        // Check if booking is already completed or has a report
+        if (data.status === 'Completed') {
+          toast.error("Cannot create report for completed appointments");
+          navigate("/Totalappointment");
+          return;
+        }
+        
+        if (data.hasReport) {
+          toast.error("A report already exists for this appointment");
+          navigate("/Totalappointment");
+          return;
+        }
+        
         setBooking(data);
         setLoading(false);
       } catch (error) {
@@ -64,7 +78,7 @@ const MakeReport = () => {
       toast.error("No booking ID provided");
       setLoading(false);
     }
-  }, [bookingId]);
+  }, [bookingId, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

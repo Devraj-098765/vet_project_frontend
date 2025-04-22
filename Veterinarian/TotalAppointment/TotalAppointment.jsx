@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import SideBarVeterinarian from "../SideBarVeterinarian/SideBarVeterinarian";
 import axiosInstance from "../../src/api/axios";
+import { FileText, Eye } from "lucide-react";
 
 const TotalAppointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -10,6 +11,8 @@ const TotalAppointment = () => {
   const [loading, setLoading] = useState(true);
   const [appointmentsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentReport, setCurrentReport] = useState(null);
+  const [showReportModal, setShowReportModal] = useState(false);
   const navigate = useNavigate();
 
   console.log("TotalAppointment", appointments);
@@ -96,8 +99,34 @@ const TotalAppointment = () => {
       toast.error("A report already exists for this appointment");
       return;
     }
+    if (appointment.status === "Completed") {
+      toast.error("Cannot create report for completed appointments");
+      return;
+    }
     console.log("Navigating to MakeReport with ID:", bookingId);
     navigate(`/booking-report/${bookingId}`);
+  };
+
+  const handleViewReport = async (bookingId) => {
+    try {
+      const response = await axiosInstance.get(`/bookings/report-by-booking/${bookingId}`);
+      setCurrentReport(response.data);
+      setShowReportModal(true);
+    } catch (error) {
+      console.error("Error fetching report:", error);
+      toast.error("Failed to fetch appointment report");
+    }
+  };
+
+  const closeReportModal = () => {
+    setShowReportModal(false);
+    setCurrentReport(null);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
   const handleLoadMore = () => {
@@ -196,24 +225,35 @@ const TotalAppointment = () => {
                             </button>
                           </div>
                         ) : (
-                          <button
-                            onClick={() => handleCreateReport(appt._id)}
-                            className={`px-4 py-2 rounded text-sm ${
-                              appt.status === "Cancelled" || appt.hasReport
-                                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                : "bg-green-500 hover:bg-green-600 text-white"
-                            }`}
-                            disabled={appt.status === "Cancelled" || appt.hasReport}
-                            title={
-                              appt.status === "Cancelled"
-                                ? "Cannot create report for cancelled appointments"
-                                : appt.hasReport
-                                ? "Report already created"
-                                : ""
-                            }
-                          >
-                            Create Report
-                          </button>
+                          <div className="flex flex-col space-y-2 items-center">
+                            {appt.hasReport ? (
+                              <button
+                                onClick={() => handleViewReport(appt._id)}
+                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm w-full max-w-xs flex items-center justify-center"
+                              >
+                                <Eye className="h-4 w-4 mr-1" /> View Report
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleCreateReport(appt._id)}
+                                className={`px-4 py-2 rounded text-sm w-full max-w-xs flex items-center justify-center ${
+                                  appt.status === "Cancelled" || appt.status === "Completed"
+                                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                    : "bg-green-500 hover:bg-green-600 text-white"
+                                }`}
+                                disabled={appt.status === "Cancelled" || appt.status === "Completed"}
+                                title={
+                                  appt.status === "Cancelled"
+                                    ? "Cannot create report for cancelled appointments"
+                                    : appt.status === "Completed"
+                                    ? "Cannot create report for completed appointments"
+                                    : ""
+                                }
+                              >
+                                <FileText className="h-4 w-4 mr-1" /> Create Report
+                              </button>
+                            )}
+                          </div>
                         )}
                       </td>
                     </tr>
@@ -237,6 +277,104 @@ const TotalAppointment = () => {
         ) : (
           <div className="bg-white p-8 rounded-lg text-center shadow-sm">
             <p className="text-gray-500">No appointments scheduled.</p>
+          </div>
+        )}
+
+        {/* Report Modal */}
+        {showReportModal && currentReport && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+              <div className="p-6 border-b">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    Report for {currentReport.petName}
+                  </h2>
+                  <button
+                    onClick={closeReportModal}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <div className="p-6">
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3 text-blue-600 border-b pb-1">
+                      Patient Information
+                    </h3>
+                    <div className="space-y-3">
+                      <p><span className="font-medium">Pet Name:</span> {currentReport.petName}</p>
+                      <p><span className="font-medium">Pet Type:</span> {currentReport.petType}</p>
+                      <p><span className="font-medium">Weight:</span> {currentReport.weight || 'N/A'}</p>
+                      <p><span className="font-medium">Temperature:</span> {currentReport.temperature || 'N/A'}</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3 text-blue-600 border-b pb-1">
+                      Report Details
+                    </h3>
+                    <div className="space-y-3">
+                      <p><span className="font-medium">Created:</span> {formatDate(currentReport.createdAt)}</p>
+                      <p><span className="font-medium">Follow-up Date:</span> {currentReport.followUpDate || 'None'}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-4 mt-4">
+                  <div>
+                    <h4 className="font-semibold text-blue-700">Diagnosis</h4>
+                    <p className="mt-1 bg-blue-50 p-3 rounded-lg">{currentReport.diagnosis}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold text-blue-700">Treatment</h4>
+                    <p className="mt-1 bg-blue-50 p-3 rounded-lg">{currentReport.treatment}</p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="font-semibold text-blue-700">Medications</h4>
+                      <p className="mt-1 bg-blue-50 p-3 rounded-lg min-h-16">
+                        {currentReport.medications || 'None prescribed'}
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-blue-700">Vaccinations</h4>
+                      <p className="mt-1 bg-blue-50 p-3 rounded-lg min-h-16">
+                        {currentReport.vaccinations || 'None administered'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-blue-700">Recommendations</h4>
+                    <p className="mt-1 bg-blue-50 p-3 rounded-lg">
+                      {currentReport.recommendations || 'No specific recommendations provided'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-6 border-t flex justify-end">
+                <button
+                  onClick={closeReportModal}
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md mr-2"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => window.print()}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                >
+                  Print Report
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

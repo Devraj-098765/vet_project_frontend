@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FiCalendar, FiFileText, FiUser, FiLogOut, FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import axiosInstance from "../../src/api/axios"; // Assuming this is your axios setup
+import axiosInstance, { getBaseUrl } from "../../src/api/axios"; // Import getBaseUrl
 
 const SideBarVeterinarian = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [vetInfo, setVetInfo] = useState({ name: "Veterinarian", role: "Vet Specialist" });
+  const [vetInfo, setVetInfo] = useState({ 
+    name: "Veterinarian", 
+    role: "Vet Specialist",
+    image: null
+  });
   const [showLogoutModal, setShowLogoutModal] = useState(false); // State for logout modal
 
   // Navigation items
@@ -22,10 +26,21 @@ const SideBarVeterinarian = () => {
   useEffect(() => {
     const fetchVetInfo = async () => {
       try {
-        const { data } = await axiosInstance.get("/veterinarians"); // Adjust endpoint as per your backend
+        const token = localStorage.getItem("vetapp-token");
+        if (!token) {
+          console.error("No authentication token found");
+          return;
+        }
+
+        const { data } = await axiosInstance.get("/veterinarians/me");
+        
+        // Format the image URL if it exists
+        const imageUrl = data.image ? `${getBaseUrl()}${data.image}` : null;
+
         setVetInfo({
           name: data.name || "Veterinarian",
-          role: data.role || "Vet Specialist",
+          role: data.specialization || "Vet Specialist",
+          image: imageUrl,
         });
       } catch (error) {
         console.error("Error fetching vet info:", error);
@@ -133,7 +148,17 @@ const SideBarVeterinarian = () => {
         {!isCollapsed && (
           <div className="mb-4 bg-green-500 bg-opacity-10 p-3 rounded-lg">
             <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-green-200 flex-shrink-0" />
+              {vetInfo.image ? (
+                <img 
+                  src={vetInfo.image} 
+                  alt="Veterinarian profile" 
+                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center flex-shrink-0">
+                  <FiUser className="text-green-800" />
+                </div>
+              )}
               <div className="ml-3 overflow-hidden">
                 <p className="text-white text-sm font-medium truncate">{vetInfo.name}</p>
                 <p className="text-green-200 text-xs truncate">{vetInfo.role}</p>
