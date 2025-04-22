@@ -52,6 +52,10 @@ const UserVeterinarianList = () => {
   };
 
   const handleBookAppointment = (vet) => {
+    if (!vet.isActive) {
+      alert("This veterinarian is currently unavailable for booking.");
+      return;
+    }
     navigate(`/bookingsystem`, { state: { vet } });
   };
 
@@ -144,18 +148,26 @@ const UserVeterinarianList = () => {
                 {/* Image with circular crop */}
                 <div className="relative z-10 mx-auto mt-6 w-36 h-36 rounded-full border-4 border-white shadow-lg overflow-hidden">
                   <img
-                    src={`http://localhost:3001${vet.image}`}
+                    src={`http://localhost:3001${vet.image || "/uploads/default.jpg"}`}
                     alt={vet.name}
                     className="w-full h-full object-cover"
+                    onError={(e) => { e.target.src = "https://via.placeholder.com/150"; }}
                   />
                 </div>
 
                 {/* Content */}
                 <div className="p-6 text-center mt-4">
                   <h3 className="text-2xl font-light text-green-800">{vet.name}</h3>
-                  <div className="flex justify-center mt-2">
+                  <div className="flex justify-center mt-2 space-x-2">
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                       {vet.specialization}
+                    </span>
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                        vet.isActive ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {vet.isActive ? "Available" : "Unavailable"}
                     </span>
                   </div>
                   <div className="mt-2 text-sm text-green-700 font-light">
@@ -237,7 +249,12 @@ const UserVeterinarianList = () => {
                     </button>
                     <button
                       onClick={() => handleBookAppointment(vet)}
-                      className="flex-1 py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 shadow-md hover:shadow-lg font-light"
+                      className={`flex-1 py-2 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg font-light ${
+                        vet.isActive
+                          ? "bg-green-600 text-white hover:bg-green-700"
+                          : "bg-gray-400 text-gray-200 cursor-not-allowed"
+                      }`}
+                      disabled={!vet.isActive}
                     >
                       Book Appointment
                     </button>

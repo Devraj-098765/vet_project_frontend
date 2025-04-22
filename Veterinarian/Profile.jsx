@@ -55,49 +55,38 @@ const VeterinarianProfile = () => {
         setLoading(true);
         console.log("Fetching profile with token:", auth?.token);
 
-        const response = await axiosInstance.get(`/veterinarians`);
-        const veterinarians = response.data;
-        console.log("All veterinarians:", veterinarians);
-
-        if (auth?.token) {
-          const base64Url = auth.token.split(".")[1];
-          const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-          const jsonPayload = decodeURIComponent(
-            atob(base64)
-              .split("")
-              .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-              .join("")
-          );
-
-          const decoded = JSON.parse(jsonPayload);
-          console.log("Decoded token:", decoded);
-          
-          // Store the userId and role in localStorage for future use
-          localStorage.setItem("vetapp-userId", decoded._id);
-          if (decoded.role) {
-            localStorage.setItem("vetapp-role", decoded.role);
-          }
-
-          const currentVet = veterinarians.find((vet) => vet.email === decoded.email || vet._id === decoded._id);
-
-          if (currentVet) {
-            console.log("Found veterinarian:", currentVet);
-            setProfile(currentVet);
-            setFormData(currentVet);
-            setLoading(false);
-          } else {
-            console.error("Veterinarian not found for email:", decoded.email);
-            setError("Profile not found. Please contact support.");
-            setLoading(false);
-          }
-        } else {
-          setError("Authentication token missing. Please log in again.");
-          setLoading(false);
+        if (!auth?.token) {
+          throw new Error("Authentication token missing. Please log in again.");
         }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        setError("Failed to load profile. Please try again.");
+
+        const response = await axiosInstance.get(`/veterinarians/me`, {
+          headers: {
+            "x-auth-token": auth.token,
+          },
+        });
+
+        const veterinarian = response.data;
+        console.log("Fetched veterinarian:", veterinarian);
+
+        setProfile(veterinarian);
+        setFormData(veterinarian);
+        localStorage.setItem("vetapp-userId", veterinarian._id);
+        localStorage.setItem("vetapp-role", veterinarian.role);
+
         setLoading(false);
+      } catch (error) {
+        console.error("Error fetching profile:", {
+          message: error.message,
+          status: error.response?.status,
+          data: error.response?.data,
+        });
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
+          "Failed to load profile. Please try again.";
+        setError(errorMessage);
+        setLoading(false);
+        toast.error(errorMessage);
       }
     };
 
@@ -142,7 +131,6 @@ const VeterinarianProfile = () => {
 
   const handleStatusToggle = async () => {
     if (isEditing) {
-      // Just update the form data if we're in edit mode
       setFormData((prev) => ({ ...prev, isActive: !prev.isActive }));
     } else {
       try {
@@ -157,20 +145,18 @@ const VeterinarianProfile = () => {
         console.log("Updating status for ID:", veterinarianId);
         console.log("Current isActive value:", profile.isActive);
         console.log("New isActive value:", updatedStatus);
-        
-        // Verify this matches the user ID in the token or localStorage
+
         const userId = localStorage.getItem("vetapp-userId");
         const userRole = localStorage.getItem("vetapp-role");
-        
+
         if (userId !== veterinarianId && userRole !== "admin") {
           console.log("Token userId:", userId, "Profile ID:", veterinarianId);
           toast.error("Authorization error: You can only update your own profile.");
           return;
         }
 
-        // Use a regular JSON object instead of FormData for clearer data handling
         const dataToSend = {
-          isActive: updatedStatus
+          isActive: updatedStatus,
         };
 
         const updateUrl = `/veterinarians/${veterinarianId}`;
@@ -185,12 +171,11 @@ const VeterinarianProfile = () => {
 
         console.log("Status update response:", response.data);
 
-        // Make sure to update the profile with the response data
-        setProfile(prev => ({
+        setProfile((prev) => ({
           ...prev,
-          isActive: response.data.isActive
+          isActive: response.data.isActive,
         }));
-        
+
         toast.success(`Status updated to ${response.data.isActive ? "Active" : "Inactive"}`);
       } catch (error) {
         console.error("Error updating status:", error);
@@ -221,19 +206,16 @@ const VeterinarianProfile = () => {
 
       console.log("Using ID for update:", veterinarianId);
 
-      // Verify this matches the user ID in the token or localStorage
       const userId = localStorage.getItem("vetapp-userId");
       const userRole = localStorage.getItem("vetapp-role");
-      
+
       if (userId !== veterinarianId && userRole !== "admin") {
         console.log("Token userId:", userId, "Profile ID:", veterinarianId);
         toast.error("Authorization error: You can only update your own profile.");
         return;
       }
 
-      // Determine if we need to handle file uploads
       if (imageFile) {
-        // Use FormData for file uploads
         const formDataToSend = new FormData();
         const updatableFields = [
           "name",
@@ -248,7 +230,6 @@ const VeterinarianProfile = () => {
 
         updatableFields.forEach((field) => {
           if (formData[field] !== undefined) {
-            // Convert boolean values to strings for FormData
             if (typeof formData[field] === "boolean") {
               formDataToSend.append(field, formData[field].toString());
               console.log(`Adding field ${field} as string:`, formData[field].toString());
@@ -267,7 +248,6 @@ const VeterinarianProfile = () => {
 
         const response = await axiosInstance.put(updateUrl, formDataToSend, {
           headers: {
-            // Don't set Content-Type with FormData
             "x-auth-token": auth.token,
           },
         });
@@ -275,7 +255,6 @@ const VeterinarianProfile = () => {
         console.log("Update response:", response.data);
         setProfile(response.data);
       } else {
-        // Use JSON for non-file updates
         const dataToSend = {};
         const updatableFields = [
           "name",
@@ -369,11 +348,10 @@ const VeterinarianProfile = () => {
       }
 
       console.log("Updating password for ID:", veterinarianId);
-      
-      // Verify this matches the user ID in the token or localStorage
+
       const userId = localStorage.getItem("vetapp-userId");
       const userRole = localStorage.getItem("vetapp-role");
-      
+
       if (userId !== veterinarianId) {
         console.log("Token userId:", userId, "Profile ID:", veterinarianId);
         setPasswordError("Authorization error: You can only update your own password.");
