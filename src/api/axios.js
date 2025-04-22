@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3001", // Base URL without /api
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3001/api", // Base URL with /api
   headers: {
     "Content-Type": "application/json",
     "Accept": "application/json",
@@ -22,5 +22,11 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+// Function to get base URL without /api for image URLs
+export const getBaseUrl = () => {
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+  return baseUrl.replace('/api', '');
+};
 
 export default axiosInstance;
