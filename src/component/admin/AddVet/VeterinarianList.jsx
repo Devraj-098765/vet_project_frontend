@@ -1,6 +1,6 @@
-
 import React, { useEffect, useState } from "react";
 import AdminNavbar from "../AdminNavbar";
+import { toast } from "react-toastify";
 
 const AdminVeterinarianList = () => {
   const [veterinarians, setVeterinarians] = useState([]);
@@ -24,6 +24,40 @@ const AdminVeterinarianList = () => {
         setLoading(false);
       });
   }, []);
+
+  const toggleVetStatus = async (vetId, currentStatus) => {
+    try {
+      const newStatus = currentStatus === "active" ? "inactive" : "active";
+      const response = await fetch(`http://localhost:3001/api/veterinarians/${vetId}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update status");
+      
+      const data = await response.json();
+
+      setVeterinarians((prev) =>
+        prev.map((vet) =>
+          vet._id === vetId ? { ...vet, status: newStatus } : vet
+        )
+      );
+      
+      // Show success message with notification info
+      const vet = veterinarians.find(v => v._id === vetId);
+      if (newStatus === "inactive") {
+        toast.success(`${vet.name}'s account has been deactivated. An email notification has been sent.`);
+      } else {
+        toast.success(`${vet.name}'s account has been activated. An email notification has been sent.`);
+      }
+    } catch (error) {
+      setError(error.message);
+      toast.error(`Failed to update status: ${error.message}`);
+    }
+  };
 
   const openProfile = (vet) => {
     setSelectedVet(vet);
@@ -57,12 +91,27 @@ const AdminVeterinarianList = () => {
               </div>
               <p className="text-gray-500 mt-2">{vet.experience} years experience</p>
               <p className="text-gray-700 font-medium mt-1">Fee: ${vet.fee}</p>
-              <button 
-                className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                onClick={() => openProfile(vet)}
-              >
-                View Profile
-              </button>
+              <p className="text-gray-700 font-medium mt-1">
+                Status: <span className={vet.status === "active" ? "text-green-600" : "text-red-600"}>{vet.status}</span>
+              </p>
+              <div className="mt-4 flex gap-2">
+                <button 
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  onClick={() => openProfile(vet)}
+                >
+                  View Profile
+                </button>
+                <button
+                  className={`px-4 py-2 rounded-lg text-white transition-colors ${
+                    vet.status === "active"
+                      ? "bg-red-600 hover:bg-red-700"
+                      : "bg-green-600 hover:bg-green-700"
+                  }`}
+                  onClick={() => toggleVetStatus(vet._id, vet.status)}
+                >
+                  {vet.status === "active" ? "Deactivate" : "Activate"}
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -109,6 +158,13 @@ const AdminVeterinarianList = () => {
                     <span className="font-semibold">Location:</span> {selectedVet.location || "Not provided"}
                   </p>
                   
+                  <p className="text-gray-700 mb-2">
+                    <span className="font-semibold">Status:</span>{" "}
+                    <span className={selectedVet.status === "active" ? "text-green-600" : "text-red-600"}>
+                      {selectedVet.status}
+                    </span>
+                  </p>
+                  
                   <div className="mt-4">
                     <h4 className="text-lg font-semibold text-purple-700 mb-2">📄 Bio</h4>
                     <p className="text-gray-700">{selectedVet.bio}</p>
@@ -116,7 +172,21 @@ const AdminVeterinarianList = () => {
                 </div>
               </div>
               
-              <div className="mt-6 flex justify-end">
+              <div className="mt-6 flex justify-end gap-2">
+                <button
+                  className={`px-4 py-2 rounded-lg text-white transition-colors ${
+                    selectedVet.status === "active"
+                      ? "bg-red-600 hover:bg-red-700"
+                      : "bg-green-600 hover:bg-green-700"
+                  }`}
+                  onClick={() => {
+                    toggleVetStatus(selectedVet._id, selectedVet.status);
+                    const newStatus = selectedVet.status === "active" ? "inactive" : "active";
+                    setSelectedVet({ ...selectedVet, status: newStatus });
+                  }}
+                >
+                  {selectedVet.status === "active" ? "Deactivate" : "Activate"}
+                </button>
                 <button 
                   onClick={closeModal}
                   className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
