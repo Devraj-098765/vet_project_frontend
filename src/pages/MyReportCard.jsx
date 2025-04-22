@@ -320,7 +320,7 @@ import { toast } from "react-toastify";
 import { FileText, Download, Printer, Search, ChevronLeft, ChevronRight, Calendar, Thermometer, Weight, Clock, X } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import axiosInstance from "../api/axios";
-import NavBar from "../component/Header/Navbar";
+import NavBar from "../component/Header/NavBar";
 import Footer from "../component/Footer/Footer";
 
 const MyReportCard = () => {
