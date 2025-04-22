@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
-import NavBar from './Header/NavBar';
 import Footer from './Footer/Footer';
 import axiosInstance from '../api/axios';
 import { Calendar, Search, Tag } from 'lucide-react';
+import NavBar from './Header/Navbar';
 
 const Card = ({ children, className }) => (
   <div className={`bg-green-50 border border-green-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 ${className}`}>{children}</div>
@@ -40,6 +41,8 @@ const UserBlogPage = () => {
     const fetchBlogs = async () => {
       try {
         const response = await axiosInstance.get('/blogs');
+        // Log response for debugging (can be removed in production)
+        console.log('Blogs API Response:', response.data);
         setBlogs(response.data);
       } catch (error) {
         console.error('Error fetching blogs:', error);
@@ -107,7 +110,7 @@ const UserBlogPage = () => {
                       <Badge variant="success">{blog.category}</Badge>
                       <span className="flex items-center gap-1">
                         <Tag size={16} className="text-green-600" />
-                        Dr. {blog.author.name}
+                        Dr. {blog.author?.name || 'Unknown Author'}
                       </span>
                     </div>
                     <div className="h-px w-full bg-green-200 my-3"></div>
