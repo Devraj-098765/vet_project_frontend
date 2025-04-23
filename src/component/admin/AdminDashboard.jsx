@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiCalendar, FiHeart, FiUsers, FiActivity, FiLogOut } from "react-icons/fi";
+import { FiCalendar, FiHeart, FiUsers, FiActivity, FiLogOut, FiPieChart } from "react-icons/fi";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import AdminNavbar from "./AdminNavbar";
@@ -96,6 +96,37 @@ const AdminDashboard = () => {
     navigate(route);
   };
 
+  // Create pie chart data for users vs appointments
+  const pieChartData = [
+    { name: "Users", value: statistics.totalUsers, color: "#3B82F6" }, // Blue
+    { name: "Appointments", value: statistics.totalAppointments, color: "#10B981" } // Green
+  ];
+
+  // Calculate total for percentage
+  const pieTotal = pieChartData.reduce((sum, item) => sum + item.value, 0);
+
+  // Calculate segments for pie chart
+  const getPieChartSegments = () => {
+    let cumulativePercentage = 0;
+    return pieChartData.map((item) => {
+      const percentage = pieTotal > 0 ? (item.value / pieTotal) * 100 : 0;
+      const startAngle = cumulativePercentage;
+      cumulativePercentage += percentage;
+      const endAngle = cumulativePercentage;
+      
+      return {
+        name: item.name,
+        value: item.value,
+        percentage,
+        startAngle: (startAngle / 100) * 360,
+        endAngle: (endAngle / 100) * 360,
+        color: item.color
+      };
+    });
+  };
+
+  const pieSegments = getPieChartSegments();
+
   return (
     <div className="flex h-screen bg-gray-100">
       <AdminNavbar />
@@ -168,41 +199,79 @@ const AdminDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="bg-white p-6 rounded-xl shadow lg:col-span-2 hover:shadow-md transition-shadow duration-300">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-800">Weekly Appointments Overview</h2>
+              <h2 className="text-xl font-semibold text-gray-800">Users vs Appointments Distribution</h2>
               <div className="bg-blue-100 text-blue-600 rounded-full p-2">
-                <FiActivity className="text-lg" />
+                <FiPieChart className="text-lg" />
               </div>
             </div>
             {isLoading ? (
               <div className="animate-pulse bg-gray-200 h-64 w-full rounded"></div>
             ) : (
               <div className="h-64 relative">
-                <div className="flex h-52 items-end space-x-3 px-4">
-                  {appointmentData.map((item, index) => {
-                    const maxValue = Math.max(...appointmentData.map((d) => d.value));
-                    const heightPercentage = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
-                    return (
-                      <div key={index} className="flex flex-col items-center flex-1 relative group">
-                        <div
-                          className="w-full bg-gradient-to-t from-blue-400 to-blue-600 rounded-t-md transition-all duration-300 ease-in-out hover:from-blue-500 hover:to-blue-700 shadow hover:shadow-md group-hover:translate-y-px transform"
-                          style={{ height: `${heightPercentage}%` }}
-                        >
-                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-sm text-gray-700 bg-white px-3 py-1.5 rounded-lg shadow-md">
-                            {item.value} appointments
-                          </div>
-                        </div>
-                        <span className="text-sm mt-2 text-gray-600 font-medium">{item.name}</span>
+                {/* Pie Chart */}
+                <div className="flex justify-center">
+                  <div className="relative w-64 h-64">
+                    {/* Pie segments */}
+                    {pieSegments.map((segment, index) => {
+                      // Skip rendering if the segment is too small
+                      if (segment.percentage < 0.5) return null;
+                      
+                      // Calculate SVG path for arc
+                      const radius = 120;
+                      const centerX = 128;
+                      const centerY = 128;
+                      
+                      // Convert degrees to radians
+                      const startRad = (segment.startAngle - 90) * Math.PI / 180;
+                      const endRad = (segment.endAngle - 90) * Math.PI / 180;
+                      
+                      // Calculate points
+                      const x1 = centerX + radius * Math.cos(startRad);
+                      const y1 = centerY + radius * Math.sin(startRad);
+                      const x2 = centerX + radius * Math.cos(endRad);
+                      const y2 = centerY + radius * Math.sin(endRad);
+                      
+                      // Determine which arc to use (large or small)
+                      const largeArc = segment.percentage > 50 ? 1 : 0;
+                      
+                      // Create path
+                      const path = `M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                      
+                      return (
+                        <svg key={index} className="absolute inset-0 transition-opacity duration-300 hover:opacity-90 cursor-pointer" viewBox="0 0 256 256">
+                          <path
+                            d={path}
+                            fill={segment.color}
+                            stroke="white"
+                            strokeWidth="2"
+                          >
+                            <title>{segment.name}: {segment.value} ({segment.percentage.toFixed(1)}%)</title>
+                          </path>
+                        </svg>
+                      );
+                    })}
+                    
+                    {/* Center circle with total */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="bg-white rounded-full w-24 h-24 flex flex-col items-center justify-center shadow">
+                        <span className="text-2xl font-bold text-gray-800">{pieTotal}</span>
+                        <span className="text-xs text-gray-500">Total</span>
                       </div>
-                    );
-                  })}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex justify-between mt-4 border-t pt-3 text-xs text-gray-500 px-4">
-                  <span>0</span>
-                  <span className="font-medium">Appointments</span>
-                  <span>{Math.max(...appointmentData.map((d) => d.value))}</span>
-                </div>
-                <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -rotate-90 text-xs text-gray-500">
-                  Volume
+                
+                {/* Legend */}
+                <div className="flex justify-center mt-6 gap-8">
+                  {pieSegments.map((segment, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: segment.color }}></div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-700">{segment.name}</span>
+                        <span className="text-xs text-gray-500">{segment.value} ({segment.percentage.toFixed(1)}%)</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

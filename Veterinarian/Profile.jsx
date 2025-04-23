@@ -83,7 +83,7 @@ const VeterinarianProfile = () => {
 
   const formatImageUrl = (imagePath) => {
     if (!imagePath) return null;
-    return `${baseUrl}${imagePath}`;
+    return `${baseUrl}${imagePath}?t=${new Date().getTime()}`;
   };
 
   const handleInputChange = (e) => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axiosInstance from "../../api/axios.js";
+import axiosInstance, { getBaseUrl } from "../../api/axios.js";
 import NavBar from "../Header/Navbar.jsx";
 import Footer from "../Footer/Footer";
 import { toast } from "react-toastify";
@@ -115,15 +115,13 @@ const AppointmentHistory = () => {
           ) : (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {appointments.map((appt) => {
+                // Use getBaseUrl to correctly format the image URL
+                const baseUrl = getBaseUrl();
                 let imageUrl = appt.veterinarianId?.image
-                  ? `${import.meta.env.VITE_API_URL}${appt.veterinarianId.image}`
-                  : "https://placehold.co/40x40";
+                  ? `${baseUrl}${appt.veterinarianId.image}`
+                  : "/assets/default-profile.png";
                 
-                if (imageUrl.includes("/api/uploads/")) {
-                  imageUrl = imageUrl.replace("/api/uploads/", "/uploads/");
-                }
-
-                console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
+                console.log("Base URL:", baseUrl);
                 console.log("Veterinarian Image Path:", appt.veterinarianId?.image);
                 console.log("Constructed Image URL:", imageUrl);
 
@@ -154,7 +152,7 @@ const AppointmentHistory = () => {
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
                                   console.error(`Image failed to load: ${imageUrl}`);
-                                  e.target.src = "https://placehold.co/40x40";
+                                  e.target.src = "/assets/default-profile.png";
                                 }}
                                 onLoad={() => console.log(`Image loaded successfully: ${imageUrl}`)}
                               />
