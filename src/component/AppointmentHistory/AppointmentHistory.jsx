@@ -115,7 +115,6 @@ const AppointmentHistory = () => {
           ) : (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {appointments.map((appt) => {
-                // Use getBaseUrl to correctly format the image URL
                 const baseUrl = getBaseUrl();
                 let imageUrl = appt.veterinarianId?.image
                   ? `${baseUrl}${appt.veterinarianId.image}`
