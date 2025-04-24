@@ -1,7 +1,6 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router-dom";
 import ProtectedRoute from "./utils/ProtectedRoute";
-import MainLayout from "./component/MainLayout";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import IndexPage from "./component/Index/IndexPage";
@@ -9,7 +8,7 @@ import AboutUs from "./component/About/About";
 import Consultation from "./component/Consultation/Consultation";
 import Footer from "./component/Footer/Footer";
 import Contact from "./utils/Contact";
-import UserBlogPage from "./component/UserBlog.jsx";
+import { UserBlogPage, BlogDetail } from "./component/UserBlog.jsx";
 import Admin from "./pages/auth/Admin";
 import AdminDashboard from "./component/admin/AdminDashboard";
 import UserList from "./component/admin/Userlist/UserList";
@@ -29,13 +28,16 @@ import VeterinarianReports from "../Veterinarian/VeterinarianReports.jsx";
 import MyReportCard from "./pages/MyReportCard.jsx";
 import Blog from "../Veterinarian/Blog.jsx";
 import ResetPasswordConfirmation from "./pages/auth/ResetPasswordConfirmation.jsx";
-
+import VetLocationMap from "./component/VetMap/VetLocationMap.jsx";
+import RouteErrorBoundary from "./utils/RouteErrorBoundary.jsx";
+import NotFound from "./utils/NotFound.jsx";
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
       element: <Outlet />,
+      errorElement: <RouteErrorBoundary />,
       children: [
         {
           path: "/",
@@ -54,6 +56,10 @@ function App() {
           element: <UserVeterinarianList />,
         },
         {
+          path: "/find-nearby-vets",
+          element: <VetLocationMap />,
+        },
+        {
           path: "/contact",
           element: <Contact />,
         },
@@ -62,8 +68,17 @@ function App() {
           element: <Footer />,
         },
         {
-        path:"/userblog",
-        element:<UserBlogPage/>  
+          path: "/blogs",
+          element: <UserBlogPage />  
+        },
+        {
+          path: "/blogs/:id",
+          element: <BlogDetail />  
+        },
+        // Redirect from old blog path to the new one
+        {
+          path: "/userblog",
+          element: <Navigate to="/blogs" replace />
         },
         {
           path: "/bookingsystem",
@@ -93,24 +108,33 @@ function App() {
               <MyReportCard />
             </ProtectedRoute>
           ),
-        }, // New route
+        },
+        // Catch-all for undefined paths within the main layout
+        {
+          path: "*",
+          element: <NotFound />
+        }
       ],
     },
     {
       path: "/sign-up",
       element: <Signup />,
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/login",
       element: <Login />,
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/reset-password/:token",
-      element: <ResetPasswordConfirmation />, // Assuming you have a ResetPassword component
+      element: <ResetPasswordConfirmation />,
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/admin",
       element: <Admin />,
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/adminDashboard",
@@ -119,6 +143,7 @@ function App() {
           <AdminDashboard />
         </ProtectedRoute>
       ),
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/appointments",
@@ -127,14 +152,17 @@ function App() {
           <AdminAppointments />
         </ProtectedRoute>
       ),
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/UserList",
       element: <UserList />,
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/AddVet",
       element: <AddVet />,
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/admin/veterinarianlist",
@@ -143,6 +171,7 @@ function App() {
           <VeterinarianList />
         </ProtectedRoute>
       ),
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/VeterinarianDashboard",
@@ -151,6 +180,7 @@ function App() {
           <VeterinarianDashboard />
         </ProtectedRoute>
       ),
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/Totalappointment",
@@ -159,6 +189,7 @@ function App() {
           <TotalAppointment />
         </ProtectedRoute>
       ),
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/booking-report/:bookingId",
@@ -167,6 +198,7 @@ function App() {
           <MakeReport />
         </ProtectedRoute>
       ),
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/veterinarian-reports",
@@ -175,19 +207,27 @@ function App() {
           <VeterinarianReports />
         </ProtectedRoute>
       ),
+      errorElement: <RouteErrorBoundary />,
     },
     {
-    path: "/blog",
-    element: (
-      <ProtectedRoute>
-        <Blog />
-      </ProtectedRoute>
-    ),
+      path: "/blog",
+      element: (
+        <ProtectedRoute>
+          <Blog />
+        </ProtectedRoute>
+      ),
+      errorElement: <RouteErrorBoundary />,
     },
     {
       path: "/Profile",
       element: <Profile />,
+      errorElement: <RouteErrorBoundary />,
     },
+    // Global catch-all for any unmatched routes
+    {
+      path: "*",
+      element: <NotFound />,
+    }
   ]);
 
   return <RouterProvider router={router} />;

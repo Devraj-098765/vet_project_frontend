@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import Footer from './Footer/Footer';
 import axiosInstance from '../api/axios';
-import { Calendar, Search, Tag } from 'lucide-react';
+import { Calendar, Search, Tag, ArrowLeft } from 'lucide-react';
 import NavBar from './Header/Navbar';
+import { useNavigate, useParams } from 'react-router-dom';
+// import CommentSection from './Comments/CommentSection';
 
 const Card = ({ children, className }) => (
   <div className={`bg-green-50 border border-green-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 ${className}`}>{children}</div>
@@ -33,9 +34,125 @@ const Badge = ({ children, variant }) => (
   </span>
 );
 
+// BlogDetail component to show a single blog post with comments
+const BlogDetail = () => {
+  const { id } = useParams();
+  const [blog, setBlog] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get(`/blogs/${id}`);
+        setBlog(response.data);
+      } catch (error) {
+        console.error('Error fetching blog:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchBlog();
+    }
+  }, [id]);
+
+  const formatContent = (content) => {
+    return content.split('\n').map((paragraph, index) => 
+      paragraph ? <p key={index} className="mb-3 text-green-900">{paragraph}</p> : <br key={index} />
+    );
+  };
+
+  const goBack = () => {
+    navigate('/blogs');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-green-100 to-green-50 flex justify-center items-center">
+        <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-green-500 border-r-transparent"></div>
+      </div>
+    );
+  }
+
+  if (!blog) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-green-100 to-green-50">
+        <div className="flex justify-center items-center bg-green-800 bg-opacity-10 backdrop-blur-sm sticky top-0 z-10">
+          <NavBar />
+        </div>
+        <div className="max-w-4xl mx-auto p-8 text-center">
+          <h1 className="text-2xl font-bold text-red-600">Blog post not found</h1>
+          <button 
+            onClick={goBack}
+            className="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 mx-auto"
+          >
+            <ArrowLeft size={16} />
+            Back to Blog List
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-green-100 to-green-50">
+      <div className="flex justify-center items-center bg-green-800 bg-opacity-10 backdrop-blur-sm sticky top-0 z-10">
+        <NavBar />
+      </div>
+      
+      <div className="max-w-4xl mx-auto p-8 space-y-8">
+        <button 
+          onClick={goBack}
+          className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors w-fit"
+        >
+          <ArrowLeft size={16} />
+          Back to Blog List
+        </button>
+
+        <div className="bg-green-50 border border-green-200 rounded-xl shadow-sm">
+          <div className="p-6 space-y-4">
+            <div>
+              <h2 className="text-3xl font-semibold text-green-800 mb-2">{blog.title}</h2>
+              <div className="flex flex-wrap items-center gap-3 text-sm text-green-700 mb-3">
+                <span className="flex items-center gap-1">
+                  <Calendar size={16} className="text-green-600" />
+                  {new Date(blog.createdAt).toLocaleString()}
+                </span>
+                <span className="px-3 py-1 text-xs font-medium rounded-full bg-green-200 text-green-800">
+                  {blog.category}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Tag size={16} className="text-green-600" />
+                  Dr. {blog.author?.name || 'Unknown Author'}
+                </span>
+              </div>
+              <div className="h-px w-full bg-green-200 my-3"></div>
+            </div>
+            <div className="prose prose-green max-w-none text-green-800">
+              {formatContent(blog.content)}
+            </div>
+            {blog.updatedAt && (
+              <p className="text-xs text-green-600 italic mt-4">
+                Last updated: {new Date(blog.updatedAt).toLocaleString()}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Comments Section Removed */}
+      </div>
+      <Footer />
+    </div>
+  );
+};
+
 const UserBlogPage = () => {
   const [blogs, setBlogs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -58,9 +175,19 @@ const UserBlogPage = () => {
   );
 
   const formatContent = (content) => {
-    return content.split('\n').map((paragraph, index) => 
+    // Truncate content for preview
+    const maxLength = 200;
+    const truncated = content.length > maxLength 
+      ? content.substring(0, maxLength) + '...' 
+      : content;
+      
+    return truncated.split('\n').map((paragraph, index) => 
       paragraph ? <p key={index} className="mb-3 text-green-900">{paragraph}</p> : <br key={index} />
     );
+  };
+
+  const viewBlogDetails = (blogId) => {
+    navigate(`/blogs/${blogId}`);
   };
 
   return (
@@ -98,7 +225,7 @@ const UserBlogPage = () => {
             </Card>
           ) : (
             filteredBlogs.map((blog) => (
-              <Card key={blog._id}>
+              <Card key={blog._id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => viewBlogDetails(blog._id)}>
                 <CardContent className="space-y-4">
                   <div>
                     <h2 className="text-2xl font-semibold text-green-800 mb-2">{blog.title}</h2>
@@ -118,11 +245,16 @@ const UserBlogPage = () => {
                   <div className="prose prose-green max-w-none text-green-800">
                     {formatContent(blog.content)}
                   </div>
-                  {blog.updatedAt && (
-                    <p className="text-xs text-green-600 italic mt-4">
-                      Last updated: {new Date(blog.updatedAt).toLocaleString()}
-                    </p>
-                  )}
+                  <div className="flex justify-between items-center">
+                    {blog.updatedAt && (
+                      <p className="text-xs text-green-600 italic">
+                        Last updated: {new Date(blog.updatedAt).toLocaleString()}
+                      </p>
+                    )}
+                    <button className="text-green-600 hover:text-green-800 text-sm font-medium">
+                      Read More →
+                    </button>
+                  </div>
                 </CardContent>
               </Card>
             ))
@@ -134,4 +266,4 @@ const UserBlogPage = () => {
   );
 };
 
-export default UserBlogPage;
+export { UserBlogPage, BlogDetail };

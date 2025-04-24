@@ -186,7 +186,7 @@ const NavBar = () => {
           </NavLink>
 
           <NavLink 
-            to="/userblog" 
+            to="/blogs" 
             className={({ isActive }) => 
               isActive 
                 ? "bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium"
@@ -340,109 +340,103 @@ const NavBar = () => {
         {mobileMenuOpen && (
           <div 
             ref={mobileMenuRef}
-            className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-green-200 z-20 mx-4"
+            className="absolute top-16 right-0 w-64 bg-white shadow-lg rounded-lg overflow-hidden z-10 border border-green-200 md:hidden"
           >
-            <div className="py-2">
-              <NavLink 
-                to="/consultation" 
-                className={({ isActive }) => 
-                  isActive 
-                    ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
-                    : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
-                }
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Consultation
-              </NavLink>
+            <NavLink 
+              to="/consultation" 
+              className={({ isActive }) => 
+                isActive 
+                  ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
+                  : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
+              }
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Consultation
+            </NavLink>
+            
+            <NavLink 
+              to="/user/veterinarians" 
+              className={({ isActive }) => 
+                isActive 
+                  ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
+                  : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
+              }
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              All Veterinarians
+            </NavLink>
 
-              <NavLink 
-                to="/user/veterinarians" 
-                className={({ isActive }) => 
-                  isActive 
-                    ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
-                    : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
-                }
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                All Veterinarians
-              </NavLink>
+            <NavLink 
+              to="/about-us" 
+              className={({ isActive }) => 
+                isActive 
+                  ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
+                  : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
+              }
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              About
+            </NavLink>
 
-              <NavLink 
-                to="/about-us" 
-                className={({ isActive }) => 
-                  isActive 
-                    ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
-                    : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
-                }
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                About
-              </NavLink>
+            <NavLink
+              to="/blogs"
+              className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Blog
+            </NavLink>
 
-              <NavLink 
-                to="/userblog" 
-                className={({ isActive }) => 
-                  isActive 
-                    ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
-                    : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
-                }
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Blog
-              </NavLink>
+            <NavLink 
+              to="/contact" 
+              className={({ isActive }) => 
+                isActive 
+                  ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
+                  : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
+              }
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Contact
+            </NavLink>
 
-              <NavLink 
-                to="/contact" 
-                className={({ isActive }) => 
-                  isActive 
-                    ? "block px-4 py-3 bg-green-100 text-green-800 font-medium"
-                    : "block px-4 py-3 text-green-700 hover:bg-green-50 transition-colors"
-                }
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Contact
-              </NavLink>
-
-              {auth.token && (
-                <>
-                  <div className="border-t border-green-100 my-2"></div>
-                  <NavLink
-                    to={`/editprofile/${auth.userId}`}
-                    className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Edit profile 
-                  </NavLink>
-                  <NavLink
-                    to="/my-report-card"
-                    className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Report
-                  </NavLink>
-                  <NavLink
-                    to={`/appointmenthistory/${auth.userId}`}
-                    className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Appointment Details
-                  </NavLink>
-                  <NavLink
-                    to="/userblog"
-                    className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Blog
-                  </NavLink>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-3 text-red-600 hover:bg-green-50 transition-colors border-t border-green-100"
-                  >
-                    Logout
-                  </button>
-                </>
-              )}
-            </div>
+            {auth.token && (
+              <>
+                <div className="border-t border-green-100 my-2"></div>
+                <NavLink
+                  to={`/editprofile/${auth.userId}`}
+                  className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Edit profile 
+                </NavLink>
+                <NavLink
+                  to="/my-report-card"
+                  className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Report
+                </NavLink>
+                <NavLink
+                  to={`/appointmenthistory/${auth.userId}`}
+                  className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Appointment Details
+                </NavLink>
+                <NavLink
+                  to="/blogs"
+                  className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Blog
+                </NavLink>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-3 text-red-600 hover:bg-green-50 transition-colors border-t border-green-100"
+                >
+                  Logout
+                </button>
+              </>
+            )}
           </div>
         )}
       </nav>
