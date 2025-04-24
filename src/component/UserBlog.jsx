@@ -4,7 +4,6 @@ import axiosInstance from '../api/axios';
 import { Calendar, Search, Tag, ArrowLeft } from 'lucide-react';
 import NavBar from './Header/Navbar';
 import { useNavigate, useParams } from 'react-router-dom';
-// import CommentSection from './Comments/CommentSection';
 
 const Card = ({ children, className }) => (
   <div className={`bg-green-50 border border-green-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 ${className}`}>{children}</div>
