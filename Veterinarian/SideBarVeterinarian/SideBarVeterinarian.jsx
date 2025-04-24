@@ -92,6 +92,10 @@ const SideBarVeterinarian = () => {
           <div
             className="flex items-center cursor-pointer"
             onClick={() => handleNavigation("/VeterinarianDashboard")}
+            role="button"
+            tabIndex="0"
+            aria-label="Go to Dashboard"
+            onKeyDown={(e) => e.key === 'Enter' && handleNavigation("/VeterinarianDashboard")}
           >
             <div className="bg-green-500 bg-opacity-20 p-2 rounded-full">
               <FiUser className="text-white text-xl" />
@@ -102,28 +106,35 @@ const SideBarVeterinarian = () => {
         <button
           onClick={toggleCollapse}
           className="text-white hover:bg-green-500 hover:bg-opacity-20 p-1 rounded-full transition-colors"
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {isCollapsed ? <FiChevronRight size={20} /> : <FiChevronLeft size={20} />}
         </button>
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-grow mt-4">
+      <nav className="flex-grow mt-4" aria-label="Main navigation">
         <ul className="space-y-2">
           {navItems.map((item) => (
             <li
               key={item.route}
-              className={`relative flex items-center px-4 py-3 rounded-lg cursor-pointer transition-all duration-300 ${
+              className={`relative group flex items-center px-4 py-3 rounded-lg cursor-pointer transition-all duration-300 ${
                 isActive(item.route)
                   ? "bg-green-500 bg-opacity-20 text-white shadow-md"
                   : "text-green-100 hover:bg-green-500 hover:bg-opacity-10"
               }`}
               onClick={() => handleNavigation(item.route)}
+              role="button"
+              tabIndex="0"
+              aria-label={item.name}
+              aria-current={isActive(item.route) ? "page" : undefined}
+              onKeyDown={(e) => e.key === 'Enter' && handleNavigation(item.route)}
             >
               <div
                 className={`text-xl ${
                   isActive(item.route) ? "text-white" : "text-green-200"
                 }`}
+                aria-hidden="true"
               >
                 {item.icon}
               </div>
@@ -131,12 +142,12 @@ const SideBarVeterinarian = () => {
                 <span className="ml-3 font-medium">{item.name}</span>
               )}
               {isCollapsed && (
-                <span className="absolute left-14 bg-green-700 text-white text-xs rounded-md px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                <span className="absolute left-14 bg-green-700 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   {item.tooltip}
                 </span>
               )}
               {isActive(item.route) && !isCollapsed && (
-                <div className="ml-auto w-1 h-6 bg-green-300 rounded-full" />
+                <div className="ml-auto w-1 h-6 bg-green-300 rounded-full" aria-hidden="true" />
               )}
             </li>
           ))}
@@ -155,7 +166,7 @@ const SideBarVeterinarian = () => {
                   className="w-8 h-8 rounded-full object-cover flex-shrink-0"
                 />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center flex-shrink-0" aria-hidden="true">
                   <FiUser className="text-green-800" />
                 </div>
               )}
@@ -168,14 +179,15 @@ const SideBarVeterinarian = () => {
         )}
         <button
           onClick={handleLogoutClick}
-          className={`w-full flex items-center px-4 py-3 text-green-100 hover:bg-green-500 hover:bg-opacity-10 rounded-lg transition-all duration-300 ${
+          className={`group w-full flex items-center px-4 py-3 text-green-100 hover:bg-green-500 hover:bg-opacity-10 rounded-lg transition-all duration-300 ${
             isCollapsed ? "justify-center" : ""
           }`}
+          aria-label="Logout"
         >
-          <FiLogOut className="text-xl text-green-200 flex-shrink-0" />
+          <FiLogOut className="text-xl text-green-200 flex-shrink-0" aria-hidden="true" />
           {!isCollapsed && <span className="ml-3 font-medium">Logout</span>}
           {isCollapsed && (
-            <span className="absolute left-14 bg-green-700 text-white text-xs rounded-md px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+            <span className="absolute left-14 bg-green-700 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
               Logout
             </span>
           )}
@@ -184,9 +196,14 @@ const SideBarVeterinarian = () => {
 
       {/* Custom Logout Modal */}
       {showLogoutModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="logout-modal-title"
+        >
           <div className="bg-white rounded-lg p-6 w-80 shadow-lg">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Confirm Logout</h3>
+            <h3 id="logout-modal-title" className="text-lg font-semibold text-gray-800 mb-4">Confirm Logout</h3>
             <p className="text-gray-600 mb-6">Are you sure you want to log out?</p>
             <div className="flex justify-end space-x-3">
               <button
