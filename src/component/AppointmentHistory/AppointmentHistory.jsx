@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance, { getBaseUrl } from "../../api/axios.js";
-import NavBar from "../Header/Navbar.jsx";
+import NavBar from "../Header/NavBar.jsx";
 import Footer from "../Footer/Footer";
 import { toast } from "react-toastify";
+import { FaMoneyBill, FaCheck, FaClock } from "react-icons/fa";
 
 const AppointmentHistory = () => {
   const [appointments, setAppointments] = useState([]);
+  const [payments, setPayments] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -14,6 +16,7 @@ const AppointmentHistory = () => {
 
   useEffect(() => {
     fetchAppointments();
+    fetchPayments();
   }, []);
 
   const fetchAppointments = async () => {
@@ -27,6 +30,43 @@ const AppointmentHistory = () => {
       setError("Failed to load appointment history");
       setLoading(false);
       toast.error("Failed to load appointment history");
+    }
+  };
+  
+  const fetchPayments = async () => {
+    try {
+      const response = await axiosInstance.get("/payments/history");
+      console.log("Payment history response:", response.data);
+      
+      // Create a map of booking ID to payment
+      const paymentsMap = {};
+      response.data.forEach(payment => {
+        // Carefully handle different response structures for bookingId
+        let bookingId;
+        if (payment.bookingId) {
+          if (typeof payment.bookingId === 'object' && payment.bookingId._id) {
+            // If bookingId is populated as an object
+            bookingId = payment.bookingId._id;
+          } else if (typeof payment.bookingId === 'string') {
+            // If bookingId is just a string ID
+            bookingId = payment.bookingId;
+          } else {
+            // Use the toString() method for ObjectId instances
+            bookingId = payment.bookingId.toString();
+          }
+          
+          paymentsMap[bookingId] = {
+            ...payment,
+            // Format the date for easier display
+            formattedDate: new Date(payment.createdAt).toLocaleDateString()
+          };
+        }
+      });
+      console.log("Payments map:", paymentsMap);
+      setPayments(paymentsMap);
+    } catch (err) {
+      console.error("Payment Fetch Error:", err.response?.data || err.message);
+      // Don't set error here as we still want to show appointments even if payments fail
     }
   };
 
@@ -65,7 +105,8 @@ const AppointmentHistory = () => {
       closeCancelModal();
     } catch (err) {
       console.error("Cancel Error:", err.response?.data || err.message);
-      toast.error("Failed to cancel appointment");
+      // Display the specific error message from the backend
+      toast.error(err.response?.data?.error || "Failed to cancel appointment");
       closeCancelModal();
     }
   };
@@ -82,6 +123,25 @@ const AppointmentHistory = () => {
         return "bg-red-400";
       default:
         return "bg-gray-400";
+    }
+  };
+  
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "Pending":
+        return <FaClock className="text-yellow-500" />;
+      case "Confirmed":
+        return <FaCheck className="text-green-500" />;
+      case "Completed":
+        return <FaCheck className="text-blue-500" />;
+      case "Cancelled":
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        );
+      default:
+        return <FaClock className="text-gray-500" />;
     }
   };
 
@@ -119,6 +179,12 @@ const AppointmentHistory = () => {
                 let imageUrl = appt.veterinarianId?.image
                   ? `${baseUrl}${appt.veterinarianId.image}`
                   : "/assets/default-profile.png";
+                
+                const payment = payments[appt._id];
+                
+                console.log("Appointment ID:", appt._id);
+                console.log("Payment for this appointment:", payment);
+                console.log("All payment keys:", Object.keys(payments));
                 
                 console.log("Base URL:", baseUrl);
                 console.log("Veterinarian Image Path:", appt.veterinarianId?.image);
@@ -232,64 +298,68 @@ const AppointmentHistory = () => {
                               </p>
                             </div>
                           </div>
+                          
+                          {/* Payment Information */}
+                          <div className="flex items-center">
+                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                              <FaMoneyBill className="w-4 h-4 text-blue-600" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500 font-medium">Payment</p>
+                              {payment ? (
+                                <div className="flex flex-col">
+                                  <div className="flex items-center">
+                                    <span className="text-gray-800">${payment.amount.toFixed(2)}</span>
+                                    <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700">Paid</span>
+                                  </div>
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    {payment.formattedDate} 
+                                    {payment.metadata?.service && ` • ${payment.metadata.service}`}
+                                  </p>
+                                </div>
+                              ) : appt.paymentCompleted ? (
+                                <div className="flex flex-col">
+                                  <div className="flex items-center">
+                                    <span className="text-gray-800">Payment received</span>
+                                    <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700">Paid</span>
+                                  </div>
+                                </div>
+                              ) : (
+                                <p className="text-gray-500">Not paid yet</p>
+                              )}
+                            </div>
+                          </div>
 
                           <div className="flex items-center">
                             <div className="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center mr-3">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                className="w-4 h-4 text-yellow-600"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
+                              {getStatusIcon(appt.status)}
                             </div>
                             <div>
                               <p className="text-sm text-gray-500 font-medium">Status</p>
                               <p className="text-gray-800">{appt.status}</p>
                             </div>
                           </div>
-
-                          {appt.status === "Cancelled" && appt.cancellationReason && (
-                            <div className="flex items-center">
-                              <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                  className="w-4 h-4 text-red-600"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M6 18L18 6M6 6l12 12"
-                                  />
-                                </svg>
-                              </div>
-                              <div>
-                                <p className="text-sm text-gray-500 font-medium">Cancellation Reason</p>
-                                <p className="text-gray-800">{appt.cancellationReason}</p>
-                              </div>
-                            </div>
-                          )}
                         </div>
 
-                        {["Pending"].includes(appt.status) && (
+                        <div className="border-t border-green-100 pt-4">
                           <button
                             onClick={() => openCancelModal(appt._id)}
-                            className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 px-4 rounded-xl font-medium hover:from-red-600 hover:to-red-700"
+                            disabled={appt.status === "Cancelled" || appt.status === "Completed" || appt.status === "Confirmed"}
+                            className={`w-full py-2 rounded-lg text-center text-sm font-medium ${
+                              appt.status === "Cancelled" || appt.status === "Completed" || appt.status === "Confirmed"
+                                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                : "bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                            }`}
                           >
-                            Cancel Appointment
+                            {appt.status === "Cancelled"
+                              ? "Cancelled"
+                              : appt.status === "Completed"
+                              ? "Completed"
+                              : appt.status === "Confirmed"
+                              ? "Cannot Cancel Confirmed"
+                              : "Cancel Appointment"}
                           </button>
-                        )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -300,37 +370,43 @@ const AppointmentHistory = () => {
         </div>
       </div>
 
-      {/* Cancellation Modal */}
+      {/* Cancel Modal */}
       {showCancelModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Cancel Appointment</h2>
-            <p className="text-gray-600 mb-4">Please provide a reason for canceling this appointment.</p>
-            <textarea
-              value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              rows="4"
-              placeholder="Enter cancellation reason..."
-            />
-            <div className="flex justify-end mt-6 space-x-3">
-              <button
-                onClick={closeCancelModal}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
-              >
-                Close
-              </button>
-              <button
-                onClick={handleCancel}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-              >
-                Confirm Cancellation
-              </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md relative overflow-hidden">
+            <div className="h-2 bg-red-500 w-full absolute top-0"></div>
+            <div className="p-6 pt-8">
+              <h3 className="text-xl font-bold text-gray-800 mb-1">Cancel Appointment</h3>
+              <p className="text-gray-600 mb-4">
+                Please provide a reason for cancellation.
+              </p>
+
+              <textarea
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder="Reason for cancellation..."
+                className="w-full p-3 mb-4 rounded-lg border border-gray-300 resize-none"
+                rows={4}
+              ></textarea>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={closeCancelModal}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  Confirm
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
-
       <Footer />
     </div>
   );

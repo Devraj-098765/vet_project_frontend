@@ -5,6 +5,9 @@ import NavBar from "../component/Header/NavBar.jsx";
 import useAuth from "../hooks/useAuth";
 import Footer from "./Footer/Footer";
 import axiosInstance from "../api/axios.js";
+import PaymentForm from "./Payment/PaymentForm";
+import PaymentSuccess from "./Payment/PaymentSuccess";
+import { toast } from "react-hot-toast";
 
 const BookingSystem = () => {
   const { auth } = useAuth();
@@ -27,6 +30,11 @@ const BookingSystem = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [bookingId, setBookingId] = useState(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [paymentInfo, setPaymentInfo] = useState(null);
+  const [appointmentDetails, setAppointmentDetails] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([
     "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
     "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM",
@@ -118,6 +126,7 @@ const BookingSystem = () => {
     setErrors({});
 
     try {
+      // Only check slot availability, don't create booking yet
       const slotCheck = await axiosInstance.get('/bookings/available-slots', {
         params: {
           veterinarianId: formData.veterinarianId,
@@ -131,9 +140,90 @@ const BookingSystem = () => {
         return;
       }
 
-      const response = await axiosInstance.post("/bookings", formData);
-      console.log("Booking Response:", response.data);
-      setSuccess(true);
+      // Instead of creating a booking, just store the form data and show payment form
+      console.log("Booking form validated, proceeding to payment");
+      setShowPayment(true);
+    } catch (error) {
+      console.error("Error checking slots:", error);
+      console.error("Response data:", error.response?.data);
+      console.error("Error message:", error.message);
+      setErrors({
+        form: error.response?.data?.error || "Something went wrong. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePaymentSuccess = async (paymentInfo) => {
+    try {
+      // Improve extraction of payment intent ID
+      let paymentIntentId;
+      if (typeof paymentInfo === 'object' && paymentInfo !== null) {
+        paymentIntentId = paymentInfo.id || paymentInfo.paymentIntentId;
+      } else if (typeof paymentInfo === 'string') {
+        paymentIntentId = paymentInfo;
+      } else {
+        console.error("Invalid payment info format:", paymentInfo);
+        throw new Error("Invalid payment information received");
+      }
+        
+      console.log("Payment successful, creating booking with payment ID:", paymentIntentId);
+      
+      // Validate required fields before sending
+      if (!formData.veterinarianId || !formData.date || !formData.time || 
+          !formData.petName || !formData.petType || !formData.service) {
+        console.error("Missing required booking fields:", formData);
+        toast.error("Missing required booking information");
+        return;
+      }
+      
+      // Now create the booking with payment information
+      const bookingResponse = await axiosInstance.post("/bookings/with-payment", {
+        ...formData,
+        paymentIntentId: paymentIntentId
+      });
+      
+      console.log("Booking with payment created:", bookingResponse.data);
+      
+      // Extract booking ID from response
+      const bookingID = bookingResponse.data.bookingId || bookingResponse.data.booking?._id || bookingResponse.data._id;
+      
+      if (!bookingID) {
+        console.error("No booking ID found in response:", bookingResponse.data);
+        toast.error("Error creating booking. Please contact support.");
+        return;
+      }
+      
+      // Store appointment details for success page
+      const appointmentData = {
+        id: bookingID,
+        veterinarianName: vet?.name || "Unknown",
+        service: formData.service,
+        date: formData.date,
+        time: formData.time,
+        amount: vet?.fee || 0
+      };
+      
+      // Save payment info whether it's an object or just an ID
+      const finalPaymentInfo = typeof paymentInfo === 'object' 
+        ? paymentInfo 
+        : { id: paymentIntentId, amount: vet?.fee || 0 };
+        
+      // Also store vet name in payment metadata for receipt
+      if (typeof finalPaymentInfo === 'object' && finalPaymentInfo !== null) {
+        if (!finalPaymentInfo.metadata) finalPaymentInfo.metadata = {};
+        finalPaymentInfo.metadata.veterinarianName = vet?.name || "Unknown";
+      }
+      
+      setPaymentInfo(finalPaymentInfo);
+      
+      setBookingId(bookingID);
+      setAppointmentDetails(appointmentData);
+      setPaymentSuccess(true);
+      setShowPayment(false);
+      
+      // Reset form
       setFormData({
         name: auth?.name || auth?.email || "",
         phone: "",
@@ -146,14 +236,42 @@ const BookingSystem = () => {
         notes: "",
         veterinarianId: vet?._id || "",
       });
-      setTimeout(() => setSuccess(false), 5000);
     } catch (error) {
-      console.error("Booking Error:", error.response ? error.response.data : error.message);
-      setErrors({
-        form: error.response?.data?.error || "Something went wrong. Please try again.",
+      console.error("Error creating booking after payment:", error);
+      
+      // Get detailed error message from the response if available
+      const errorDetails = error.response?.data?.error || 
+                         error.response?.data?.details || 
+                         error.message || 
+                         "Unknown error";
+      
+      console.error("Error details:", errorDetails);
+      
+      toast.error(`Payment was successful but there was a problem creating your booking: ${errorDetails}`);
+      
+      // Still show the success page but with an error message
+      setAppointmentDetails({
+        error: true,
+        errorMessage: errorDetails,
+        veterinarianName: vet?.name || "Unknown",
+        service: formData.service,
+        date: formData.date,
+        time: formData.time,
+        amount: vet?.fee || 0
       });
-    } finally {
-      setLoading(false);
+      
+      // Save basic payment info
+      setPaymentInfo({
+        id: typeof paymentInfo === 'string' ? paymentInfo : (paymentInfo?.id || 'unknown'),
+        amount: vet?.fee || 0,
+        error: true,
+        metadata: {
+          veterinarianName: vet?.name || "Unknown"
+        }
+      });
+      
+      setPaymentSuccess(true);
+      setShowPayment(false);
     }
   };
 
@@ -167,6 +285,89 @@ const BookingSystem = () => {
     maxDate.setDate(maxDate.getDate() + 7);
     return maxDate.toISOString().split("T")[0];
   };
+
+  // If payment is successful, show payment success page
+  if (paymentSuccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100">
+        <div className="flex justify-center items-center">
+          <NavBar />
+        </div>
+        
+        <div className="max-w-2xl mx-auto p-6 my-8">
+          <PaymentSuccess 
+            paymentInfo={paymentInfo} 
+            appointmentDetails={appointmentDetails} 
+          />
+        </div>
+        
+        <Footer />
+      </div>
+    );
+  }
+
+  // If payment form should be shown, display payment form
+  if (showPayment) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100">
+        <div className="flex justify-center items-center">
+          <NavBar />
+        </div>
+        
+        <div className="max-w-2xl mx-auto p-6 my-8">
+          <div className="bg-white rounded-xl overflow-hidden shadow-lg border-l-4 border-green-700">
+            <div className="h-8 bg-gradient-to-r from-green-800 to-green-600"></div>
+            
+            <div className="p-6">
+              <div className="flex justify-center mb-4">
+                <div className="w-14 h-14 bg-green-700 rounded-full flex items-center justify-center -mt-12 border-4 border-white shadow-md">
+                  <Calendar size={24} className="text-white" />
+                </div>
+              </div>
+              
+              <h2 className="text-2xl font-bold text-center text-green-800 mb-1">Complete Your Payment</h2>
+              <p className="text-center text-green-600 mb-6 text-sm">
+                For appointment with Dr. {vet?.name || "Unknown"}
+              </p>
+              
+              <div className="bg-green-50 p-4 rounded-lg mb-6">
+                <h3 className="font-semibold text-green-800 mb-3">Appointment Summary</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray-500">Service:</p>
+                    <p className="font-medium">{formData.service}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Date & Time:</p>
+                    <p className="font-medium">{formData.date} @ {formData.time}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Pet:</p>
+                    <p className="font-medium">{formData.petName} ({formData.petType})</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Consultation Fee:</p>
+                    <p className="font-medium">${vet?.fee || 0}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <PaymentForm 
+                appointmentDetails={{
+                  name: formData.name,
+                  amount: vet?.fee || 0,
+                  service: formData.service
+                }} 
+                onPaymentSuccess={handlePaymentSuccess} 
+              />
+            </div>
+          </div>
+        </div>
+        
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100">
@@ -188,6 +389,7 @@ const BookingSystem = () => {
             <h2 className="text-2xl font-bold text-center text-green-800 mb-1">Veterinary Appointment</h2>
             <p className="text-center text-green-600 mb-6 text-sm">
               Scheduling with Dr. {vet?.name || "Unknown"}
+              {vet?.fee ? <span className="font-medium"> (${vet.fee} consultation fee)</span> : ""}
             </p>
 
             {success && (
@@ -384,7 +586,7 @@ const BookingSystem = () => {
                 className="w-full bg-green-700 hover:bg-green-800 text-white p-2 rounded-lg flex justify-center items-center disabled:bg-green-400 transition duration-300"
               >
                 {loading ? <Loader2 size={18} className="animate-spin mr-2" /> : null}
-                {loading ? "Booking..." : "Book Appointment"}
+                {loading ? "Booking..." : "Proceed to Payment"}
               </button>
             </form>
           </div>
