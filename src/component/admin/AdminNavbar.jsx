@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiActivity, FiUsers, FiCalendar, FiHeart } from "react-icons/fi";
+import { FiActivity, FiUsers, FiCalendar, FiHeart, FiDollarSign } from "react-icons/fi";
 
 const AdminNavbar = () => {
   const navigate = useNavigate();
@@ -11,7 +11,8 @@ const AdminNavbar = () => {
     { name: " Add Veterinarians", icon: <FiUsers />, route: "/AddVet" },
     { name: "Appointments", icon: <FiCalendar />, route: "/appointments" },
     { name: "User List", icon: <FiHeart />, route: "/UserList" },
-    { name: "Veterinarian List", icon: <FiActivity />, route: "/admin/veterinarianlist" },
+    { name: "Veterinarian List", icon: <FiUsers />, route: "/admin/veterinarianlist" },
+    { name: "Payments", icon: <FiDollarSign />, route: "/admin/payments" },
   ];
 
   const handleNavigation = (route, name) => {

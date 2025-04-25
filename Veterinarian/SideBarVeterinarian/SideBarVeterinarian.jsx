@@ -82,30 +82,30 @@ const SideBarVeterinarian = () => {
 
   return (
     <aside
-      className={`bg-gradient-to-b from-green-800 to-green-600 rounded-r-xl shadow-xl h-screen flex flex-col transition-all duration-300 ${
+      className={`bg-gradient-to-br from-green-800 via-green-700 to-green-600 rounded-r-xl shadow-xl h-screen flex flex-col transition-all duration-300 ${
         isCollapsed ? "w-16" : "w-64"
-      }`}
+      } relative`}
     >
       {/* Header with Logo and Toggle */}
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between p-4 border-b border-green-600 border-opacity-30">
         {!isCollapsed && (
           <div
-            className="flex items-center cursor-pointer"
+            className="flex items-center cursor-pointer group"
             onClick={() => handleNavigation("/VeterinarianDashboard")}
             role="button"
             tabIndex="0"
             aria-label="Go to Dashboard"
             onKeyDown={(e) => e.key === 'Enter' && handleNavigation("/VeterinarianDashboard")}
           >
-            <div className="bg-green-500 bg-opacity-20 p-2 rounded-full">
+            <div className="bg-white bg-opacity-20 p-2 rounded-full shadow-inner group-hover:bg-opacity-30 transition-all">
               <FiUser className="text-white text-xl" />
             </div>
-            <h2 className="text-xl font-bold text-white ml-2">Vetcare</h2>
+            <h2 className="text-xl font-bold text-white ml-3 group-hover:translate-x-0.5 transition-transform">Vetcare</h2>
           </div>
         )}
         <button
           onClick={toggleCollapse}
-          className="text-white hover:bg-green-500 hover:bg-opacity-20 p-1 rounded-full transition-colors"
+          className="text-white hover:bg-white hover:bg-opacity-20 p-1.5 rounded-full transition-colors"
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {isCollapsed ? <FiChevronRight size={20} /> : <FiChevronLeft size={20} />}
@@ -113,61 +113,70 @@ const SideBarVeterinarian = () => {
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-grow mt-4" aria-label="Main navigation">
-        <ul className="space-y-2">
-          {navItems.map((item) => (
-            <li
-              key={item.route}
-              className={`relative group flex items-center px-4 py-3 rounded-lg cursor-pointer transition-all duration-300 ${
-                isActive(item.route)
-                  ? "bg-green-500 bg-opacity-20 text-white shadow-md"
-                  : "text-green-100 hover:bg-green-500 hover:bg-opacity-10"
-              }`}
-              onClick={() => handleNavigation(item.route)}
-              role="button"
-              tabIndex="0"
-              aria-label={item.name}
-              aria-current={isActive(item.route) ? "page" : undefined}
-              onKeyDown={(e) => e.key === 'Enter' && handleNavigation(item.route)}
-            >
-              <div
-                className={`text-xl ${
-                  isActive(item.route) ? "text-white" : "text-green-200"
-                }`}
-                aria-hidden="true"
+      <nav className="flex-grow mt-6 px-2" aria-label="Main navigation">
+        <ul className="space-y-1">
+          {navItems.map((item) => {
+            const active = isActive(item.route);
+            return (
+              <li
+                key={item.name}
+                className={`relative group`}
               >
-                {item.icon}
-              </div>
-              {!isCollapsed && (
-                <span className="ml-3 font-medium">{item.name}</span>
-              )}
-              {isCollapsed && (
-                <span className="absolute left-14 bg-green-700 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  {item.tooltip}
-                </span>
-              )}
-              {isActive(item.route) && !isCollapsed && (
-                <div className="ml-auto w-1 h-6 bg-green-300 rounded-full" aria-hidden="true" />
-              )}
-            </li>
-          ))}
+                <div 
+                  className={`flex items-center px-3 py-3 rounded-lg cursor-pointer transition-all duration-200 ${
+                    active
+                      ? "bg-white bg-opacity-20 text-white shadow-md"
+                      : "text-green-100 hover:bg-white hover:bg-opacity-10"
+                  }`}
+                  onClick={() => handleNavigation(item.route)}
+                  role="button"
+                  tabIndex="0"
+                  aria-label={item.name}
+                  aria-current={active ? "page" : undefined}
+                  onKeyDown={(e) => e.key === 'Enter' && handleNavigation(item.route)}
+                >
+                  <div
+                    className={`text-xl ${
+                      active ? "text-white" : "text-green-200"
+                    }`}
+                    aria-hidden="true"
+                  >
+                    {item.icon}
+                  </div>
+                  {!isCollapsed && (
+                    <span className={`ml-3 font-medium ${active ? "translate-x-0.5" : ""} transition-transform`}>
+                      {item.name}
+                    </span>
+                  )}
+                  {isCollapsed && (
+                    <span className="absolute left-14 bg-green-700 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg z-50">
+                      {item.tooltip}
+                    </span>
+                  )}
+                  {active && !isCollapsed && (
+                    <div className="ml-auto w-1.5 h-6 bg-white rounded-full shadow-sm" aria-hidden="true" />
+                  )}
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
       {/* Veterinarian Info & Logout */}
-      <div className="mt-auto p-4">
+      <div className="mt-auto p-4 border-t border-green-600 border-opacity-30">
         {!isCollapsed && (
-          <div className="mb-4 bg-green-500 bg-opacity-10 p-3 rounded-lg">
+          <div className="mb-4 bg-white bg-opacity-10 p-3 rounded-lg hover:bg-opacity-15 transition-colors shadow-inner">
             <div className="flex items-center">
               {vetInfo.image ? (
                 <img 
                   src={vetInfo.image} 
                   alt="Veterinarian profile" 
-                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                  className="w-9 h-9 rounded-full object-cover flex-shrink-0 border-2 border-white border-opacity-30"
                 />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                  <FiUser className="text-green-800" />
+                <div className="w-9 h-9 rounded-full bg-white bg-opacity-20 flex items-center justify-center flex-shrink-0 border-2 border-white border-opacity-20" aria-hidden="true">
+                  <FiUser className="text-white" />
                 </div>
               )}
               <div className="ml-3 overflow-hidden">
@@ -179,15 +188,15 @@ const SideBarVeterinarian = () => {
         )}
         <button
           onClick={handleLogoutClick}
-          className={`group w-full flex items-center px-4 py-3 text-green-100 hover:bg-green-500 hover:bg-opacity-10 rounded-lg transition-all duration-300 ${
+          className={`group w-full flex items-center px-3 py-3 text-green-100 hover:bg-white hover:bg-opacity-10 rounded-lg transition-all duration-200 ${
             isCollapsed ? "justify-center" : ""
           }`}
           aria-label="Logout"
         >
-          <FiLogOut className="text-xl text-green-200 flex-shrink-0" aria-hidden="true" />
-          {!isCollapsed && <span className="ml-3 font-medium">Logout</span>}
+          <FiLogOut className="text-xl text-green-200 flex-shrink-0 group-hover:text-white transition-colors" aria-hidden="true" />
+          {!isCollapsed && <span className="ml-3 font-medium group-hover:translate-x-0.5 transition-transform">Logout</span>}
           {isCollapsed && (
-            <span className="absolute left-14 bg-green-700 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <span className="absolute left-14 bg-green-700 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg z-50">
               Logout
             </span>
           )}

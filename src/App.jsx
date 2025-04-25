@@ -32,6 +32,7 @@ import VetLocationMap from "./component/VetMap/VetLocationMap.jsx";
 import AllNotifications from "./component/Notifications/AllNotifications.jsx";
 import PaymentHistory from "./component/Payment/PaymentHistory";
 import PaymentReceipt from "./component/Payment/PaymentReceipt";
+import AdminPayments from "./component/admin/AdminPayments";
 
 
 function App() {
@@ -242,6 +243,14 @@ function App() {
       element: (
         <ProtectedRoute>
           <AllNotifications />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/admin/payments",
+      element: (
+        <ProtectedRoute>
+          <AdminPayments />
         </ProtectedRoute>
       ),
     },
