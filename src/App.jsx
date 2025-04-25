@@ -29,6 +29,9 @@ import MyReportCard from "./pages/MyReportCard.jsx";
 import Blog from "../Veterinarian/Blog.jsx";
 import ResetPasswordConfirmation from "./pages/auth/ResetPasswordConfirmation.jsx";
 import VetLocationMap from "./component/VetMap/VetLocationMap.jsx";
+import AllNotifications from "./component/Notifications/AllNotifications.jsx";
+import PaymentHistory from "./component/Payment/PaymentHistory";
+import PaymentReceipt from "./component/Payment/PaymentReceipt";
 
 
 function App() {
@@ -105,6 +108,22 @@ function App() {
           element: (
             <ProtectedRoute>
               <MyReportCard />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/payments/history",
+          element: (
+            <ProtectedRoute>
+              <PaymentHistory />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/payments/:id",
+          element: (
+            <ProtectedRoute>
+              <PaymentReceipt />
             </ProtectedRoute>
           ),
         },
@@ -217,6 +236,14 @@ function App() {
       path: "/Profile",
       element: <Profile />,
       
+    },
+    {
+      path: "/all-notifications",
+      element: (
+        <ProtectedRoute>
+          <AllNotifications />
+        </ProtectedRoute>
+      ),
     },
    
   ]);
