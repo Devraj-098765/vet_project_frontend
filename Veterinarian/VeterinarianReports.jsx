@@ -80,30 +80,347 @@ const VeterinarianReports = () => {
 
   const downloadReportAsPDF = (report) => {
     const doc = new jsPDF();
-    doc.text(`Veterinary Report for ${report.petName}`, 10, 10);
-    doc.text(`Date: ${report.createdAt.split('T')[0]}`, 10, 20);
-    doc.text(`Diagnosis: ${report.diagnosis || 'N/A'}`, 10, 30);
-    doc.text(`Treatment: ${report.treatment || 'N/A'}`, 10, 40);
-    doc.text(`Medications: ${report.medications || 'None'}`, 10, 50);
-    doc.text(`Vaccinations: ${report.vaccinations || 'None'}`, 10, 60);
-    doc.text(`Recommendations: ${report.recommendations || 'None'}`, 10, 70);
+    
+    // Set font styles
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(0, 100, 150); // Blue header color
+    
+    // Add title
+    doc.text(`Veterinary Report for ${report.petName}`, 15, 15);
+    
+    // Add horizontal line
+    doc.setDrawColor(0, 100, 150);
+    doc.line(15, 17, 195, 17);
+    
+    // Reset to normal text
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    
+    // Patient and appointment information section
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 100, 150);
+    doc.text("Patient Information", 15, 25);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Pet Name: ${report.petName}`, 15, 35);
+    doc.text(`Pet Type: ${report.petType || 'N/A'}`, 15, 45);
+    
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 100, 150);
+    doc.text("Appointment Details", 110, 25);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Date: ${report.createdAt.split('T')[0]}`, 110, 35);
+    
+    // Add horizontal line
+    doc.setDrawColor(200, 200, 200);
+    doc.line(15, 55, 195, 55);
+    
+    // Medical details section
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 100, 150);
+    doc.text("Medical Report", 15, 65);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Weight: ${report.weight || 'N/A'} kg`, 15, 75);
+    doc.text(`Temperature: ${report.temperature || 'N/A'} °C`, 15, 85);
+    doc.text(`Follow-up Date: ${report.followUpDate || 'None scheduled'}`, 15, 95);
+    
+    // Add horizontal line
+    doc.setDrawColor(200, 200, 200);
+    doc.line(15, 105, 195, 105);
+    
+    // Diagnostic section
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 100, 150);
+    doc.text("Diagnosis", 15, 115);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    
+    // Handle multiline text for diagnosis
+    const diagnosisLines = doc.splitTextToSize(report.diagnosis || 'N/A', 180);
+    doc.text(diagnosisLines, 15, 125);
+    
+    // Calculate next y position based on number of diagnosis lines
+    let yPos = 125 + (diagnosisLines.length * 7);
+    
+    // Treatment section
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 100, 150);
+    doc.text("Treatment", 15, yPos + 10);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    
+    // Handle multiline text for treatment
+    const treatmentLines = doc.splitTextToSize(report.treatment || 'N/A', 180);
+    doc.text(treatmentLines, 15, yPos + 20);
+    
+    // Update y position
+    yPos = yPos + 20 + (treatmentLines.length * 7);
+    
+    // Medications section
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 100, 150);
+    doc.text("Medications", 15, yPos + 10);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(report.medications || 'None prescribed', 15, yPos + 20);
+    
+    // Vaccinations section
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 100, 150);
+    doc.text("Vaccinations", 110, yPos + 10);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(report.vaccinations || 'None administered', 110, yPos + 20);
+    
+    // Update y position
+    yPos = yPos + 30;
+    
+    // Recommendations section
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 100, 150);
+    doc.text("Recommendations", 15, yPos + 10);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    
+    // Handle multiline text for recommendations
+    const recommendationsLines = doc.splitTextToSize(
+      report.recommendations || 'No specific recommendations provided', 
+      180
+    );
+    doc.text(recommendationsLines, 15, yPos + 20);
+    
+    // Add footer
+    yPos = 270;
+    doc.setDrawColor(200, 200, 200);
+    doc.line(15, yPos, 195, yPos);
+    
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Report created on: ${report.createdAt.split('T')[0]}`, 15, yPos + 10);
+    
+    // Save the PDF
     doc.save(`${report.petName}_Report.pdf`);
   };
 
   const printReport = (report) => {
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    
+    // Generate styled HTML content that matches the view format
     const printContent = `
-      <h2>Veterinary Report for ${report.petName}</h2>
-      <p><strong>Date:</strong> ${report.createdAt.split('T')[0]}</p>
-      <p><strong>Diagnosis:</strong> ${report.diagnosis || 'N/A'}</p>
-      <p><strong>Treatment:</strong> ${report.treatment || 'N/A'}</p>
-      <p><strong>Medications:</strong> ${report.medications || 'None'}</p>
-      <p><strong>Vaccinations:</strong> ${report.vaccinations || 'None'}</p>
-      <p><strong>Recommendations:</strong> ${report.recommendations || 'None'}</p>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Veterinary Report for ${report.petName}</title>
+        <style>
+          body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #047857;
+          }
+          .header h1 {
+            color: #047857;
+            margin-bottom: 5px;
+          }
+          .section {
+            margin-bottom: 20px;
+          }
+          .section-title {
+            color: #047857;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+          }
+          .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+          }
+          .stat-box {
+            background-color: #f0fdf4;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+          }
+          .stat-box p {
+            margin: 0;
+          }
+          .stat-label {
+            color: #059669;
+            font-size: 0.9em;
+          }
+          .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+          }
+          .data-box {
+            background-color: #f0fdf4;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #d1fae5;
+          }
+          .data-title {
+            font-weight: bold;
+            color: #047857;
+            margin-bottom: 5px;
+          }
+          .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+          }
+          .footer {
+            margin-top: 30px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+          }
+          .badge {
+            display: inline-block;
+            background-color: #f0fdf4;
+            color: #059669;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            border: 1px solid #d1fae5;
+          }
+          @media print {
+            body {
+              padding: 0;
+              margin: 0;
+            }
+            @page {
+              margin: 1.5cm;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Veterinary Report</h1>
+          <p>Report ID: ${report._id}</p>
+          <div class="badge">${report.petType || 'Not specified'}</div>
+        </div>
+        
+        <div class="grid">
+          <div class="section">
+            <h2 class="section-title">Patient Information</h2>
+            <p><strong>Pet Name:</strong> ${report.petName}</p>
+            <p><strong>Owner:</strong> ${report.userId?.name || 'N/A'}</p>
+          </div>
+          
+          <div class="section">
+            <h2 class="section-title">Appointment Details</h2>
+            <p><strong>Date:</strong> ${report.createdAt.split('T')[0]}</p>
+            <p><strong>Veterinarian:</strong> You</p>
+          </div>
+        </div>
+        
+        <div class="section">
+          <h2 class="section-title">Medical Report</h2>
+          
+          <div class="grid grid-3col">
+            <div class="stat-box">
+              <p class="stat-label">Weight</p>
+              <p class="stat-value">${report.weight || 'N/A'} kg</p>
+            </div>
+            <div class="stat-box">
+              <p class="stat-label">Temperature</p>
+              <p class="stat-value">${report.temperature || 'N/A'} °C</p>
+            </div>
+            <div class="stat-box">
+              <p class="stat-label">Follow-up Date</p>
+              <p class="stat-value">${report.followUpDate || 'None'}</p>
+            </div>
+          </div>
+          
+          <div class="section">
+            <div class="data-title">Diagnosis</div>
+            <div class="data-box">${report.diagnosis || 'N/A'}</div>
+            
+            <div class="data-title">Treatment</div>
+            <div class="data-box">${report.treatment || 'N/A'}</div>
+            
+            <div class="grid-2col">
+              <div>
+                <div class="data-title">Medications</div>
+                <div class="data-box">${report.medications || 'None'}</div>
+              </div>
+              <div>
+                <div class="data-title">Vaccinations</div>
+                <div class="data-box">${report.vaccinations || 'None'}</div>
+              </div>
+            </div>
+            
+            <div class="data-title">Recommendations</div>
+            <div class="data-box">${report.recommendations || 'None'}</div>
+          </div>
+        </div>
+        
+        <div class="footer">
+          <p>Report created on: ${report.createdAt.split('T')[0]}</p>
+        </div>
+        
+        <script>
+          // Auto print once loaded
+          window.onload = function() {
+            window.print();
+            // Don't close immediately to allow cancellation
+            setTimeout(function() {
+              window.close();
+            }, 500);
+          };
+        </script>
+      </body>
+      </html>
     `;
-    const printWindow = window.open('', '', 'width=800,height=600');
-    printWindow.document.write('<html><body>' + printContent + '</body></html>');
+    
+    // Write to the new window and trigger print
+    printWindow.document.write(printContent);
     printWindow.document.close();
-    printWindow.print();
   };
 
   if (loading) return (

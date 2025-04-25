@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import SideBarVeterinarian from "../SideBarVeterinarian/SideBarVeterinarian";
 import axiosInstance from "../../src/api/axios";
-import { FileText, Eye, Phone, Calendar, User, Clock, MessageCircle } from "lucide-react";
+import { FileText, Eye, Phone, Calendar, User, Clock, MessageCircle, Filter } from "lucide-react";
 
 const TotalAppointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -13,6 +13,7 @@ const TotalAppointment = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentReport, setCurrentReport] = useState(null);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("All");
   const navigate = useNavigate();
 
   console.log("TotalAppointment", appointments);
@@ -35,7 +36,7 @@ const TotalAppointment = () => {
         });
 
         setAppointments(sortedAppointments);
-        setDisplayedAppointments(sortedAppointments.slice(0, appointmentsPerPage));
+        applyFilters(sortedAppointments);
         setLoading(false);
       } catch (error) {
         console.error(
@@ -51,6 +52,28 @@ const TotalAppointment = () => {
     fetchAppointments();
   }, [appointmentsPerPage]);
 
+  // Apply filters based on the current status filter
+  const applyFilters = (appointmentsToFilter) => {
+    let filtered = [...appointmentsToFilter];
+    
+    // Apply status filter
+    if (statusFilter !== "All") {
+      filtered = filtered.filter(appt => 
+        appt.status.toLowerCase() === statusFilter.toLowerCase()
+      );
+    }
+    
+    setDisplayedAppointments(filtered.slice(0, appointmentsPerPage));
+    setCurrentPage(1);
+  };
+
+  // Effect to reapply filters when statusFilter changes
+  useEffect(() => {
+    if (!loading && appointments.length > 0) {
+      applyFilters(appointments);
+    }
+  }, [statusFilter, loading]);
+
   const handleStatusUpdate = async (bookingId, status) => {
     try {
       const { data } = await axiosInstance.put(`/bookings/${bookingId}/status`, {
@@ -63,11 +86,8 @@ const TotalAppointment = () => {
       );
       setAppointments(updatedAppointments);
 
-      setDisplayedAppointments((prevDisplayed) =>
-        prevDisplayed.map((appt) =>
-          appt._id === bookingId ? { ...appt, status } : appt
-        )
-      );
+      // Reapply filters with updated appointments
+      applyFilters(updatedAppointments);
 
       toast.success(data.message);
     } catch (error) {
@@ -134,12 +154,31 @@ const TotalAppointment = () => {
     const startIndex = currentPage * appointmentsPerPage;
     const endIndex = startIndex + appointmentsPerPage;
 
-    // Get the next set of appointments
-    const nextAppointments = appointments.slice(startIndex, endIndex);
+    // Apply filter to all appointments
+    let filtered = [...appointments];
+    if (statusFilter !== "All") {
+      filtered = filtered.filter(appt => 
+        appt.status.toLowerCase() === statusFilter.toLowerCase()
+      );
+    }
+
+    // Get the next set of filtered appointments
+    const nextAppointments = filtered.slice(startIndex, endIndex);
 
     // Append to displayed appointments
     setDisplayedAppointments([...displayedAppointments, ...nextAppointments]);
     setCurrentPage(nextPage);
+  };
+
+  // Handle filter button clicks
+  const handleFilterChange = (status) => {
+    setStatusFilter(status);
+  };
+
+  const getFilterButtonClass = (status) => {
+    return statusFilter === status
+      ? "bg-green-600 text-white" 
+      : "bg-white text-green-700 hover:bg-green-50";
   };
 
   const getStatusStyle = (status) => {
@@ -170,6 +209,11 @@ const TotalAppointment = () => {
       </div>
     );
 
+  // Count number of appointments for each status
+  const pendingCount = appointments.filter(a => a.status === "Pending").length;
+  const confirmedCount = appointments.filter(a => a.status === "Confirmed").length;
+  const cancelledCount = appointments.filter(a => a.status === "Cancelled").length;
+
   return (
     <div className="flex bg-green-50 min-h-screen">
       <SideBarVeterinarian />
@@ -179,7 +223,41 @@ const TotalAppointment = () => {
           <p className="text-green-600 mt-1">View and manage all your veterinary appointments</p>
         </div>
 
-        {appointments && appointments.length > 0 ? (
+        {/* Status Filter Buttons */}
+        <div className="bg-white shadow-md rounded-lg p-4 mb-6">
+          <div className="flex items-center mb-4">
+            <Filter className="h-5 w-5 mr-2 text-green-700" />
+            <h3 className="text-lg font-medium text-green-800">Filter Appointments by Status</h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => handleFilterChange("All")}
+              className={`px-4 py-2 rounded-lg transition-colors ${getFilterButtonClass("All")}`}
+            >
+              All Appointments ({appointments.length})
+            </button>
+            <button
+              onClick={() => handleFilterChange("Pending")}
+              className={`px-4 py-2 rounded-lg transition-colors ${getFilterButtonClass("Pending")}`}
+            >
+              Pending ({pendingCount})
+            </button>
+            <button
+              onClick={() => handleFilterChange("Confirmed")}
+              className={`px-4 py-2 rounded-lg transition-colors ${getFilterButtonClass("Confirmed")}`}
+            >
+              Confirmed ({confirmedCount})
+            </button>
+            <button
+              onClick={() => handleFilterChange("Cancelled")}
+              className={`px-4 py-2 rounded-lg transition-colors ${getFilterButtonClass("Cancelled")}`}
+            >
+              Cancelled ({cancelledCount})
+            </button>
+          </div>
+        </div>
+
+        {displayedAppointments && displayedAppointments.length > 0 ? (
           <div className="space-y-6">
             {displayedAppointments.map((appt) => (
               <div
@@ -313,19 +391,29 @@ const TotalAppointment = () => {
             ))}
 
             {/* Load More button (only show if there are more appointments to load) */}
-            {displayedAppointments.length < appointments.length && (
-              <div className="mt-8 flex justify-center">
-                <button
-                  onClick={handleLoadMore}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md shadow-md transition-all duration-200 flex items-center"
-                >
-                  <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                  Load More Appointments
-                </button>
-              </div>
-            )}
+            {(() => {
+              // Get current filtered appointments
+              let filteredAppointments = appointments;
+              if (statusFilter !== "All") {
+                filteredAppointments = appointments.filter(
+                  appt => appt.status.toLowerCase() === statusFilter.toLowerCase()
+                );
+              }
+              
+              return displayedAppointments.length < filteredAppointments.length && (
+                <div className="mt-8 flex justify-center">
+                  <button
+                    onClick={handleLoadMore}
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md shadow-md transition-all duration-200 flex items-center"
+                  >
+                    <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                    Load More Appointments
+                  </button>
+                </div>
+              );
+            })()}
           </div>
         ) : (
           <div className="bg-white p-12 rounded-lg text-center shadow-md border border-green-100">
@@ -335,8 +423,24 @@ const TotalAppointment = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-medium text-green-800 mb-2">No Appointments Yet</h3>
-              <p className="text-gray-500">There are currently no appointments scheduled in your calendar.</p>
+              <h3 className="text-xl font-medium text-green-800 mb-2">
+                {statusFilter === "All" 
+                  ? "No Appointments Yet" 
+                  : `No ${statusFilter} Appointments`}
+              </h3>
+              <p className="text-gray-500">
+                {statusFilter === "All"
+                  ? "There are currently no appointments scheduled in your calendar."
+                  : `There are currently no appointments with status "${statusFilter}".`}
+              </p>
+              {statusFilter !== "All" && (
+                <button
+                  onClick={() => handleFilterChange("All")}
+                  className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+                >
+                  Show All Appointments
+                </button>
+              )}
             </div>
           </div>
         )}
