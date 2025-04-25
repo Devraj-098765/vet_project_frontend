@@ -325,6 +325,13 @@ const NavBar = () => {
                   >
                     Appointment Details
                   </NavLink>
+                  <NavLink
+                    to="/payments/history"
+                    className="flex px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Payment History
+                  </NavLink>
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-3 text-red-600 hover:bg-green-50 transition-colors border-t border-green-100"
@@ -406,7 +413,7 @@ const NavBar = () => {
                   className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Edit profile 
+                  Edit profile
                 </NavLink>
                 <NavLink
                   to="/my-report-card"
@@ -421,6 +428,13 @@ const NavBar = () => {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Appointment Details
+                </NavLink>
+                <NavLink
+                  to="/payments/history"
+                  className="block px-4 py-3 text-green-800 hover:bg-green-50 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Payment History
                 </NavLink>
                 <NavLink
                   to="/blogs"
