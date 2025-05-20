@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import AdminNavbar from "../AdminNavbar";
 
 const AdminAddVeterinarian = () => {
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm();
   const [photoPreview, setPhotoPreview] = useState(null);
 
   const handleFileChange = (e) => {
@@ -42,6 +42,9 @@ const AdminAddVeterinarian = () => {
       const result = await response.json();
       if (response.ok) {
         toast.success(result.message);
+        // Reset form and photo preview after successful submission
+        reset();
+        setPhotoPreview(null);
       } else {
         toast.error(result.message);
       }
@@ -166,6 +169,7 @@ const AdminAddVeterinarian = () => {
                       accept="image/*"
                       onChange={handleFileChange}
                       className="hidden"
+                      id="image-upload"
                     />
                   </label>
                 </div>
