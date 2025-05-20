@@ -156,29 +156,69 @@ const BookingSystem = () => {
   };
 
   const handlePaymentSuccess = async (paymentInfo) => {
+    // Immediately extract payment intent ID
+    let paymentIntentId;
+    if (typeof paymentInfo === 'object' && paymentInfo !== null) {
+      paymentIntentId = paymentInfo.id || paymentInfo.paymentIntentId;
+    } else if (typeof paymentInfo === 'string') {
+      paymentIntentId = paymentInfo;
+    } else {
+      console.error("Invalid payment info format:", paymentInfo);
+      throw new Error("Invalid payment information received");
+    }
+    
+    console.log("Payment successful, creating booking with payment ID:", paymentIntentId);
+    
+    // Validate required fields
+    if (!formData.veterinarianId || !formData.date || !formData.time || 
+        !formData.petName || !formData.petType || !formData.service) {
+      console.error("Missing required booking fields:", formData);
+      toast.error("Missing required booking information");
+      return;
+    }
+    
+    // Immediately prepare preliminary appointment details for success page
+    const preliminaryAppointmentData = {
+      veterinarianName: vet?.name || "Unknown",
+      service: formData.service,
+      date: formData.date,
+      time: formData.time,
+      amount: vet?.fee || 0
+    };
+    
+    // Save payment info whether it's an object or just an ID
+    const finalPaymentInfo = typeof paymentInfo === 'object' 
+      ? paymentInfo 
+      : { id: paymentIntentId, amount: vet?.fee || 0 };
+      
+    // Store vet name in payment metadata for receipt
+    if (typeof finalPaymentInfo === 'object' && finalPaymentInfo !== null) {
+      if (!finalPaymentInfo.metadata) finalPaymentInfo.metadata = {};
+      finalPaymentInfo.metadata.veterinarianName = vet?.name || "Unknown";
+    }
+    
+    // IMMEDIATELY show success page (don't wait for API call)
+    setPaymentInfo(finalPaymentInfo);
+    setAppointmentDetails(preliminaryAppointmentData);
+    setPaymentSuccess(true);
+    setShowPayment(false);
+    
+    // Reset form
+    setFormData({
+      name: auth?.name || auth?.email || "",
+      phone: "",
+      date: "",
+      time: "",
+      petName: "",
+      petType: "",
+      petAge: "",
+      service: "",
+      notes: "",
+      veterinarianId: vet?._id || "",
+    });
+    
+    // THEN create the booking asynchronously (in the background)
     try {
-      // Improve extraction of payment intent ID
-      let paymentIntentId;
-      if (typeof paymentInfo === 'object' && paymentInfo !== null) {
-        paymentIntentId = paymentInfo.id || paymentInfo.paymentIntentId;
-      } else if (typeof paymentInfo === 'string') {
-        paymentIntentId = paymentInfo;
-      } else {
-        console.error("Invalid payment info format:", paymentInfo);
-        throw new Error("Invalid payment information received");
-      }
-        
-      console.log("Payment successful, creating booking with payment ID:", paymentIntentId);
-      
-      // Validate required fields before sending
-      if (!formData.veterinarianId || !formData.date || !formData.time || 
-          !formData.petName || !formData.petType || !formData.service) {
-        console.error("Missing required booking fields:", formData);
-        toast.error("Missing required booking information");
-        return;
-      }
-      
-      // Now create the booking with payment information
       const bookingResponse = await axiosInstance.post("/bookings/with-payment", {
         ...formData,
         paymentIntentId: paymentIntentId
@@ -189,53 +229,14 @@ const BookingSystem = () => {
       // Extract booking ID from response
       const bookingID = bookingResponse.data.bookingId || bookingResponse.data.booking?._id || bookingResponse.data._id;
       
-      if (!bookingID) {
+      if (bookingID) {
+        // Update the appointment details with the booking ID (user is already seeing success page)
+        setBookingId(bookingID);
+        setAppointmentDetails(prev => ({...prev, id: bookingID}));
+      } else {
         console.error("No booking ID found in response:", bookingResponse.data);
-        toast.error("Error creating booking. Please contact support.");
-        return;
+        // Don't show error toast as user is already on success page
       }
-      
-      // Store appointment details for success page
-      const appointmentData = {
-        id: bookingID,
-        veterinarianName: vet?.name || "Unknown",
-        service: formData.service,
-        date: formData.date,
-        time: formData.time,
-        amount: vet?.fee || 0
-      };
-      
-      // Save payment info whether it's an object or just an ID
-      const finalPaymentInfo = typeof paymentInfo === 'object' 
-        ? paymentInfo 
-        : { id: paymentIntentId, amount: vet?.fee || 0 };
-        
-      // Also store vet name in payment metadata for receipt
-      if (typeof finalPaymentInfo === 'object' && finalPaymentInfo !== null) {
-        if (!finalPaymentInfo.metadata) finalPaymentInfo.metadata = {};
-        finalPaymentInfo.metadata.veterinarianName = vet?.name || "Unknown";
-      }
-      
-      setPaymentInfo(finalPaymentInfo);
-      
-      setBookingId(bookingID);
-      setAppointmentDetails(appointmentData);
-      setPaymentSuccess(true);
-      setShowPayment(false);
-      
-      // Reset form
-      setFormData({
-        name: auth?.name || auth?.email || "",
-        phone: "",
-        date: "",
-        time: "",
-        petName: "",
-        petType: "",
-        petAge: "",
-        service: "",
-        notes: "",
-        veterinarianId: vet?._id || "",
-      });
     } catch (error) {
       console.error("Error creating booking after payment:", error);
       
@@ -247,31 +248,19 @@ const BookingSystem = () => {
       
       console.error("Error details:", errorDetails);
       
-      toast.error(`Payment was successful but there was a problem creating your booking: ${errorDetails}`);
-      
-      // Still show the success page but with an error message
-      setAppointmentDetails({
+      // Don't show toast as user is already on success page
+      // Instead update the appointment details to show error
+      setAppointmentDetails(prev => ({
+        ...prev,
         error: true,
-        errorMessage: errorDetails,
-        veterinarianName: vet?.name || "Unknown",
-        service: formData.service,
-        date: formData.date,
-        time: formData.time,
-        amount: vet?.fee || 0
-      });
+        errorMessage: errorDetails
+      }));
       
-      // Save basic payment info
-      setPaymentInfo({
-        id: typeof paymentInfo === 'string' ? paymentInfo : (paymentInfo?.id || 'unknown'),
-        amount: vet?.fee || 0,
-        error: true,
-        metadata: {
-          veterinarianName: vet?.name || "Unknown"
-        }
-      });
-      
-      setPaymentSuccess(true);
-      setShowPayment(false);
+      // Update payment info to indicate error
+      setPaymentInfo(prev => ({
+        ...prev,
+        error: true
+      }));
     }
   };
 
