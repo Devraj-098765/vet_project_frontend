@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaCheckCircle, FaClock, FaExclamationTriangle } from 'react-icons/fa';
 
 const PaymentSuccess = ({ paymentInfo, appointmentDetails }) => {
   const navigate = useNavigate();
   const hasError = appointmentDetails?.error || false;
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const handleViewReceipt = () => {
     // Navigate directly to the payment receipt page with the payment ID
@@ -17,6 +18,8 @@ const PaymentSuccess = ({ paymentInfo, appointmentDetails }) => {
   };
 
   const handleViewAppointments = () => {
+    setIsNavigating(true);
+    // Use the appointments route directly instead of appointmenthistory/:id
     navigate('/appointments');
   };
 
@@ -49,12 +52,14 @@ const PaymentSuccess = ({ paymentInfo, appointmentDetails }) => {
               <button 
                 className="bg-green-600 text-white px-4 py-2 rounded-md font-medium hover:bg-green-700 transition-colors"
                 onClick={handleViewReceipt}
+                disabled={isNavigating}
               >
                 View Receipt
               </button>
               <button 
                 className="border border-amber-600 text-amber-600 px-4 py-2 rounded-md font-medium hover:bg-amber-50 transition-colors"
                 onClick={handleContactSupport}
+                disabled={isNavigating}
               >
                 Contact Support
               </button>
@@ -88,14 +93,16 @@ const PaymentSuccess = ({ paymentInfo, appointmentDetails }) => {
               <button 
                 className="bg-green-600 text-white px-4 py-2 rounded-md font-medium hover:bg-green-700 transition-colors"
                 onClick={handleViewReceipt}
+                disabled={isNavigating}
               >
-                View Receipt
+                {isNavigating ? 'Please wait...' : 'View Receipt'}
               </button>
               <button 
                 className="border border-green-600 text-green-600 px-4 py-2 rounded-md font-medium hover:bg-green-50 transition-colors"
                 onClick={handleViewAppointments}
+                disabled={isNavigating}
               >
-                View My Appointments
+                {isNavigating ? 'Loading...' : 'View My Appointments'}
               </button>
             </div>
           </>
