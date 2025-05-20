@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../api/axios";
+import { toast } from "react-toastify";
 
 const USER_INFO_URL = "/users";
 
