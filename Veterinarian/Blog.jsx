@@ -2,23 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from "../src/api/axios";
 import SideBarVeterinarian from './SideBarVeterinarian/SideBarVeterinarian';
-import { Calendar, Search, Edit, Trash2, X, Check, PlusCircle, Filter, BookOpen } from 'lucide-react';
-
-const Card = ({ children, className }) => (
-  <div className={`bg-white rounded-xl shadow-lg border border-green-100 transition-all hover:shadow-xl ${className}`}>{children}</div>
-);
-
-const CardContent = ({ children, className }) => (
-  <div className={`p-6 ${className}`}>{children}</div>
-);
+import { Search, Edit, Trash2, X, Check, PlusCircle, Filter, BookOpen, ThumbsUp, ThumbsDown } from 'lucide-react';
 
 const Button = ({ children, variant, onClick, className }) => (
   <button
     onClick={onClick}
-    className={`px-4 py-2 rounded-lg flex items-center justify-center transition-all ${
-      variant === 'success' ? 'bg-green-700 text-white hover:bg-green-800' :
+    className={`px-4 py-2 rounded-md flex items-center justify-center transition-all ${
+      variant === 'success' ? 'bg-teal-600 text-white hover:bg-teal-700' :
       variant === 'danger' ? 'bg-red-500 text-white hover:bg-red-600' :
-      'bg-green-100 text-green-800 hover:bg-green-200'
+      'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
     } ${className}`}
   >
     {children}
@@ -27,12 +19,12 @@ const Button = ({ children, variant, onClick, className }) => (
 
 const Input = ({ placeholder, value, onChange, icon, className }) => (
   <div className={`relative ${className}`}>
-    {icon && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-600">{icon}</span>}
+    {icon && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-teal-500">{icon}</span>}
     <input
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      className={`w-full p-3 pl-10 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-green-50 ${className}`}
+      className={`w-full p-3 pl-10 border border-teal-100 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500 bg-white ${className}`}
     />
   </div>
 );
@@ -42,14 +34,14 @@ const Textarea = ({ placeholder, value, onChange, className }) => (
     placeholder={placeholder}
     value={value}
     onChange={onChange}
-    className={`w-full p-3 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-green-50 ${className}`}
+    className={`w-full p-3 border border-teal-100 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500 bg-white ${className}`}
     rows="6"
   />
 );
 
 const Badge = ({ children, variant }) => (
   <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-    variant === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-gray-100 text-gray-800'
+    variant === 'success' ? 'bg-teal-100 text-teal-700' : 'bg-gray-100 text-gray-800'
   }`}>
     {children}
   </span>
@@ -139,7 +131,8 @@ const VetBlogPage = () => {
 
   const blogStats = {
     total: blogs.length,
-    categories: [...new Set(blogs.map(blog => blog.category))].length
+    categories: [...new Set(blogs.map(blog => blog.category))].length,
+    likes: blogs.reduce((total, blog) => total + (blog.likesCount || 0), 0)
   };
 
   const formatContent = (content) => {
@@ -156,150 +149,180 @@ const VetBlogPage = () => {
   return (
     <div className="flex">
       <SideBarVeterinarian />
-      <div className="flex-1 bg-gradient-to-br from-green-50 to-green-100 min-h-screen">
-        <div className="max-w-5xl mx-auto p-8 space-y-8">
-          <div className="flex flex-col items-center mb-12">
-            <div className="w-16 h-16 bg-green-700 rounded-full flex items-center justify-center mb-4">
-              <BookOpen size={28} className="text-white" />
+      <div className="flex-1 bg-gradient-to-br from-blue-50/40 to-teal-50/40 min-h-screen">
+        <div className="max-w-5xl mx-auto p-6">
+          <div className="text-center mb-10 pt-8">
+            <div className="inline-block bg-gradient-to-r from-teal-600 to-teal-400 text-black px-6 py-2 rounded-full mb-4">
+              <h1 className="text-xl font-semibold">Veterinary Knowledge Hub</h1>
             </div>
-            <h1 className="text-4xl font-bold text-green-800">Veterinary Knowledge Hub</h1>
-            <p className="text-green-600 mt-2">Share your expertise with the pet community</p>
+            <p className="text-teal-800">Share your expertise and insights with the pet care community</p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-5 flex justify-between items-center border-l-4 border-green-600">
-            <div className="flex space-x-8">
-              <div className="flex flex-col">
-                <span className="text-sm text-green-600 font-medium">Total Posts</span>
-                <span className="text-2xl font-bold text-green-800">{blogStats.total}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm text-green-600 font-medium">Categories</span>
-                <span className="text-2xl font-bold text-green-800">{blogStats.categories}</span>
+          {/* Stats cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-white rounded-md shadow-sm p-4 border-t-4 border-teal-400">
+              <div className="flex flex-col items-center">
+                <div className="bg-teal-100 p-3 rounded-full mb-2">
+                  <BookOpen size={20} className="text-teal-600" />
+                </div>
+                <p className="text-sm text-teal-600 font-medium">Total Posts</p>
+                <p className="text-2xl font-semibold text-teal-800">{blogStats.total}</p>
               </div>
             </div>
-            <Button onClick={toggleForm} variant="success" className="py-3 px-6 font-medium">
-              {isFormExpanded ? (
-                <>
-                  <X size={18} className="mr-2" />
-                  Close Form
-                </>
-              ) : (
-                <>
-                  <PlusCircle size={18} className="mr-2" />
-                  New Blog Post
-                </>
-              )}
+            
+            <div className="bg-white rounded-md shadow-sm p-4 border-t-4 border-blue-400">
+              <div className="flex flex-col items-center">
+                <div className="bg-blue-100 p-3 rounded-full mb-2">
+                  <Filter size={20} className="text-blue-600" />
+                </div>
+                <p className="text-sm text-blue-600 font-medium">Categories</p>
+                <p className="text-2xl font-semibold text-blue-800">{blogStats.categories}</p>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-md shadow-sm p-4 border-t-4 border-green-400">
+              <div className="flex flex-col items-center">
+                <div className="bg-green-100 p-3 rounded-full mb-2">
+                  <ThumbsUp size={20} className="text-green-600" />
+                </div>
+                <p className="text-sm text-green-600 font-medium">Total Likes</p>
+                <p className="text-2xl font-semibold text-green-800">{blogStats.likes}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Bar */}
+          <div className="flex flex-wrap items-center gap-4 mb-6">
+            <Button onClick={toggleForm} variant="success" className="py-2 px-5 shadow-md">
+              <PlusCircle size={18} className="mr-2" />
+              {isFormExpanded ? "Cancel" : "New Blog Post"}
             </Button>
+            
+            <div className="flex-1 flex items-center gap-4">
+              <Input
+                placeholder="Search your blogs..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                icon={<Search size={18} />}
+                className="w-full shadow-sm"
+              />
+              <div className="hidden md:flex items-center bg-white rounded-md border border-teal-100 px-3 py-2 text-teal-700 shadow-sm">
+                <Filter size={18} className="mr-2 text-teal-500" />
+                <span>{filteredBlogs.length} posts</span>
+              </div>
+            </div>
           </div>
 
+          {/* Post creation/edit form */}
           {isFormExpanded && (
-            <Card className="border-t-4 border-t-green-600">
-              <CardContent className="space-y-5">
-                <h2 className="text-xl font-semibold text-green-800 mb-4">
+            <div className="bg-white rounded-md shadow-md mb-8 p-6 border-l-4 border-teal-500">
+              <div className="space-y-4">
+                <h2 className="text-lg font-medium text-teal-800 pb-2 border-b border-teal-100">
                   {editing ? 'Edit Blog Post' : 'Create New Blog Post'}
                 </h2>
+                
                 <Input
                   placeholder="Enter an engaging title..."
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
+                
                 <Textarea
                   placeholder="Share your veterinary knowledge and insights..."
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                 />
+                
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full p-3 border border-green-200 rounded-lg bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full p-3 border border-teal-100 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-teal-500"
                 >
                   <option value="">Select Category</option>
                   {categories.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
                 </select>
-                <div className="flex gap-3 pt-2">
-                  <Button onClick={handlePost} variant="success" className="py-3 px-6 font-medium">
+                
+                <div className="flex gap-3 pt-3 border-t border-teal-100">
+                  <Button onClick={handlePost} variant="success" className="py-2 shadow-sm">
                     <Check size={18} className="mr-2" />
                     {editing ? 'Update Post' : 'Publish Post'}
                   </Button>
-                  <Button onClick={resetForm} className="py-3 px-6 font-medium">
+                  <Button onClick={resetForm} className="py-2 shadow-sm">
                     <X size={18} className="mr-2" />
                     Clear
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
-          <div className="flex items-center gap-4">
-            <Input
-              placeholder="Search your blogs..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              icon={<Search size={18} />}
-              className="bg-white flex-grow"
-            />
-            <div className="flex items-center bg-white rounded-lg border border-green-200 px-3 py-2 text-green-700">
-              <Filter size={18} className="mr-2" />
-              <span>{filteredBlogs.length} posts</span>
+          {/* Empty state or blog posts */}
+          {filteredBlogs.length === 0 ? (
+            <div className="bg-white rounded-md shadow-md p-8 border border-teal-100">
+              <div className="text-center">
+                <div className="bg-gradient-to-r from-teal-100 to-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BookOpen size={28} className="text-teal-600" />
+                </div>
+                <h3 className="text-lg font-medium text-teal-800 mb-1">No Blog Posts Yet</h3>
+                <p className="text-teal-600 mb-0 max-w-md mx-auto">
+                  Share your veterinary knowledge by creating your first post!
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div className="space-y-6">
-            {filteredBlogs.length === 0 ? (
-              <Card>
-                <CardContent>
-                  <div className="py-16 text-center">
-                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <BookOpen size={32} className="text-green-700" />
-                    </div>
-                    <p className="text-gray-500 text-lg">No blog posts yet. Create your first post!</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              filteredBlogs.map((blog) => (
-                <Card key={blog._id} className="overflow-hidden">
-                  <div className="h-2 bg-green-700"></div>
-                  <CardContent className="space-y-4">
-                    <div>
+          ) : (
+            <div className="space-y-4">
+              {filteredBlogs.map((blog) => (
+                <div key={blog._id} className="bg-white rounded-md shadow-md overflow-hidden border border-teal-100">
+                  <div className="h-1 bg-gradient-to-r from-teal-400 to-blue-400"></div>
+                  <div className="p-6">
+                    <div className="mb-4">
                       <div className="flex justify-between items-start">
-                        <h2 className="text-2xl font-semibold text-green-800">{blog.title}</h2>
+                        <h2 className="text-xl font-medium text-teal-800">{blog.title}</h2>
                         <Badge variant="success">{blog.category}</Badge>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
-                        <span className="flex items-center gap-1">
-                          <Calendar size={14} />
-                          {new Date(blog.createdAt).toLocaleString()}
-                        </span>
+                      <div className="flex items-center gap-2 text-sm text-teal-600 mt-2">
+                        <span>{new Date(blog.createdAt).toLocaleString()}</span>
+                        {blog.updatedAt && blog.updatedAt !== blog.createdAt && (
+                          <span className="text-xs text-teal-500 italic">
+                            • Updated: {new Date(blog.updatedAt).toLocaleString()}
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <div className="prose prose-green max-w-none bg-green-50 p-4 rounded-lg border border-green-100 my-2">
+                    
+                    <div className="bg-gradient-to-r from-teal-50 to-blue-50 p-4 rounded-md mb-4 border border-teal-100">
                       {formatContent(blog.content)}
                     </div>
-                    <div className="flex justify-between items-center pt-2 border-t border-green-100">
-                      <div className="flex gap-3">
-                        <Button onClick={() => handleEdit(blog)} className="px-5">
-                          <Edit size={16} className="mr-2" />
+                    
+                    <div className="flex flex-wrap justify-between items-center pt-3 border-t border-teal-100 gap-4">
+                      <div className="flex gap-2">
+                        <Button onClick={() => handleEdit(blog)} className="py-1 px-3 shadow-sm">
+                          <Edit size={16} className="mr-1" />
                           Edit
                         </Button>
-                        <Button variant="danger" onClick={() => handleDelete(blog._id)} className="px-5">
-                          <Trash2 size={16} className="mr-2" />
+                        <Button variant="danger" onClick={() => handleDelete(blog._id)} className="py-1 px-3 shadow-sm">
+                          <Trash2 size={16} className="mr-1" />
                           Delete
                         </Button>
                       </div>
-                      {blog.updatedAt && (
-                        <p className="text-xs text-gray-500 italic">
-                          Updated: {new kronor(blog.updatedAt).toLocaleString()}
-                        </p>
-                      )}
+                      <div className="flex items-center gap-4">
+                        <span className="flex items-center gap-1 text-green-600">
+                          <ThumbsUp size={16} />
+                          <span>{blog.likesCount || 0}</span>
+                        </span>
+                        <span className="flex items-center gap-1 text-red-400">
+                          <ThumbsDown size={16} />
+                          <span>{blog.dislikesCount || 0}</span>
+                        </span>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
