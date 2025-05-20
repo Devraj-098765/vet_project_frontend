@@ -26,8 +26,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
           {/* Left Section: Navigation */}
           <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-emerald-500">
-            <h2 className="text-xl font-bold text-emerald-800 mb-4">Vetcare</h2>
-            <ul className="space-y-3 text-gray-700">
+            <h2 className="text-xl font-serif font-bold text-emerald-800 mb-4">Vetcare</h2>
+            <ul className="space-y-3 text-gray-700 font-sans">
               <li>
                 <NavLink
                   to="/consultation"
@@ -72,9 +72,9 @@ const Footer = () => {
 
           {/* Middle Section: Contact */}
           <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-emerald-500">
-            <h2 className="text-xl font-bold text-emerald-800 mb-2">Stay Connected</h2>
-            <p className="text-gray-600 mt-2">Contact:</p>
-            <p className="text-emerald-700 font-medium">hi.Vetpeople@Vetcare.com</p>
+            <h2 className="text-xl font-serif font-bold text-emerald-800 mb-2">Stay Connected</h2>
+            <p className="text-gray-600 mt-2 font-sans">Contact:</p>
+            <p className="text-emerald-700 font-sans font-medium">hi.Vetpeople@Vetcare.com</p>
             <div className="flex items-center gap-4 mt-4">
               <a
                 href="https://facebook.com"
@@ -97,12 +97,12 @@ const Footer = () => {
 
           {/* Right Section: Promo */}
           <div className="bg-white p-6 rounded-lg shadow-md border-r-4 border-emerald-500 relative">
-            <div className="absolute -top-3 -right-3 bg-emerald-500 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold">
+            <div className="absolute -top-3 -right-3 bg-emerald-500 w-8 h-8 rounded-full flex items-center justify-center text-white font-serif font-bold">
               10%
             </div>
-            <h2 className="text-xl font-bold text-emerald-800 mb-2">Join as Vetfamily and get 10% OFF</h2>
-            <p className="text-gray-600 mt-2">Our services are wide open for you</p>
-            <button className="mt-6 px-6 py-2 bg-emerald-500 text-white rounded-full hover:bg-emerald-600 transition-colors duration-300 transform hover:-translate-y-1 hover:shadow-lg shadow-md">
+            <h2 className="text-xl font-serif font-bold text-emerald-800 mb-2">Join as Vetfamily and get 10% OFF</h2>
+            <p className="text-gray-600 mt-2 font-sans">Our services are wide open for you</p>
+            <button className="mt-6 px-6 py-2 bg-emerald-500 text-white rounded-full hover:bg-emerald-600 transition-colors duration-300 transform hover:-translate-y-1 hover:shadow-lg shadow-md font-sans">
               Be Vetfamily
             </button>
           </div>
@@ -111,9 +111,9 @@ const Footer = () => {
         {/* Bottom Section: Copyright */}
         <div className="relative mt-12 pt-8 text-center">
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-200 via-emerald-400 to-emerald-200"></div>
-          <p className="text-emerald-800 text-sm">
-            Abhisekkhatri@gmail.com •{" "}
-            <NavLink to="/terms" className="text-emerald-600 hover:underline">
+          <p className="text-emerald-800 text-sm font-sans">
+          vetcaresystem12@gmail.com {" "}
+            <NavLink to="/terms" className="text-emerald-600 hover:underline font-sans">
               Terms and Privacy Policy
             </NavLink>
           </p>
