@@ -24,16 +24,15 @@ const UserVeterinarianList = () => {
       const response = await axios.get(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`
       );
-      
       if (response.data && response.data.length > 0) {
         return {
           lat: parseFloat(response.data[0].lat),
-          lng: parseFloat(response.data[0].lon)
+          lng: parseFloat(response.data[0].lon),
         };
       }
       return null;
     } catch (error) {
-      console.error('Error geocoding address:', error);
+      console.error("Error geocoding address:", error);
       return null;
     }
   };
@@ -41,13 +40,12 @@ const UserVeterinarianList = () => {
   // Calculate distance between two points using Haversine formula
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371; // Radius of the Earth in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c; // Distance in km
     return distance;
   };
@@ -57,7 +55,7 @@ const UserVeterinarianList = () => {
     const getUserLocation = () => {
       setLocationLoading(true);
       setLocationError(null);
-      
+
       if (navigator.geolocation) {
         console.log("Requesting user location...");
         navigator.geolocation.getCurrentPosition(
@@ -65,10 +63,9 @@ const UserVeterinarianList = () => {
             console.log("User location obtained:", position.coords);
             setUserLocation({
               lat: position.coords.latitude,
-              lng: position.coords.longitude
+              lng: position.coords.longitude,
             });
             setLocationLoading(false);
-            
             // Auto-sort by distance when location is available
             setSortOption("distance");
           },
@@ -77,10 +74,10 @@ const UserVeterinarianList = () => {
             setLocationError("Failed to get your location. Location-based sorting is unavailable.");
             setLocationLoading(false);
           },
-          { 
-            enableHighAccuracy: true, 
-            timeout: 10000, 
-            maximumAge: 0 
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0,
           }
         );
       } else {
@@ -88,48 +85,43 @@ const UserVeterinarianList = () => {
         setLocationLoading(false);
       }
     };
-    
+
     getUserLocation();
   }, []);
 
-  // Fetch veterinarians and geocode their addresses
+  // Fetch veterinarians
   useEffect(() => {
     const fetchVeterinarians = async () => {
       try {
         console.log("Fetching veterinarians from API...");
         const res = await fetch("http://localhost:3001/api/veterinarians");
         console.log("API response status:", res.status);
-        
+
         if (!res.ok) {
           const errorText = await res.text();
           console.error("Failed to fetch veterinarians:", errorText);
           throw new Error(`Failed to fetch veterinarians: ${res.status} ${res.statusText}`);
         }
-        
+
         const data = await res.json();
         console.log("Veterinarians fetched successfully:", data.length);
-        
+
         // Process vets to add coordinates if user location is available
+        let vetsWithCoordinates = data;
         if (userLocation) {
           console.log("User location available, calculating distances...");
-          
-          const vetsWithCoordinates = await Promise.all(
+          vetsWithCoordinates = await Promise.all(
             data.map(async (vet) => {
               try {
                 const coordinates = await geocodeAddress(vet.location);
                 if (coordinates) {
                   console.log(`Geocoded location for ${vet.name}:`, coordinates);
-                  const distance = calculateDistance(
-                    userLocation.lat,
-                    userLocation.lng,
-                    coordinates.lat,
-                    coordinates.lng
-                  );
+                  const distance = calculateDistance(userLocation.lat, userLocation.lng, coordinates.lat, coordinates.lng);
                   console.log(`Distance to ${vet.name}: ${distance.toFixed(2)} km`);
                   return {
                     ...vet,
                     coordinates,
-                    distance: distance
+                    distance,
                   };
                 }
                 console.log(`Could not geocode location for ${vet.name}`);
@@ -140,23 +132,10 @@ const UserVeterinarianList = () => {
               }
             })
           );
-          
-          setVeterinarians(vetsWithCoordinates);
-          
-          // Apply distance sorting immediately
-          if (sortOption === "distance") {
-            const sortedByDistance = [...vetsWithCoordinates].sort(
-              (a, b) => (a.distance || Infinity) - (b.distance || Infinity)
-            );
-            setFilteredVeterinarians(sortedByDistance);
-          } else {
-            setFilteredVeterinarians(vetsWithCoordinates);
-          }
-        } else {
-          console.log("User location not available, skipping distance calculation");
-          setVeterinarians(data);
-          setFilteredVeterinarians(data);
         }
+
+        setVeterinarians(vetsWithCoordinates);
+        setFilteredVeterinarians(vetsWithCoordinates); // Initialize filtered list
       } catch (err) {
         console.error("Error in fetchVeterinarians:", err);
         setError(err.message);
@@ -165,17 +144,14 @@ const UserVeterinarianList = () => {
       }
     };
 
-    // Always attempt to fetch veterinarians
     fetchVeterinarians();
-  }, [userLocation, sortOption]);
+  }, [userLocation]); // Only depend on userLocation
 
-  const handleSortChange = (e) => {
-    const option = e.target.value;
-    console.log("Sort option changed to:", option);
-    setSortOption(option);
-
+  // Handle sorting
+  useEffect(() => {
+    console.log("Sorting veterinarians with option:", sortOption);
     let sortedVets = [...veterinarians];
-    if (option === "distance" && userLocation) {
+    if (sortOption === "distance" && userLocation) {
       console.log("Sorting by distance...");
       sortedVets.sort((a, b) => {
         const distanceA = a.distance || Infinity;
@@ -183,15 +159,21 @@ const UserVeterinarianList = () => {
         console.log(`Comparing: ${a.name} (${distanceA} km) vs ${b.name} (${distanceB} km)`);
         return distanceA - distanceB;
       });
-    } else if (option === "price-low-high") {
+    } else if (sortOption === "price-low-high") {
       sortedVets.sort((a, b) => a.fee - b.fee);
-    } else if (option === "price-high-low") {
+    } else if (sortOption === "price-high-low") {
       sortedVets.sort((a, b) => b.fee - a.fee);
     } else {
-      // Default to "recommended" - keep original order
+      // Default to original order
       sortedVets = [...veterinarians];
     }
     setFilteredVeterinarians(sortedVets);
+  }, [sortOption, veterinarians, userLocation]);
+
+  const handleSortChange = (e) => {
+    const option = e.target.value;
+    console.log("Sort option changed to:", option);
+    setSortOption(option);
   };
 
   const handleBookAppointment = (vet) => {
@@ -284,31 +266,50 @@ const UserVeterinarianList = () => {
                 </svg>
               </div>
             </div>
-            
+
             {/* Location status indicator */}
             {locationLoading && (
               <div className="mt-2 flex items-center text-sm text-amber-600">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-amber-600"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 <span>Detecting your location...</span>
               </div>
             )}
-            
+
             {locationError && (
               <div className="mt-2 flex items-center text-sm text-red-600">
                 <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
                 </svg>
                 <span>Location services unavailable</span>
               </div>
             )}
-            
+
             {userLocation && sortOption === "distance" && (
               <div className="mt-2 flex items-center text-sm text-green-600">
                 <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 <span>Showing nearest veterinarians</span>
@@ -328,10 +329,12 @@ const UserVeterinarianList = () => {
                 {/* Image with circular crop */}
                 <div className="relative z-10 mx-auto mt-6 w-36 h-36 rounded-full border-4 border-white shadow-lg overflow-hidden">
                   <img
-                    src={`http://localhost:3001${vet.image || "/uploads/default.jpg"}`}
+                    src={`http://localhost:3001${vet.image || "/Uploads/default.jpg"}`}
                     alt={vet.name}
                     className="w-full h-full object-cover"
-                    onError={(e) => { e.target.src = "https://via.placeholder.com/150"; }}
+                    onError={(e) => {
+                      e.target.src = "https://via.placeholder.com/150";
+                    }}
                   />
                 </div>
 
@@ -413,7 +416,13 @@ const UserVeterinarianList = () => {
                       ) : (
                         <Link to="/login" className="text-green-600 hover:text-green-800 flex items-center gap-1">
                           <span>Login to view</span>
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-3 w-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
                         </Link>
@@ -440,11 +449,7 @@ const UserVeterinarianList = () => {
 
                   {/* Bio */}
                   <div className="mt-4 min-h-16 text-green-700 font-light leading-relaxed">
-                    {expandedVet === vet._id ? (
-                      <p>{vet.bio}</p>
-                    ) : (
-                      <p>{truncateBio(vet.bio)}</p>
-                    )}
+                    {expandedVet === vet._id ? <p>{vet.bio}</p> : <p>{truncateBio(vet.bio)}</p>}
                   </div>
 
                   {/* Buttons */}
