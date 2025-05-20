@@ -17,9 +17,7 @@ const useAppointmentHistory = () => {
     const fetchAppointmentHistory = async (id) => {
       try {
         setLoading(true);
-        console.log("I am from the useAppointmentHistory");
         const response = await axiosInstance.get(`${APPOINTMENT_URL}/${id}`);
-        console.log("AppointmentHistory", response.data);
         setAppointments(response.data);
       } catch (err) {
         setError(err.message || "Failed to fetch appointments");
@@ -39,16 +37,14 @@ const useAppointmentHistory = () => {
 
   useEffect(() => {
     const fetchAdminAppointments = async () => {
+      // Don't show loading state for admin appointments to prevent UI delays
       try {
-        setLoading(true);
         const response = await axiosInstance.get(`${APPOINTMENT_URL}/admin/bookings`);
-        console.log("AdminAppointments", response.data);
-        setAdminAppointments(response.data);
+        setAdminAppointments(response.data || []);
       } catch (err) {
         setError(err.message || "Failed to fetch admin appointments");
         console.error("Error fetching admin appointments:", err);
-      } finally {
-        setLoading(false);
+        setAdminAppointments([]);
       }
     };
 
