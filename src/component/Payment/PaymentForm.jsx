@@ -58,7 +58,14 @@ const CardForm = ({ appointmentDetails, onSuccess }) => {
       } else if (result.paymentIntent.status === "succeeded") {
         console.log("Payment succeeded with ID:", result.paymentIntent.id);
         
-        // Record the payment in the database
+        // First show success toast and call the success callback immediately
+        toast.success("Payment successful!");
+        
+        // Immediately call onSuccess with the payment info to advance to the next screen
+        // This will move the user to the success page without waiting
+        onSuccess(result.paymentIntent.id);
+        
+        // THEN record the payment in the database (async, in the background)
         try {
           const paymentData = {
             paymentIntentId: result.paymentIntent.id,
@@ -76,26 +83,20 @@ const CardForm = ({ appointmentDetails, onSuccess }) => {
           
           console.log("Recording payment with data:", paymentData);
           
-          const response = await axiosInstance.post("/payments/record", paymentData);
-          console.log("Payment record response:", response.data);
+          // Record payment in the background, don't wait for it
+          axiosInstance.post("/payments/record", paymentData)
+            .then(response => {
+              console.log("Payment record response:", response.data);
+            })
+            .catch(recordError => {
+              console.error("Error recording payment:", recordError);
+              console.error("Error response data:", recordError.response?.data);
+              // No need to show toast since user has already moved to success page
+            });
           
-          toast.success("Payment successful and recorded!");
-          
-          // Call the onSuccess callback with just the payment intent ID - for backward compatibility
-          onSuccess(result.paymentIntent.id);
         } catch (recordError) {
-          console.error("Error recording payment:", recordError);
-          console.error("Error response data:", recordError.response?.data);
-          
-          // Get more specific error message if available
-          const errorMessage = recordError.response?.data?.error || 
-                             recordError.response?.data?.details || 
-                             "There was an issue saving your payment record.";
-          
-          // Even if recording fails, we still proceed as the payment was successful
-          toast.warning(`Payment successful but ${errorMessage}`);
-          // Pass just the ID to the callback for consistency
-          onSuccess(result.paymentIntent.id);
+          console.error("Error preparing payment record:", recordError);
+          // No need to show toast since user has already moved to success page
         }
       } else {
         console.warn("Payment not succeeded:", result.paymentIntent.status);
