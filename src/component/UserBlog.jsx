@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Footer from './Footer/Footer';
 import axiosInstance from '../api/axios';
-import { Calendar, Search, Tag, ArrowLeft } from 'lucide-react';
-import NavBar from './Header/Navbar';
+import { Calendar, Search, Tag, ArrowLeft, ThumbsUp, ThumbsDown } from 'lucide-react';
+import NavBar from './Header/NavBar';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const Card = ({ children, className }) => (
@@ -39,6 +39,14 @@ const BlogDetail = () => {
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [reactionStatus, setReactionStatus] = useState({
+    userLiked: false,
+    userDisliked: false,
+    likesCount: 0,
+    dislikesCount: 0
+  });
+  // Check if user is logged in
+  const isLoggedIn = localStorage.getItem("vetapp-token") || localStorage.getItem("token");
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -46,6 +54,12 @@ const BlogDetail = () => {
         setLoading(true);
         const response = await axiosInstance.get(`/blogs/${id}`);
         setBlog(response.data);
+        setReactionStatus({
+          userLiked: response.data.userLiked || false,
+          userDisliked: response.data.userDisliked || false,
+          likesCount: response.data.likesCount || 0,
+          dislikesCount: response.data.dislikesCount || 0
+        });
       } catch (error) {
         console.error('Error fetching blog:', error);
       } finally {
@@ -66,6 +80,64 @@ const BlogDetail = () => {
 
   const goBack = () => {
     navigate('/blogs');
+  };
+
+  const redirectToLogin = () => {
+    if (window.confirm("You need to log in to like or dislike blogs. Would you like to log in now?")) {
+      navigate('/login');
+    }
+  };
+
+  const handleLike = async () => {
+    if (!isLoggedIn) {
+      redirectToLogin();
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post(`/blogs/${id}/like`);
+      console.log('Like response:', response.data);
+      
+      setReactionStatus({
+        userLiked: response.data.userLiked,
+        userDisliked: response.data.userDisliked,
+        likesCount: response.data.likes,
+        dislikesCount: response.data.dislikes
+      });
+    } catch (error) {
+      console.error('Error liking blog:', error);
+      if (error.response && error.response.status === 401) {
+        redirectToLogin();
+      } else {
+        alert('There was an error processing your like. Please try again.');
+      }
+    }
+  };
+
+  const handleDislike = async () => {
+    if (!isLoggedIn) {
+      redirectToLogin();
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post(`/blogs/${id}/dislike`);
+      console.log('Dislike response:', response.data);
+      
+      setReactionStatus({
+        userLiked: response.data.userLiked,
+        userDisliked: response.data.userDisliked,
+        likesCount: response.data.likes,
+        dislikesCount: response.data.dislikes
+      });
+    } catch (error) {
+      console.error('Error disliking blog:', error);
+      if (error.response && error.response.status === 401) {
+        redirectToLogin();
+      } else {
+        alert('There was an error processing your dislike. Please try again.');
+      }
+    }
   };
 
   if (loading) {
@@ -133,6 +205,33 @@ const BlogDetail = () => {
             <div className="prose prose-green max-w-none text-green-800">
               {formatContent(blog.content)}
             </div>
+            
+            {/* Reactions Section */}
+            <div className="flex items-center space-x-8 pt-4 mt-4 border-t border-green-200">
+              <button 
+                onClick={handleLike}
+                className={`flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg transition ${
+                  reactionStatus.userLiked 
+                    ? 'bg-green-500 text-white'
+                    : 'bg-green-100 text-green-800 hover:bg-green-200'
+                }`}
+              >
+                <ThumbsUp size={18} /> 
+                <span>{reactionStatus.likesCount}</span>
+              </button>
+              <button 
+                onClick={handleDislike}
+                className={`flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg transition ${
+                  reactionStatus.userDisliked 
+                    ? 'bg-red-500 text-white'
+                    : 'bg-red-100 text-red-800 hover:bg-red-200'
+                }`}
+              >
+                <ThumbsDown size={18} /> 
+                <span>{reactionStatus.dislikesCount}</span>
+              </button>
+            </div>
+            
             {blog.updatedAt && (
               <p className="text-xs text-green-600 italic mt-4">
                 Last updated: {new Date(blog.updatedAt).toLocaleString()}
@@ -140,8 +239,6 @@ const BlogDetail = () => {
             )}
           </div>
         </div>
-
-        {/* Comments Section Removed */}
       </div>
       <Footer />
     </div>
@@ -152,12 +249,13 @@ const UserBlogPage = () => {
   const [blogs, setBlogs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  // Check if user is logged in
+  const isLoggedIn = localStorage.getItem("vetapp-token") || localStorage.getItem("token");
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         const response = await axiosInstance.get('/blogs');
-        // Log response for debugging (can be removed in production)
         console.log('Blogs API Response:', response.data);
         setBlogs(response.data);
       } catch (error) {
@@ -187,6 +285,82 @@ const UserBlogPage = () => {
 
   const viewBlogDetails = (blogId) => {
     navigate(`/blogs/${blogId}`);
+  };
+
+  const redirectToLogin = () => {
+    if (window.confirm("You need to log in to like or dislike blogs. Would you like to log in now?")) {
+      navigate('/login');
+    }
+  };
+
+  const handleLike = async (e, blogId) => {
+    // Stop event propagation to prevent navigation when clicking like button
+    e.stopPropagation();
+    
+    if (!isLoggedIn) {
+      redirectToLogin();
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post(`/blogs/${blogId}/like`);
+      console.log('Like response:', response.data);
+      
+      // Update the blogs state with the new like count
+      setBlogs(prevBlogs => 
+        prevBlogs.map(blog => 
+          blog._id === blogId ? {
+            ...blog,
+            likesCount: response.data.likes,
+            dislikesCount: response.data.dislikes,
+            userLiked: response.data.userLiked,
+            userDisliked: response.data.userDisliked
+          } : blog
+        )
+      );
+    } catch (error) {
+      console.error('Error liking blog:', error);
+      if (error.response && error.response.status === 401) {
+        redirectToLogin();
+      } else {
+        alert('There was an error processing your like. Please try again.');
+      }
+    }
+  };
+
+  const handleDislike = async (e, blogId) => {
+    // Stop event propagation to prevent navigation when clicking dislike button
+    e.stopPropagation();
+    
+    if (!isLoggedIn) {
+      redirectToLogin();
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post(`/blogs/${blogId}/dislike`);
+      console.log('Dislike response:', response.data);
+      
+      // Update the blogs state with the new dislike count
+      setBlogs(prevBlogs => 
+        prevBlogs.map(blog => 
+          blog._id === blogId ? {
+            ...blog,
+            likesCount: response.data.likes,
+            dislikesCount: response.data.dislikes,
+            userLiked: response.data.userLiked,
+            userDisliked: response.data.userDisliked
+          } : blog
+        )
+      );
+    } catch (error) {
+      console.error('Error disliking blog:', error);
+      if (error.response && error.response.status === 401) {
+        redirectToLogin();
+      } else {
+        alert('There was an error processing your dislike. Please try again.');
+      }
+    }
   };
 
   return (
@@ -224,9 +398,9 @@ const UserBlogPage = () => {
             </Card>
           ) : (
             filteredBlogs.map((blog) => (
-              <Card key={blog._id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => viewBlogDetails(blog._id)}>
+              <Card key={blog._id} className="cursor-pointer hover:shadow-lg transition-shadow">
                 <CardContent className="space-y-4">
-                  <div>
+                  <div onClick={() => viewBlogDetails(blog._id)}>
                     <h2 className="text-2xl font-semibold text-green-800 mb-2">{blog.title}</h2>
                     <div className="flex flex-wrap items-center gap-3 text-sm text-green-700 mb-3">
                       <span className="flex items-center gap-1">
@@ -241,16 +415,36 @@ const UserBlogPage = () => {
                     </div>
                     <div className="h-px w-full bg-green-200 my-3"></div>
                   </div>
-                  <div className="prose prose-green max-w-none text-green-800">
+                  <div className="prose prose-green max-w-none text-green-800" onClick={() => viewBlogDetails(blog._id)}>
                     {formatContent(blog.content)}
                   </div>
                   <div className="flex justify-between items-center">
-                    {blog.updatedAt && (
-                      <p className="text-xs text-green-600 italic">
-                        Last updated: {new Date(blog.updatedAt).toLocaleString()}
-                      </p>
-                    )}
-                    <button className="text-green-600 hover:text-green-800 text-sm font-medium">
+                    <div className="flex items-center space-x-4">
+                      <button 
+                        onClick={(e) => handleLike(e, blog._id)}
+                        className={`flex items-center gap-1 px-2 py-1 rounded ${
+                          blog.userLiked 
+                            ? 'bg-green-500 text-white' 
+                            : 'text-green-700 hover:bg-green-100'
+                        }`}
+                      >
+                        <ThumbsUp size={16} /> {blog.likesCount || 0}
+                      </button>
+                      <button 
+                        onClick={(e) => handleDislike(e, blog._id)}
+                        className={`flex items-center gap-1 px-2 py-1 rounded ${
+                          blog.userDisliked 
+                            ? 'bg-red-500 text-white' 
+                            : 'text-red-700 hover:bg-red-100'
+                        }`}
+                      >
+                        <ThumbsDown size={16} /> {blog.dislikesCount || 0}
+                      </button>
+                    </div>
+                    <button 
+                      onClick={() => viewBlogDetails(blog._id)}
+                      className="text-green-600 hover:text-green-800 text-sm font-medium"
+                    >
                       Read More →
                     </button>
                   </div>
