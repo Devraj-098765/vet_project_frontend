@@ -21,7 +21,7 @@ const Consultation = () => {
           <NavBar />
         </div>
         
-        <div className="absolute bottom-0 left-0 text-white text-6xl md:text-[60px] font-bold p-8 z-10">
+        <div className="absolute bottom-0 left-0 text-white text-6xl md:text-[60px] font-serif font-bold p-8 z-10">
           Ensuring your pets live their best lives
         </div>
       </div>
@@ -34,11 +34,11 @@ const Consultation = () => {
         
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium mb-4">
+            <span className="inline-block px-4 py-1 bg-green-100 text-green-800 rounded-full text-sm font-sans font-medium mb-4">
               OUR SERVICES
             </span>
-            <h1 className="text-4xl font-bold text-gray-800">Choose Your Consultation Option</h1>
-            <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
+            <h1 className="text-4xl font-serif font-bold text-gray-800">Choose Your Consultation Option</h1>
+            <p className="mt-4 text-gray-600 max-w-2xl mx-auto font-sans">
               We offer flexible ways to provide veterinary care for your beloved pets
             </p>
           </div>
@@ -57,11 +57,11 @@ const Consultation = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition duration-300" />
                 </div>
-                <div className="absolute top-4 right-4 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                <div className="absolute top-4 right-4 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-sans font-medium">
                   Remote Care
                 </div>
-                <h2 className="text-3xl font-semibold text-gray-800">Connect with A Vet</h2>
-                <p className="text-gray-600 mt-4 text-lg flex-grow">
+                <h2 className="text-3xl font-serif font-semibold text-gray-800">Connect with A Vet</h2>
+                <p className="text-gray-600 mt-4 text-lg flex-grow font-sans">
                   Get expert veterinary care from the comfort of your home. Our online consultations provide
                   professional access to advice, follow-ups, and non-emergency consultations.
                 </p>
@@ -94,11 +94,11 @@ const Consultation = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition duration-300" />
                 </div>
-                <div className="absolute top-4 right-4 bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">
+                <div className="absolute top-4 right-4 bg-teal-100 text-teal-800 text-sm font-sans font-medium px-3 py-1 rounded-full">
                   In-Person Care
                 </div>
-                <h2 className="text-3xl font-semibold text-gray-800">Visit Our Clinic</h2>
-                <p className="text-gray-600 mt-4 text-lg flex-grow">
+                <h2 className="text-3xl font-serif font-semibold text-gray-800">Visit Our Clinic</h2>
+                <p className="text-gray-600 mt-4 text-lg flex-grow font-sans">
                   Visit our clinic for comprehensive veterinary care. Our experienced team provides thorough
                   examinations, advanced diagnostics, and personalized treatments for your pet's well-being.
                 </p>
