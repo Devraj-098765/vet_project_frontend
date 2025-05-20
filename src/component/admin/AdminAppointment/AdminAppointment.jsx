@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../../api/axios';
+import React, { useEffect } from 'react';
 import AdminNavbar from '../AdminNavbar';
-import { toast } from 'react-toastify';
 import useAppointmentHistory from '../../../hooks/useAppointmentHistory';
 
 const AdminAppointments = () => {
-  const [vetBookings, setVetBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [cancelLoading, setCancelLoading] = useState(null);
-  const { adminAppointments, error } = useAppointmentHistory();
+  const { adminAppointments } = useAppointmentHistory();
 
-  console.log("AdminAppointments", adminAppointments);
+  // Prepare data as soon as possible
+  const appointmentsArray = Array.isArray(adminAppointments) ? adminAppointments : [];
 
   const getStatusColor = (status) => {
     const statusColors = {
@@ -23,11 +19,16 @@ const AdminAppointments = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    if (!dateString) return 'N/A';
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return 'Invalid Date';
+    }
   };
 
   return (
@@ -42,11 +43,17 @@ const AdminAppointments = () => {
             <p className="text-purple-600 text-lg">Manage veterinary appointments with ease</p>
           </div>
 
-          {adminAppointments.length > 0 ? (
+          {appointmentsArray.length === 0 ? (
+            <div className="bg-white/60 backdrop-blur-lg p-12 rounded-2xl text-center">
+              <p className="text-2xl text-purple-600 font-medium">
+                No bookings found.
+              </p>
+            </div>
+          ) : (
             <div className="space-y-8">
-              {adminAppointments.map((vet) => (
+              {appointmentsArray.map((vet) => (
                 <div 
-                  key={vet.veterinarian._id} 
+                  key={vet.veterinarian?._id || `vet-${Math.random().toString()}`}
                   className="bg-white/60 backdrop-blur-lg rounded-2xl shadow-xl border border-purple-200 overflow-hidden"
                 >
                   <div className="bg-purple-500 p-6">
@@ -55,14 +62,14 @@ const AdminAppointments = () => {
                         Dr. {vet.veterinarian?.name ?? 'Unknown Veterinarian'}
                       </h3>
                       <div className="bg-white/20 px-4 py-2 rounded-full text-white">
-                        {vet.totalAppointments} Appointments
+                        {vet.totalAppointments || 0} Appointments
                       </div>
                     </div>
                   </div>
                   <div className="p-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {vet.appointments.map((appt) => (
+                    {Array.isArray(vet.appointments) && vet.appointments.map((appt) => (
                       <div 
-                        key={appt._id} 
+                        key={appt._id || `appt-${Math.random().toString()}`}
                         className="bg-white/70 rounded-2xl p-6 space-y-4 border-l-4 hover:scale-105 transition-all duration-300 ease-in-out relative"
                         style={{
                           borderLeftColor: appt.status === 'Pending' ? '#d8b4fe' :
@@ -72,14 +79,14 @@ const AdminAppointments = () => {
                         }}
                       >
                         <div className={`${getStatusColor(appt.status)} font-bold text-sm bg-purple-50 px-3 py-1 rounded-full inline-block`}>
-                          {appt.status}
+                          {appt.status || 'Unknown'}
                         </div>
                         <div>
                           <p className="text-lg font-semibold text-purple-800">
-                            {appt.userId ? appt.userId.name : 'Unknown User'}
+                            {appt.userId?.name || 'Unknown User'}
                           </p>
                           <p className="text-purple-600 text-sm">
-                            {appt.userId ? appt.userId.email : 'No email'}
+                            {appt.userId?.email || 'No email'}
                           </p>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-sm">
@@ -89,15 +96,15 @@ const AdminAppointments = () => {
                           </div>
                           <div>
                             <p className="text-purple-500">Time</p>
-                            <p className="text-purple-800">{appt.time}</p>
+                            <p className="text-purple-800">{appt.time || 'N/A'}</p>
                           </div>
                           <div>
                             <p className="text-purple-500">Pet</p>
-                            <p className="text-purple-800">{appt.petName} ({appt.petType})</p>
+                            <p className="text-purple-800">{appt.petName || 'N/A'} {appt.petType ? `(${appt.petType})` : ''}</p>
                           </div>
                           <div>
                             <p className="text-purple-500">Service</p>
-                            <p className="text-purple-800">{appt.service}</p>
+                            <p className="text-purple-800">{appt.service || 'N/A'}</p>
                           </div>
                         </div>
                       </div>
@@ -105,12 +112,6 @@ const AdminAppointments = () => {
                   </div>
                 </div>
               ))}
-            </div>
-          ) : (
-            <div className="bg-white/60 backdrop-blur-lg p-12 rounded-2xl text-center">
-              <p className="text-2xl text-purple-600 font-medium">
-                No bookings found.
-              </p>
             </div>
           )}
         </div>
