@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ErrorMessage from "../../utils/ErrorMessage";
 import { Loader } from "../../utils/Loading";
 import useAdminLogin from "../../hooks/useAdminLogin";
@@ -44,7 +44,15 @@ const Login = () => {
   const { handleAdminLogin, loading: adminLoginLoading, error: adminLoginError } = useAdminLogin();
   const selectedRole = watch("role"); // Watch the role field
 
+  // Update error state when adminLoginError changes
+  useEffect(() => {
+    if (adminLoginError) {
+      setError(adminLoginError);
+    }
+  }, [adminLoginError]);
+
   const onSubmit = async (data) => {
+    setError(null); // Clear any previous errors
     await handleAdminLogin(data);
   };
 
@@ -680,7 +688,7 @@ const Login = () => {
                 {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
               </div>
 
-              {error && (
+              {(error || adminLoginError) && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start">
                   <div className="flex-shrink-0 mt-0.5">
                     <svg
