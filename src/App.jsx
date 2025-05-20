@@ -33,6 +33,8 @@ import AllNotifications from "./component/Notifications/AllNotifications.jsx";
 import PaymentHistory from "./component/Payment/PaymentHistory";
 import PaymentReceipt from "./component/Payment/PaymentReceipt";
 import AdminPayments from "./component/admin/AdminPayments";
+import AdminActivities from "./component/admin/AdminActivities";
+import Earning from "../Veterinarian/Earning.jsx";
 
 
 function App() {
@@ -96,6 +98,17 @@ function App() {
           element: <EditProfile />,
         },
 
+        
+        {
+          path: "/appointments", 
+          element: (
+            <ProtectedRoute>
+              <AppointmentHistory />
+            </ProtectedRoute>
+          ),
+        },
+        
+        // Keep the old route for backward compatibility
         {
           path: "/appointmenthistory/:id",
           element: (
@@ -160,24 +173,31 @@ function App() {
       ),
   
     },
+    // Remove duplicate /appointments route
     {
-      path: "/appointments",
+      path: "/UserList",
+      element: (
+         <ProtectedRoute>
+      <UserList />,
+        </ProtectedRoute>
+      ),
+     
+    },
+    {
+      path: "/AddVet",
+      element:( 
+      <ProtectedRoute>
+      <AddVet />,
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/adminAppointment",
       element: (
         <ProtectedRoute>
           <AdminAppointments />
         </ProtectedRoute>
       ),
-    
-    },
-    {
-      path: "/UserList",
-      element: <UserList />,
-     
-    },
-    {
-      path: "/AddVet",
-      element: <AddVet />,
-     
     },
     {
       path: "/admin/veterinarianlist",
@@ -251,6 +271,22 @@ function App() {
       element: (
         <ProtectedRoute>
           <AdminPayments />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/admin/activities",
+      element: (
+        <ProtectedRoute>
+          <AdminActivities />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/earning",
+      element: (
+        <ProtectedRoute>
+          <Earning />
         </ProtectedRoute>
       ),
     },
