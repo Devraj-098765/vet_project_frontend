@@ -10,7 +10,13 @@ const AdminVeterinarianList = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/veterinarians")
+    const token = localStorage.getItem("vetapp-token");
+    
+    fetch("http://localhost:3001/api/veterinarians", {
+      headers: {
+        "x-auth-token": token
+      }
+    })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch data");
         return res.json();
@@ -27,11 +33,18 @@ const AdminVeterinarianList = () => {
 
   const toggleVetStatus = async (vetId, currentStatus) => {
     try {
+      const token = localStorage.getItem("vetapp-token");
+      if (!token) {
+        toast.error("Authentication token missing. Please log in again.");
+        return;
+      }
+      
       const newStatus = currentStatus === "active" ? "inactive" : "active";
       const response = await fetch(`http://localhost:3001/api/veterinarians/${vetId}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          "x-auth-token": token
         },
         body: JSON.stringify({ status: newStatus }),
       });
