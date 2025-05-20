@@ -6,7 +6,6 @@ import AdminNavbar from "./AdminNavbar";
 const AdminPayments = () => {
   const [payments, setPayments] = useState([]);
   const [filteredPayments, setFilteredPayments] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [stats, setStats] = useState({
@@ -19,16 +18,15 @@ const AdminPayments = () => {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        setLoading(true);
         const response = await axiosInstance.get("/payments/admin/all");
-        setPayments(response.data);
-        setFilteredPayments(response.data);
-        calculateStats(response.data);
-        setLoading(false);
+        setPayments(response.data || []);
+        setFilteredPayments(response.data || []);
+        calculateStats(response.data || []);
       } catch (err) {
         console.error("Error fetching payments:", err);
         setError("Failed to load payments");
-        setLoading(false);
+        setPayments([]);
+        setFilteredPayments([]);
       }
     };
     fetchPayments();
@@ -185,11 +183,7 @@ const AdminPayments = () => {
             </div>
           </div>
           
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="w-16 h-16 border-4 border-t-indigo-600 border-b-purple-600 border-l-transparent border-r-transparent rounded-full animate-spin"></div>
-            </div>
-          ) : error ? (
+          {error ? (
             <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow-md">
               <p className="text-red-600 font-medium text-center">{error}</p>
             </div>
