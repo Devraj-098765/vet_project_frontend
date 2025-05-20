@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { FaPhoneAlt, FaEnvelope, FaPaw } from "react-icons/fa";
 import Footer from "../Footer/Footer";
 // Import NavBar but we'll handle it differently
-import NavBar from "../Header/Navbar";
+import NavBar from "../Header/NavBar";
 
 const IndexPage = () => { 
   return (
